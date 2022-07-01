@@ -2,8 +2,8 @@
 //Title: Basic Webserver
 //Made by: Stephen Gillie
 //Created on: 6/17/2022
-//Updated on: 6/28/2022
-//Notes: 
+//Updated on: 6/30/2022
+//Notes: The goal for CrudRest is to be, in different modes, a webserver, database, load balancer, in-memory cache, message queue, password manager, and a variety of other uses.
 
 const http = require("http");
 const https = require("https");
@@ -212,10 +212,10 @@ function webRequest(method, location, callback, JSON,file,cached) {
 	} else {
 		port = 80;
 	}
-	locsplit2.shift()
-	locsplit2.shift()
+	locsplit2.shift();
+	locsplit2.shift();//This tosses out the first 2 blank array entries.
 	var host = locsplit2[0]
-	locsplit2.shift()
+	locsplit2.shift();//This one tosses out the host, so only the path is left.
 	var path = locsplit2.join("/")
 
 	var contentType = 'text/plain';
@@ -270,13 +270,13 @@ function webRequest(method, location, callback, JSON,file,cached) {
 	};
 
 	const req = https.request(options, res => {
-	  console.log(`statusCode: ${res.statusCode}`);
+		console.log(`statusCode: ${res.statusCode}`);
 
-  var msg = '';
-  res.setEncoding('utf8');
-	  res.on('data', d => {
-		process.stdout.write(d);
-	  });
+		var msg = '';
+		res.setEncoding('utf8');
+		res.on('data', d => {
+			process.stdout.write(d);
+		});
 	});
 	if (JSON) {data = JSON.parse(data)};
 
