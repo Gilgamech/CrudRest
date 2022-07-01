@@ -11,9 +11,17 @@ const fs = require('fs');
 const url  = require('url');
 
 var serverPort = 80;
+var hostRole = "Web";
+
+// Set up sites and siteOptions hash tables (dictionaries).
+var sites = new Object();
+var siteOptions = new Object();
+
+sites["/index.html"] = '<!DOCTYPE html> <html lang="en"> <head> <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/> <link rel="shortcut icon" href="http://www.gilgamech.com/images/favicon.ico" type="image/x-icon"/> <meta name="viewport" content="width=device-width, initial-scale=1"> <title>Gilgamech Technologies</title> <script src="http://www.gilgamech.com/FruitBot/seedrandom.js"></script> <script src="http://www.gilgamech.com/FruitBot/board.js"></script> <script src="http://www.gilgamech.com/FruitBot/grid.js"></script> <script src="http://www.gilgamech.com/FruitBot/mybot.js"></script> <script src="http://www.gilgamech.com/FruitBot/simplebot.js"></script> <script src="http://www.gilgamech.com/FruitBot/player.js"></script> <script src="http://www.gilgamech.com/js/thirdparty/jquery.min.js"></script> <link href="http://www.gilgamech.com/css/normalize.css" rel="stylesheet" type="text/css"> <link href="http://www.gilgamech.com/css/Gilgamech.css" rel="stylesheet" type="text/css"> </head> <body> <div id="titleParent" class="titleContainer"> <a class="pageTitle " href="/">Gilgamech Technologies</a> </div> <div id="headWrapper"> <script> <!-- SCRIPTS GO HERE --> </script> <style> <!-- CSS CLASSES GO HERE --> </style> </div> <div id="navContainer"> <nav> <ul> <li><a>Blog ▼</a> <ul> <li><a href="/blog.html">June 2022</a></li> <li><a>2022 ▼</a><ul> <li><a href="/2022/May.html">May 2022</a></li> <li><a href="/2022/April.html">Apr 2022</a></li> <li><a href="/2022/March.html">Mar 2022</a></li> <li><a href="/2022/February.html">Feb 2022</a></li> <li><a href="/2022/January.html">Jan 2022</a></li> </ul></li> <li><a>2021 ▼</a><ul> <li><a href="/2021/December.html">Dec 2021</a></li> <li><a href="/2021/November.html">Nov 2021</a></li> <li><a href="/2021/October.html">Oct 2021</a></li> <li><a href="/2021/September.html">Sept 2021</a></li> <li><a href="/2021/August.html">August 2021</a></li> <li><a href="/2021/July.html">July 2021</a></li> </ul></ul></li> <li><a href="/history.html">World History</a></li> <li><a>Stuff ▼</a><ul> <li><a href="/Gillogisms.html">Gillogisms</a></li> <li><a>Gaming ▼</a><ul> <li><a href="/InGameItem.html">Ingame Items</a></li> <li><a href="/Android.html">Android</a></li> </ul></li> <li><a>Tools ▼</a><ul> <li><a href="/calc.html">Calculators</a></li> <li><a href="/WhyIsItDown.html">Whys It Down?</a></li> <li><a href="/errorcause.html">Error Causes</a></li> </ul></li> </ul></li> <li><a href="/contact.html">Contact</a></li> </ul></li> </nav> </div> <div id="content"> <canvas id="game_view"></canvas> <script>GamePlay.init();</script>  </div><!-- End Content--> <div id="footWrapper"> <div class="container-fluid"> </div> <div id="spacerName"> <br> <br> </div> <div id="errDiv" class="row img-rounded"> </div> <div id="footerStatic" class="navbar-static-bottom" style="text-align: center;"> <p class="copyright">© 2013-2022 Gilgamech Technologies - We are the gears that make our world go around.</p> </div> </div> </body> </html>'
 
 var responseData = "Hola Mundo";
 var error404 = "<HTML><body>404 Not Found</body><HTML>";
+var error405 = "<HTML><body>405 Method Not Allowed.</body><HTML>";
 var pagename = "/index.html";
 var statusCode = 200;
 const files = fs.readdirSync("/home/app");
@@ -25,6 +33,11 @@ fs.readFile("/home/app/custerr/404.htm", 'utf8', function (err,data) {
 	}
 });
 
+try {
+	readUpstream("/test", sites);
+} catch {
+	hostRole = "DB";
+}// end try
 
 const server = http.createServer((request, response) => {
 	statusCode = 200;
@@ -77,29 +90,224 @@ const server = http.createServer((request, response) => {
 	  default:
 	}//end switch pagename
 
-	switch(request.url) {
-	  default:
-		  if (files.includes(pagename.split("/")[1])) {
-			fs.readFile("/home/app"+pagename, function (err,data) {
-				statusCode = 200;
-				responseData =  data;
-				if (err) {
-					console.log("404 error: "+pagename+" not found.");
-					response.writeHead(404, {'Content-Type': 'text/html'}); 
-					response.end(error404);
-				} 
-				response.writeHead(statusCode, {'Content-Type': contentType}); 
+	switch(request.method) {
+		case "HEAD":
+			response.writeHead(statusCode, {'Content-Type': contentType});
+			response.end(responseData);
+			break; //end HEAD
+		case "GET":
+			if (sites[pagename] == null) {
+				response.writeHead(404, {'Content-Type': 'text/html'});
+				response.end(error404);
+			}else{
+				responseData = sites[pagename];
+				// responseData = readUpstream(pagename  , sites);
+				response.writeHead(statusCode, {'Content-Type': contentType});
 				response.end(responseData);
-			});
-		} else {
-			console.log("404 error: "+pagename+" not found.");
-			response.writeHead(404, {'Content-Type': 'text/html'}); 
-			response.end(error404);
-		}
-		break;
-	} // end switch pagename
+			};//end if sites
+			break; //end GET
+		case "PUT":
+			if (hostRole == "Web") {
+				response.writeHead(405, {'Content-Type': 'text/html'});
+				response.end(error405);
+			} else if (hostRole == "DB") {
+				let body = '';
+				request.on('data', chunk => {
+				body += chunk.toString(); // convert Buffer to string
+				});
+				request.on('end', () => {
+					if (sites[pagename] == null) {
+						console.log(pagename+" empty, populating.")
+						sites[pagename] = body;
+					} else {
+						console.log(pagename+" exists, appending.")
+						sites[pagename] += body;
+					}
+					dataSave(sites);
+					responseData = "<HTML><body>Upsert "+sites[pagename]+"</body><HTML>";
+					console.log(request.method+" complete from "+request.socket.remoteAddress+" for page "+pagename);
+					response.writeHead(statusCode, {'Content-Type': contentType});
+					response.end(responseData);
+				});
+			} else {
+				console.log("Bad Role: "+hostRole);
+			} //end if hostRole
+			break; //end PUT
+		case "DELETE":
+			if (hostRole == "Web") {
+				response.writeHead(405, {'Content-Type': 'text/html'});
+				response.end(error405);
+			} else if (hostRole == "DB") {
+				responseData = "<HTML><body>Delete "+pagename+"</body><HTML>";
+				sites[pagename] = null;
+				dataSave(sites);
+				
+				response.writeHead(statusCode, {'Content-Type': contentType});
+				response.end(responseData);
+			} else {
+				console.log("Bad Role: "+hostRole);
+			} //end if hostRole
+			break; //end DELETE
+		case "POST":
+			if (hostRole == "Web") {
+				response.writeHead(405, {'Content-Type': 'text/html'});
+				response.end(error405);
+			} else if (hostRole == "DB") {
+				let body = '';
+				request.on('data', chunk => {
+					body += chunk.toString(); // convert Buffer to string
+				});
+				request.on('end', () => {
+					siteOptions[pagename] = body;
+					dataSave(siteOptions);
+					responseData = "<HTML><body>Upsert "+siteOptions[pagename]+"</body><HTML>";
+					console.log(request.method+" complete from "+request.socket.remoteAddress+" for page "+pagename);
+					response.writeHead(statusCode, {'Content-Type': contentType});
+					response.end(responseData);
+				});
+			} else {
+				console.log("Bad Role: "+hostRole);
+			} //end if hostRole
+			break; //end POST
+		case "OPTIONS":
+			if (hostRole == "Web") {
+				response.writeHead(405, {'Content-Type': 'text/html'});
+				response.end(error405);
+			} else if (hostRole == "DB") {
+				responseData = siteOptions[pagename];
+			} else {
+				console.log("Bad Role: "+hostRole);
+			} //end if hostRole
+			response.writeHead(statusCode, {'Content-Type': contentType});
+			response.end(responseData);
+			break; //end POST
+		default:
+			responseData = error405;
+			response.StatusCode = 405;
+
+			response.writeHead(statusCode, {'Content-Type': contentType});
+			response.end(responseData);
+			break; //end default
+	}//end switch
+
 })
-  
+
 server.listen((serverPort), () => {
-    console.log("Server is Running on port "+serverPort);
+    console.log(hostRole+" is Running on port "+serverPort);
 })
+
+function readUpstream(path, dict) {
+	if (hostRole == "Web") {
+		return webRequest(path, "GET");
+	} else if (hostRole == "DB") {
+		return dict[path];
+	} else {
+		return "Bad Role";
+	} //end if hostRole
+}// end readUpstream
+
+function writeDownstream(path, method, body) {
+	if (hostRole == "Web") {
+		webRequest(path, method, body);
+	} else if (hostRole == "DB") {
+		console.log(body);
+	} else {
+		console.log("Bad Role: "+hostRole);
+	} //end if hostRole
+}// end writeDownstream
+
+function dataSave(dict) {
+	fs.writeFile("CrudRestStorage.txt", dict, (err) => {
+		if (err) {
+			console.log(err);
+		}
+	});
+	writeDownstream("/log", "PUT", "dataSave");
+}
+
+function webRequest(method, location, callback, JSON,file,cached) {
+	var locsplit = loc.split(":").split("/")
+	var locsplit2 =locsplit[1].split("/")
+	var port
+	if (locsplit[0] == "https"){
+		port = 443;
+	} else {
+		port = 80;
+	}
+	locsplit2.shift()
+	locsplit2.shift()
+	var host = locsplit2[0]
+	locsplit2.shift()
+	var path = locsplit2.join("/")
+
+	var contentType = 'text/plain';
+	var encodingType = '';
+	switch(pagename.split(".")[1]) {
+	  case "css":
+		contentType = 'text/css'
+		break;
+	  case "gif":
+		contentType = 'image/gif'
+		break;
+	  case "htm":
+		contentType = 'text/html'
+		break;
+	  case "html":
+		contentType = 'text/html'
+		break;
+	  case "ico":
+		contentType = 'image/x-icon'
+		break;
+	  case "jpg":
+		contentType = 'image/jpeg'
+		break;
+	  case "js":
+		contentType = 'application/javascript'
+		break;
+	  case "pdf":
+		contentType = 'application/pdf'
+		break;
+	  case "png":
+		contentType = 'image/png'
+		break;
+	  case "scad":
+		break;
+	  case "txt":
+		break;
+	  case "png":
+		contentType = 'image/png'
+		break;
+	  default:
+	}//end switch pagename
+
+	const options = {
+	  host: host,
+	  port: port,
+	  path: path,
+	  method: method,
+	  headers: {
+		'Content-Type': contentType,
+		'Content-Length': data.length
+	  }
+	};
+
+	const req = https.request(options, res => {
+	  console.log(`statusCode: ${res.statusCode}`);
+
+  var msg = '';
+  res.setEncoding('utf8');
+	  res.on('data', d => {
+		process.stdout.write(d);
+	  });
+	});
+	if (JSON) {data = JSON.parse(data)};
+
+	request.on('error', error => {
+	  console.error(error);
+	});
+
+
+	if(data) {req.write(data)};
+	req.end();
+
+}// end webRequest
