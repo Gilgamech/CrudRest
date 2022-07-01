@@ -33,10 +33,12 @@ fs.readFile("/home/app/custerr/404.htm", 'utf8', function (err,data) {
 	}
 });
 
+var allowedVerbs = ["GET","HEAD","OPTIONS"]
 try {
 	readUpstream("/test", sites);
 } catch {
 	hostRole = "DB";
+	allowedVerbs = ["GET","HEAD","PUT","POST","DELETE","OPTIONS"]
 }// end try
 
 const server = http.createServer((request, response) => {
@@ -89,29 +91,26 @@ const server = http.createServer((request, response) => {
 		break;
 	  default:
 	}//end switch pagename
-
-	switch(request.method) {
-		case "HEAD":
-			response.writeHead(statusCode, {'Content-Type': contentType});
-			response.end(responseData);
-			break; //end HEAD
-		case "GET":
-			if (sites[pagename] == null) {
-				response.writeHead(404, {'Content-Type': 'text/html'});
-				response.end(error404);
-			}else{
-				responseData = sites[pagename];
-				// responseData = readUpstream(pagename  , sites);
+	
+	if (allowedVerbs.includes(request.method)) {
+		switch(request.method) {
+			case "HEAD":
 				response.writeHead(statusCode, {'Content-Type': contentType});
 				response.end(responseData);
-			};//end if sites
-			break; //end GET
-		case "PUT":
-			if (hostRole == "Web") {
-				response.writeHead(405, {'Content-Type': 'text/html'});
-				response.end(error405);
-			} else if (hostRole == "DB") {
-				let body = '';
+				break; //end HEAD
+			case "GET":
+				if (sites[pagename] == null) {
+					response.writeHead(404, {'Content-Type': 'text/html'});
+					response.end(error404);
+				}else{
+					// responseData = readUpstream(pagename  , sites);
+					responseData = sites[pagename];
+					response.writeHead(statusCode, {'Content-Type': contentType});
+					response.end(responseData);
+				};//end if sites
+				break; //end GET
+			case "PUT":
+				var body = '';
 				request.on('data', chunk => {
 				body += chunk.toString(); // convert Buffer to string
 				});
@@ -129,31 +128,17 @@ const server = http.createServer((request, response) => {
 					response.writeHead(statusCode, {'Content-Type': contentType});
 					response.end(responseData);
 				});
-			} else {
-				console.log("Bad Role: "+hostRole);
-			} //end if hostRole
-			break; //end PUT
-		case "DELETE":
-			if (hostRole == "Web") {
-				response.writeHead(405, {'Content-Type': 'text/html'});
-				response.end(error405);
-			} else if (hostRole == "DB") {
+				break; //end PUT
+			case "DELETE":
 				responseData = "<HTML><body>Delete "+pagename+"</body><HTML>";
 				sites[pagename] = null;
 				dataSave(sites);
 				
 				response.writeHead(statusCode, {'Content-Type': contentType});
 				response.end(responseData);
-			} else {
-				console.log("Bad Role: "+hostRole);
-			} //end if hostRole
-			break; //end DELETE
-		case "POST":
-			if (hostRole == "Web") {
-				response.writeHead(405, {'Content-Type': 'text/html'});
-				response.end(error405);
-			} else if (hostRole == "DB") {
-				let body = '';
+				break; //end DELETE
+			case "POST":
+				var body = '';
 				request.on('data', chunk => {
 					body += chunk.toString(); // convert Buffer to string
 				});
@@ -162,33 +147,26 @@ const server = http.createServer((request, response) => {
 					dataSave(siteOptions);
 					responseData = "<HTML><body>Upsert "+siteOptions[pagename]+"</body><HTML>";
 					console.log(request.method+" complete from "+request.socket.remoteAddress+" for page "+pagename);
+					
 					response.writeHead(statusCode, {'Content-Type': contentType});
 					response.end(responseData);
 				});
-			} else {
-				console.log("Bad Role: "+hostRole);
-			} //end if hostRole
-			break; //end POST
-		case "OPTIONS":
-			if (hostRole == "Web") {
+				break; //end POST
+			case "OPTIONS":
+				responseData = siteOptions[pagename];
+					
+				response.writeHead(statusCode, {'Content-Type': contentType});
+				response.end(responseData);
+				break; //end POST
+			default:
 				response.writeHead(405, {'Content-Type': 'text/html'});
 				response.end(error405);
-			} else if (hostRole == "DB") {
-				responseData = siteOptions[pagename];
-			} else {
-				console.log("Bad Role: "+hostRole);
-			} //end if hostRole
-			response.writeHead(statusCode, {'Content-Type': contentType});
-			response.end(responseData);
-			break; //end POST
-		default:
-			responseData = error405;
-			response.StatusCode = 405;
-
-			response.writeHead(statusCode, {'Content-Type': contentType});
-			response.end(responseData);
-			break; //end default
-	}//end switch
+				break; //end default
+		}//end switch
+	} else {
+		response.writeHead(405, {'Content-Type': 'text/html'});
+		response.end(error405);
+	}
 
 })
 
