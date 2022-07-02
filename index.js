@@ -10,9 +10,7 @@ const https = require("https");
 const fs = require('fs');
 const url  = require('url');
 const LEoptions = letsencryptOptions('Gilgamech.com');
-
-var serverPort = 80;
-var hostRole = "Web";
+const serverPort = 80;//443;
 
 var sites = new Object();
 var siteOptions = new Object();
@@ -24,8 +22,9 @@ siteOptions["/index.html"].URI = "/index.html";
 siteOptions["/index.html"].Action = "";
 siteOptions["/index.html"].Owner = "Gilgamech";
 siteOptions["/index.html"].AccessList = "";
-//Default, Get, Head, Post, Put, Delete, Trace, Options, Merge, Patch"
+//how to allow only certain permission levels to do something? 
 siteOptions["/index.html"].allowedVerbs = ["GET","HEAD","OPTIONS"]
+//Default, Get, Head, Post, Put, Delete, Trace, Options, Merge, Patch"
 siteOptions["/index.html"].notes = "";
 
 var responseData = "Hola Mundo";
@@ -116,7 +115,6 @@ const server = http.createServer((request, response) => {
 					body += chunk.toString(); // convert Buffer to string
 				});
 				request.on('end', () => {
-
 					if (sites[pagename] == null) {
 						console.log(pagename+" empty, populating.")
 						sites[pagename] = body;
@@ -144,6 +142,12 @@ const server = http.createServer((request, response) => {
 					body += chunk.toString(); // convert Buffer to string
 				});
 				request.on('end', () => {
+//must be in JSON format, listing URI, action on data, list of users who can modify, if public or private, notes. URI must match or upload fails.
+//URL - redirect / cache there. list of URLs - LB between them. Format is Verb:URL:CacheExpiry,
+//data++ increments the data (hope it's an int!) data-- decriments, will come up with a list.  data/2 divides it in half. Performs the operation then serves. 
+//how to perform operation on remote data? Like get int from URL, divide by 2? (Verb:URL:CacheExpiry) / 2
+//blank or just "$PutData" is serve put data
+//if "$PutData" isn't in actions, then it ignores the put data. 
 					siteOptions[pagename] = body;
 					dataSave(siteOptions);
 					responseData = "<HTML><body>Upsert "+siteOptions[pagename]+"</body><HTML>";
