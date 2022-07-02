@@ -3,7 +3,7 @@
 //Made by: Stephen Gillie
 //Created on: 6/17/2022
 //Updated on: 6/30/2022
-//Notes: The goal for CrudRest is to be, in different modes, a webserver, database, load balancer, in-memory cache, message queue, password manager, and a variety of other uses.
+//Notes: The goal for CrudRest is to be, in different modes, a webserver, database, load balancer, in-memory cache, message queue, pub sub hub, login IdP, password manager, and a variety of other uses.
 
 const http = require("http");
 const https = require("https");
@@ -19,13 +19,14 @@ var siteOptions = new Object();
 
 sites["/index.html"] = '<!DOCTYPE html> <html lang="en"> <head> <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/> <link rel="shortcut icon" href="http://www.gilgamech.com/images/favicon.ico" type="image/x-icon"/> <meta name="viewport" content="width=device-width, initial-scale=1"> <title>Gilgamech Technologies</title> <script src="http://www.gilgamech.com/FruitBot/seedrandom.js"></script> <script src="http://www.gilgamech.com/FruitBot/board.js"></script> <script src="http://www.gilgamech.com/FruitBot/grid.js"></script> <script src="http://www.gilgamech.com/FruitBot/mybot.js"></script> <script src="http://www.gilgamech.com/FruitBot/simplebot.js"></script> <script src="http://www.gilgamech.com/FruitBot/player.js"></script> <script src="http://www.gilgamech.com/js/thirdparty/jquery.min.js"></script> <link href="http://www.gilgamech.com/css/normalize.css" rel="stylesheet" type="text/css"> <link href="http://www.gilgamech.com/css/Gilgamech.css" rel="stylesheet" type="text/css"> </head> <body> <div id="titleParent" class="titleContainer"> <a class="pageTitle " href="/">Gilgamech Technologies</a> </div> <div id="headWrapper"> <script> <!-- SCRIPTS GO HERE --> </script> <style> <!-- CSS CLASSES GO HERE --> </style> </div> <div id="navContainer"> <nav> <ul> <li><a>Blog ▼</a> <ul> <li><a href="/blog.html">June 2022</a></li> <li><a>2022 ▼</a><ul> <li><a href="/2022/May.html">May 2022</a></li> <li><a href="/2022/April.html">Apr 2022</a></li> <li><a href="/2022/March.html">Mar 2022</a></li> <li><a href="/2022/February.html">Feb 2022</a></li> <li><a href="/2022/January.html">Jan 2022</a></li> </ul></li> <li><a>2021 ▼</a><ul> <li><a href="/2021/December.html">Dec 2021</a></li> <li><a href="/2021/November.html">Nov 2021</a></li> <li><a href="/2021/October.html">Oct 2021</a></li> <li><a href="/2021/September.html">Sept 2021</a></li> <li><a href="/2021/August.html">August 2021</a></li> <li><a href="/2021/July.html">July 2021</a></li> </ul></ul></li> <li><a href="/history.html">World History</a></li> <li><a>Stuff ▼</a><ul> <li><a href="/Gillogisms.html">Gillogisms</a></li> <li><a>Gaming ▼</a><ul> <li><a href="/InGameItem.html">Ingame Items</a></li> <li><a href="/Android.html">Android</a></li> </ul></li> <li><a>Tools ▼</a><ul> <li><a href="/calc.html">Calculators</a></li> <li><a href="/WhyIsItDown.html">Whys It Down?</a></li> <li><a href="/errorcause.html">Error Causes</a></li> </ul></li> </ul></li> <li><a href="/contact.html">Contact</a></li> </ul></li> </nav> </div> <div id="content"> <canvas id="game_view"></canvas> <script>GamePlay.init();</script>  </div><!-- End Content--> <div id="footWrapper"> <div class="container-fluid"> </div> <div id="spacerName"> <br> <br> </div> <div id="errDiv" class="row img-rounded"> </div> <div id="footerStatic" class="navbar-static-bottom" style="text-align: center;"> <p class="copyright">© 2013-2022 Gilgamech Technologies - We are the gears that make our world go around.</p> </div> </div> </body> </html>'
 
-siteOptions["/index.html"].URI
-siteOptions["/index.html"].Action
-siteOptions["/index.html"].Owner
-siteOptions["/index.html"].AccessList 
+siteOptions["/index.html"] = new Object();
+siteOptions["/index.html"].URI = "/index.html";
+siteOptions["/index.html"].Action = "";
+siteOptions["/index.html"].Owner = "Gilgamech";
+siteOptions["/index.html"].AccessList = "";
 //Default, Get, Head, Post, Put, Delete, Trace, Options, Merge, Patch"
 siteOptions["/index.html"].allowedVerbs = ["GET","HEAD","OPTIONS"]
-siteOptions["/index.html"].notes
+siteOptions["/index.html"].notes = "";
 
 var responseData = "Hola Mundo";
 var error404 = "<HTML><body>404 Not Found</body><HTML>";
@@ -184,9 +185,9 @@ server.listen((serverPort), () => {
 function letsencryptOptions(domain) {
     var path = 'C:\programs\letsencrypt\live';
     return {
-        key: fs.readFileSync(path + domain + '\privkey.pem'),
-        cert: fs.readFileSync(path + domain + '\cert.pem'),
-        ca: fs.readFileSync(path + domain + '\chain.pem')
+        //key: fs.readFileSync(path + domain + '\privkey.pem'),
+        //cert: fs.readFileSync(path + domain + '\cert.pem'),
+        //ca: fs.readFileSync(path + domain + '\chain.pem')
     };
 }
 
