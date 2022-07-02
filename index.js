@@ -92,24 +92,23 @@ const server = http.createServer((request, response) => {
 	}//end switch pagename
 	
 	if (allowedVerbs.includes(request.method)) {
+		let body = '';
 		switch(request.method) {
 			case "HEAD":
 				response.writeHead(statusCode, {'Content-Type': contentType});
-				response.end(responseData);
+				response.end();
 				break; //end HEAD
 			case "GET":
 				if (sites[pagename] == null) {
 					response.writeHead(404, {'Content-Type': 'text/html'});
 					response.end(error404);
 				}else{
-					// responseData = readUpstream(pagename  , sites);
-					responseData = sites[pagename];
+					responseData = readUpstream(pagename  , sites);
 					response.writeHead(statusCode, {'Content-Type': contentType});
 					response.end(responseData);
 				};//end if sites
 				break; //end GET
 			case "PUT":
-				var body = '';
 				request.on('data', chunk => {
 				body += chunk.toString(); // convert Buffer to string
 				});
@@ -137,7 +136,6 @@ const server = http.createServer((request, response) => {
 				response.end(responseData);
 				break; //end DELETE
 			case "POST":
-				var body = '';
 				request.on('data', chunk => {
 					body += chunk.toString(); // convert Buffer to string
 				});
@@ -151,8 +149,14 @@ const server = http.createServer((request, response) => {
 					response.end(responseData);
 				});
 				break; //end POST
-			case "OPTIONS":
+			case "MERGE":
 				responseData = siteOptions[pagename];
+				
+				response.writeHead(statusCode, {'Content-Type': contentType});
+				response.end(responseData);
+				break; //end POST
+			case "OPTIONS":
+				responseData = optionsData;
 					
 				response.writeHead(statusCode, {'Content-Type': contentType});
 				response.end(responseData);
@@ -170,7 +174,7 @@ const server = http.createServer((request, response) => {
 })
 
 server.listen((serverPort), () => {
-    console.log(hostRole+" is Running on port "+serverPort);
+    console.log("Server is Running on port "+serverPort);
 })
 
 function readUpstream(path, dict) {
