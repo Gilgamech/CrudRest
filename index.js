@@ -9,6 +9,7 @@ const http = require("http");
 const https = require("https");
 const fs = require('fs');
 const url  = require('url');
+const LEoptions = letsencryptOptions('Gilgamech.com');
 
 var serverPort = 80;
 var hostRole = "Web";
@@ -176,6 +177,15 @@ const server = http.createServer((request, response) => {
 server.listen((serverPort), () => {
     console.log("Server is Running on port "+serverPort);
 })
+
+function letsencryptOptions(domain) {
+    var path = 'C:\programs\letsencrypt\live';
+    return {
+        key: fs.readFileSync(path + domain + '\privkey.pem'),
+        cert: fs.readFileSync(path + domain + '\cert.pem'),
+        ca: fs.readFileSync(path + domain + '\chain.pem')
+    };
+}
 
 function readUpstream(path, dict) {
 		return dict[path];
