@@ -149,14 +149,6 @@ siteOptions[pagename].notes = "";
 					response.end(responseData);
 				});
 				break; //end PUT
-			case "DELETE":
-				responseData = "<HTML><body>Delete "+pagename+"</body><HTML>";
-				sites[pagename] = null;
-				dataSave(sites);
-				
-				response.writeHead(statusCode, {'Content-Type': contentType});
-				response.end(responseData);
-				break; //end DELETE
 			case "POST":
 				request.on('data', chunk => {
 					body += chunk.toString(); // convert Buffer to string
@@ -177,6 +169,14 @@ siteOptions[pagename].notes = "";
 					response.end(responseData);
 				});
 				break; //end POST
+			case "DELETE":
+				responseData = "<HTML><body>Delete "+pagename+"</body><HTML>";
+				sites[pagename] = null;
+				dataSave(sites);
+				
+				response.writeHead(statusCode, {'Content-Type': contentType});
+				response.end(responseData);
+				break; //end DELETE
 			case "MERGE":
 				responseData = siteOptions[pagename];
 				
