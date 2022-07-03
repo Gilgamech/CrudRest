@@ -26,6 +26,16 @@ siteOptions["/index.html"].allowedVerbs = ["GET","HEAD","OPTIONS"]
 //Default, Get, Head, Post, Put, Delete, Trace, Options, Merge, Patch"
 siteOptions["/index.html"].notes = "";
 
+siteOptions["/favicon.ico"] = new Object();
+siteOptions["/favicon.ico"].URI = "/favicon.ico";
+siteOptions["/favicon.ico"].Action = "";
+siteOptions["/favicon.ico"].Owner = "Gilgamech";
+siteOptions["/favicon.ico"].AccessList = "";
+//how to allow only certain permission levels to do something? 
+siteOptions["/favicon.ico"].allowedVerbs = ["GET","HEAD","OPTIONS"]
+//Default, Get, Head, Post, Put, Delete, Trace, Options, Merge, Patch"
+siteOptions["/favicon.ico"].notes = "";
+
 var responseData = "Hola Mundo";
 var error404 = "<HTML><body>404 Not Found</body><HTML>";
 var error405 = "<HTML><body>405 Method Not Allowed.</body><HTML>";
@@ -92,6 +102,17 @@ const server = http.createServer((request, response) => {
 	  default:
 	}//end switch pagename
 	
+	if (siteOptions[pagename] == null) {
+		console.log("New page "+pagename);
+siteOptions[pagename] = new Object();
+siteOptions[pagename].URI = pagename;
+siteOptions[pagename].Action = "";
+siteOptions[pagename].Owner = "";
+siteOptions[pagename].AccessList = "";
+siteOptions[pagename].allowedVerbs = ["GET","HEAD","OPTIONS","POST","PUT","DELETE","MERGE"]
+siteOptions[pagename].notes = "";
+	}
+
 	if (siteOptions[pagename].allowedVerbs.includes(request.method)) {
 		let body = '';
 		switch(request.method) {
