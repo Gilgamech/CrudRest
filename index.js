@@ -306,9 +306,8 @@ function webRequest(method, location, callback, JSON,file,cached) {
 	var locsplit2 =locsplit[1].split("/")
 	var port
 	if (locsplit[0] == "https"){
+	var port = 80;
 		port = 443;
-	} else {
-		port = 80;
 	}
 	locsplit2.shift();
 	locsplit2.shift();//This tosses out the first 2 blank array entries.
