@@ -15,14 +15,14 @@ var sites = new Object();
 
 sites["/index.html"] = new Object();
 sites["/index.html"].URI = "/index.html";
-sites["/index.html"].Action = "";
+sites["/index.html"].Action = "fs~/index.html";
 sites["/index.html"].Owner = "Gilgamech";
 sites["/index.html"].AccessList = "";
 //how to allow only certain permission levels to do something? 
 sites["/index.html"].allowedVerbs = ["GET","HEAD","OPTIONS"]
 //Default, Get, Head, Post, Put, Delete, Trace, Options, Merge, Patch"
 sites["/index.html"].notes = "";
-sites["/index.html"].PutData = '<!DOCTYPE html> <html lang="en"> <head> <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/> <link rel="shortcut icon" href="http://www.gilgamech.com/images/favicon.ico" type="image/x-icon"/> <meta name="viewport" content="width=device-width, initial-scale=1"> <title>Gilgamech Technologies</title> <script src="http://www.gilgamech.com/FruitBot/seedrandom.js"></script> <script src="http://www.gilgamech.com/FruitBot/board.js"></script> <script src="http://www.gilgamech.com/FruitBot/grid.js"></script> <script src="http://www.gilgamech.com/FruitBot/mybot.js"></script> <script src="http://www.gilgamech.com/FruitBot/simplebot.js"></script> <script src="http://www.gilgamech.com/FruitBot/player.js"></script> <script src="http://www.gilgamech.com/js/thirdparty/jquery.min.js"></script> <link href="http://www.gilgamech.com/css/normalize.css" rel="stylesheet" type="text/css"> <link href="http://www.gilgamech.com/css/Gilgamech.css" rel="stylesheet" type="text/css"> </head> <body> <div id="titleParent" class="titleContainer"> <a class="pageTitle " href="/">Gilgamech Technologies</a> </div> <div id="headWrapper"> <script> <!-- SCRIPTS GO HERE --> </script> <style> <!-- CSS CLASSES GO HERE --> </style> </div> <div id="navContainer"> <nav> <ul> <li><a>Blog ▼</a> <ul> <li><a href="/blog.html">June 2022</a></li> <li><a>2022 ▼</a><ul> <li><a href="/2022/May.html">May 2022</a></li> <li><a href="/2022/April.html">Apr 2022</a></li> <li><a href="/2022/March.html">Mar 2022</a></li> <li><a href="/2022/February.html">Feb 2022</a></li> <li><a href="/2022/January.html">Jan 2022</a></li> </ul></li> <li><a>2021 ▼</a><ul> <li><a href="/2021/December.html">Dec 2021</a></li> <li><a href="/2021/November.html">Nov 2021</a></li> <li><a href="/2021/October.html">Oct 2021</a></li> <li><a href="/2021/September.html">Sept 2021</a></li> <li><a href="/2021/August.html">August 2021</a></li> <li><a href="/2021/July.html">July 2021</a></li> </ul></ul></li> <li><a href="/history.html">World History</a></li> <li><a>Stuff ▼</a><ul> <li><a href="/Gillogisms.html">Gillogisms</a></li> <li><a>Gaming ▼</a><ul> <li><a href="/InGameItem.html">Ingame Items</a></li> <li><a href="/Android.html">Android</a></li> </ul></li> <li><a>Tools ▼</a><ul> <li><a href="/calc.html">Calculators</a></li> <li><a href="/WhyIsItDown.html">Whys It Down?</a></li> <li><a href="/errorcause.html">Error Causes</a></li> </ul></li> </ul></li> <li><a href="/contact.html">Contact</a></li> </ul></li> </nav> </div> <div id="content"> <canvas id="game_view"></canvas> <script>GamePlay.init();</script>  </div><!-- End Content--> <div id="footWrapper"> <div class="container-fluid"> </div> <div id="spacerName"> <br> <br> </div> <div id="errDiv" class="row img-rounded"> </div> <div id="footerStatic" class="navbar-static-bottom" style="text-align: center;"> <p class="copyright">© 2013-2022 Gilgamech Technologies - We are the gears that make our world go around.</p> </div> </div> </body> </html>'
+sites["/index.html"].PutData = ''
 
 sites["/favicon.ico"] = new Object();
 sites["/favicon.ico"].URI = "/favicon.ico";
@@ -35,38 +35,11 @@ sites["/favicon.ico"].allowedVerbs = ["GET","HEAD","OPTIONS","MERGE"]
 sites["/favicon.ico"].notes = "";
 sites["/favicon.ico"].PutData = "";
 
-sites["/Gilgamech.html"] = new Object();
-sites["/Gilgamech.html"].URI = "/Gilgamech.html";
-sites["/Gilgamech.html"].Action = "uri~GET~https://www.Gilgamech.com~0";
-sites["/Gilgamech.html"].Owner = "Gilgamech";
-sites["/Gilgamech.html"].AccessList = "";
-//how to allow only certain permission levels to do something? 
-sites["/Gilgamech.html"].allowedVerbs = ["GET","HEAD","OPTIONS","POST","PUT","DELETE","MERGE"]
-//Default, Get, Head, Post, Put, Delete, Trace, Options, Merge, Patch"
-sites["/Gilgamech.html"].notes = "";
-sites["/Gilgamech.html"].PutData = "";
+sites["/Gilgamech.html"] = {"URI":"/Gilgamech.html","Action":"uri~GET~https://www.Gilgamech.com~0","Owner":"Gilgamech","AccessList":"","allowedVerbs":["GET","HEAD","OPTIONS","POST","PUT","DELETE","MERGE"],"notes":"","PutData":""};
 
-sites["/increment"] = new Object();
-sites["/increment"].URI = "/increment";
-sites["/increment"].Action = "math~PutData++";
-sites["/increment"].Owner = "Gilgamech";
-sites["/increment"].AccessList = "";
-//how to allow only certain permission levels to do something? 
-sites["/increment"].allowedVerbs = ["GET","HEAD","OPTIONS","POST","PUT","DELETE","MERGE"]
-//Default, Get, Head, Post, Put, Delete, Trace, Options, Merge, Patch"
-sites["/increment"].notes = "";
-sites["/increment"].PutData = 1;
+sites["/increment"] = {"URI":"/increment","Action":"math~PutData++","Owner":"Gilgamech","AccessList":"","allowedVerbs":["GET","HEAD","OPTIONS","POST","PUT","DELETE","MERGE"],"notes":"","PutData":1};
 
-sites["/decrement"] = new Object();
-sites["/decrement"].URI = "/decrement";
-sites["/decrement"].Action = "math~PutData--";
-sites["/decrement"].Owner = "Gilgamech";
-sites["/decrement"].AccessList = "";
-//how to allow only certain permission levels to do something? 
-sites["/decrement"].allowedVerbs = ["GET","HEAD","OPTIONS","POST","PUT","DELETE","MERGE"]
-//Default, Get, Head, Post, Put, Delete, Trace, Options, Merge, Patch"
-sites["/decrement"].notes = "";
-sites["/decrement"].PutData = 1000000;
+sites["/decrement"] = {"URI":"/decrement","Action":"math~PutData--","Owner":"Gilgamech","AccessList":"","allowedVerbs":["GET","HEAD","OPTIONS","POST","PUT","DELETE","MERGE"],"notes":"","PutData":1000000};
 
 var error404 = "<HTML><body>404 Not Found</body><HTML>";
 var error405 = "<HTML><body>405 Method Not Allowed.</body><HTML>";
@@ -201,7 +174,6 @@ var responseData = "";
 								break;
 						}//end switch splitAction[1]
 					default:
-						//responseData = JSON.stringify(sites[pagename].PutData);
 						responseData = sites[pagename].PutData;
 						if (typeof responseData == "number"){
 							responseData = JSON.stringify(responseData);
