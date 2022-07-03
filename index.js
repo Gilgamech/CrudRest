@@ -302,11 +302,11 @@ function dataSave(dict) {
 }
 
 function webRequest(method, location, callback, JSON,file,cached) {
-	var locsplit = loc.split(":").split("/")
 	var locsplit2 =locsplit[1].split("/")
 	var port
-	if (locsplit[0] == "https"){
 	var port = 80;
+	var locationSplit = location.split(":");
+	if (protocol == "https"){
 		port = 443;
 	}
 	locsplit2.shift();
