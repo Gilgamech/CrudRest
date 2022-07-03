@@ -131,6 +131,7 @@ var responseData = "";
 		contentType = 'image/png'
 		break;
 	  default:
+		break;
 	}//end switch pagename
 	
 	if (sites[pagename] == null) {
@@ -391,17 +392,17 @@ function webRequest(method, location, callback, JSON,file,cached) {
 
 	const req = https.request(options, res => {
 		console.log(`statusCode: ${res.statusCode}`);
-
-		var msg = '';
+		var returnVar = '';
 		res.setEncoding('utf8');
 		res.on('data', d => {
 			process.stdout.write(d);
 			if (JSON) {
 				returnVar = JSON.parse(returnVar);
 			};
+			callback(returnVar);
 		});
 		req.on('error', error => {
-			var errMsg = "problem with request: {error.message}"
+			var errMsg = "problem with request: ${error.message}"
 			console.error(errMsg);
 		});
 		if (file) {
