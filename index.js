@@ -353,17 +353,40 @@ function webRequest(method, location, callback, JSON,file,cached) {
 		contentType = 'image/png'
 		break;
 	  default:
+		break;
 	}//end switch pagename
 
+	var $headers = {};
+	switch (method) {
+		case "POST":
+		$headers= {
+			'Content-Type': 'text/plain',
+			'Content-Length': Buffer.byteLength($file)
+		}
+		break;
+	case 'GET':
+		$headers= {
+			'Content-Type': 'application/json'
+		}
+		break;
+	case 'PUT':
+		$headers= {
+			'Content-Type': 'application/json',
+			'Content-Length': Buffer.byteLength($file)
+		}
+		break;
+	default:
+		$headers= {
+			'Content-Type': 'application/json'
+		}
+		break;
+	};
 	const options = {
 	  host: host,
 	  port: port,
 	  path: path,
 	  method: method,
-	  headers: {
-		'Content-Type': contentType,
-		'Content-Length': data.length
-	  }
+	  headers: $headers
 	};
 
 	const req = https.request(options, res => {
