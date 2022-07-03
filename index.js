@@ -390,7 +390,7 @@ console.log(protocol+" request method "+method+" for path "+path+" from host "+h
 	const req = https.request(options, res => {
 		console.log(`statusCode: ${res.statusCode}`);
 		var returnVar = '';
-		res.setEncoding('utf8');
+		res.setEncoding(encodingType);
 		res.on('data', function (chunk) {
 			returnVar += chunk;
 		});
@@ -400,15 +400,15 @@ console.log(protocol+" request method "+method+" for path "+path+" from host "+h
 			};
 			callback(returnVar);
 		});
-		req.on('error', error => {
-			var errMsg = "problem with request: ${error.message}"
-			console.error(errMsg);
-		});
-		if (file) {
-			req.write(file);
-		};
-		req.end();
 	});
+	req.on('error', error => {
+		var errMsg = "problem with request: ${error.message}"
+		console.error(errMsg);
+	});
+	if (file) {
+		req.write(file);
+	};
+	req.end();
 };
 
 function refreshKey($user,$sessionID,$sessionKey,$callback) {
