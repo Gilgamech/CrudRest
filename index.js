@@ -407,11 +407,10 @@ function webRequest(method, location, callback, JSON,file,cached) {
 		if (file) {
 			req.write(file);
 		};
+		req.end();
 	});
+};
 
-	req.end();
-
-}// end webRequest
 function refreshKey($user,$sessionID,$sessionKey,$callback) {
 	sparational.sequelize.query("SELECT sessionuser FROM Sessions WHERE sessionid = '"+$sessionID+"';").then(([$SessionResults, metadata]) => {
 //console.log(JSON.stringify($SessionResults))
