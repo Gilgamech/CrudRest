@@ -12,29 +12,61 @@ const url  = require('url');
 const serverPort = 80;//443;
 
 var sites = new Object();
-var siteOptions = new Object();
 
-sites["/index.html"] = '<!DOCTYPE html> <html lang="en"> <head> <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/> <link rel="shortcut icon" href="http://www.gilgamech.com/images/favicon.ico" type="image/x-icon"/> <meta name="viewport" content="width=device-width, initial-scale=1"> <title>Gilgamech Technologies</title> <script src="http://www.gilgamech.com/FruitBot/seedrandom.js"></script> <script src="http://www.gilgamech.com/FruitBot/board.js"></script> <script src="http://www.gilgamech.com/FruitBot/grid.js"></script> <script src="http://www.gilgamech.com/FruitBot/mybot.js"></script> <script src="http://www.gilgamech.com/FruitBot/simplebot.js"></script> <script src="http://www.gilgamech.com/FruitBot/player.js"></script> <script src="http://www.gilgamech.com/js/thirdparty/jquery.min.js"></script> <link href="http://www.gilgamech.com/css/normalize.css" rel="stylesheet" type="text/css"> <link href="http://www.gilgamech.com/css/Gilgamech.css" rel="stylesheet" type="text/css"> </head> <body> <div id="titleParent" class="titleContainer"> <a class="pageTitle " href="/">Gilgamech Technologies</a> </div> <div id="headWrapper"> <script> <!-- SCRIPTS GO HERE --> </script> <style> <!-- CSS CLASSES GO HERE --> </style> </div> <div id="navContainer"> <nav> <ul> <li><a>Blog ▼</a> <ul> <li><a href="/blog.html">June 2022</a></li> <li><a>2022 ▼</a><ul> <li><a href="/2022/May.html">May 2022</a></li> <li><a href="/2022/April.html">Apr 2022</a></li> <li><a href="/2022/March.html">Mar 2022</a></li> <li><a href="/2022/February.html">Feb 2022</a></li> <li><a href="/2022/January.html">Jan 2022</a></li> </ul></li> <li><a>2021 ▼</a><ul> <li><a href="/2021/December.html">Dec 2021</a></li> <li><a href="/2021/November.html">Nov 2021</a></li> <li><a href="/2021/October.html">Oct 2021</a></li> <li><a href="/2021/September.html">Sept 2021</a></li> <li><a href="/2021/August.html">August 2021</a></li> <li><a href="/2021/July.html">July 2021</a></li> </ul></ul></li> <li><a href="/history.html">World History</a></li> <li><a>Stuff ▼</a><ul> <li><a href="/Gillogisms.html">Gillogisms</a></li> <li><a>Gaming ▼</a><ul> <li><a href="/InGameItem.html">Ingame Items</a></li> <li><a href="/Android.html">Android</a></li> </ul></li> <li><a>Tools ▼</a><ul> <li><a href="/calc.html">Calculators</a></li> <li><a href="/WhyIsItDown.html">Whys It Down?</a></li> <li><a href="/errorcause.html">Error Causes</a></li> </ul></li> </ul></li> <li><a href="/contact.html">Contact</a></li> </ul></li> </nav> </div> <div id="content"> <canvas id="game_view"></canvas> <script>GamePlay.init();</script>  </div><!-- End Content--> <div id="footWrapper"> <div class="container-fluid"> </div> <div id="spacerName"> <br> <br> </div> <div id="errDiv" class="row img-rounded"> </div> <div id="footerStatic" class="navbar-static-bottom" style="text-align: center;"> <p class="copyright">© 2013-2022 Gilgamech Technologies - We are the gears that make our world go around.</p> </div> </div> </body> </html>'
-
-siteOptions["/index.html"] = new Object();
-siteOptions["/index.html"].URI = "/index.html";
-siteOptions["/index.html"].Action = "";
-siteOptions["/index.html"].Owner = "Gilgamech";
-siteOptions["/index.html"].AccessList = "";
+sites["/index.html"] = new Object();
+sites["/index.html"].URI = "/index.html";
+sites["/index.html"].Action = "";
+sites["/index.html"].Owner = "Gilgamech";
+sites["/index.html"].AccessList = "";
 //how to allow only certain permission levels to do something? 
-siteOptions["/index.html"].allowedVerbs = ["GET","HEAD","OPTIONS"]
+sites["/index.html"].allowedVerbs = ["GET","HEAD","OPTIONS"]
 //Default, Get, Head, Post, Put, Delete, Trace, Options, Merge, Patch"
-siteOptions["/index.html"].notes = "";
+sites["/index.html"].notes = "";
+sites["/index.html"].PutData = '<!DOCTYPE html> <html lang="en"> <head> <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/> <link rel="shortcut icon" href="http://www.gilgamech.com/images/favicon.ico" type="image/x-icon"/> <meta name="viewport" content="width=device-width, initial-scale=1"> <title>Gilgamech Technologies</title> <script src="http://www.gilgamech.com/FruitBot/seedrandom.js"></script> <script src="http://www.gilgamech.com/FruitBot/board.js"></script> <script src="http://www.gilgamech.com/FruitBot/grid.js"></script> <script src="http://www.gilgamech.com/FruitBot/mybot.js"></script> <script src="http://www.gilgamech.com/FruitBot/simplebot.js"></script> <script src="http://www.gilgamech.com/FruitBot/player.js"></script> <script src="http://www.gilgamech.com/js/thirdparty/jquery.min.js"></script> <link href="http://www.gilgamech.com/css/normalize.css" rel="stylesheet" type="text/css"> <link href="http://www.gilgamech.com/css/Gilgamech.css" rel="stylesheet" type="text/css"> </head> <body> <div id="titleParent" class="titleContainer"> <a class="pageTitle " href="/">Gilgamech Technologies</a> </div> <div id="headWrapper"> <script> <!-- SCRIPTS GO HERE --> </script> <style> <!-- CSS CLASSES GO HERE --> </style> </div> <div id="navContainer"> <nav> <ul> <li><a>Blog ▼</a> <ul> <li><a href="/blog.html">June 2022</a></li> <li><a>2022 ▼</a><ul> <li><a href="/2022/May.html">May 2022</a></li> <li><a href="/2022/April.html">Apr 2022</a></li> <li><a href="/2022/March.html">Mar 2022</a></li> <li><a href="/2022/February.html">Feb 2022</a></li> <li><a href="/2022/January.html">Jan 2022</a></li> </ul></li> <li><a>2021 ▼</a><ul> <li><a href="/2021/December.html">Dec 2021</a></li> <li><a href="/2021/November.html">Nov 2021</a></li> <li><a href="/2021/October.html">Oct 2021</a></li> <li><a href="/2021/September.html">Sept 2021</a></li> <li><a href="/2021/August.html">August 2021</a></li> <li><a href="/2021/July.html">July 2021</a></li> </ul></ul></li> <li><a href="/history.html">World History</a></li> <li><a>Stuff ▼</a><ul> <li><a href="/Gillogisms.html">Gillogisms</a></li> <li><a>Gaming ▼</a><ul> <li><a href="/InGameItem.html">Ingame Items</a></li> <li><a href="/Android.html">Android</a></li> </ul></li> <li><a>Tools ▼</a><ul> <li><a href="/calc.html">Calculators</a></li> <li><a href="/WhyIsItDown.html">Whys It Down?</a></li> <li><a href="/errorcause.html">Error Causes</a></li> </ul></li> </ul></li> <li><a href="/contact.html">Contact</a></li> </ul></li> </nav> </div> <div id="content"> <canvas id="game_view"></canvas> <script>GamePlay.init();</script>  </div><!-- End Content--> <div id="footWrapper"> <div class="container-fluid"> </div> <div id="spacerName"> <br> <br> </div> <div id="errDiv" class="row img-rounded"> </div> <div id="footerStatic" class="navbar-static-bottom" style="text-align: center;"> <p class="copyright">© 2013-2022 Gilgamech Technologies - We are the gears that make our world go around.</p> </div> </div> </body> </html>'
 
-siteOptions["/favicon.ico"] = new Object();
-siteOptions["/favicon.ico"].URI = "/favicon.ico";
-siteOptions["/favicon.ico"].Action = "";
-siteOptions["/favicon.ico"].Owner = "Gilgamech";
-siteOptions["/favicon.ico"].AccessList = "";
+sites["/favicon.ico"] = new Object();
+sites["/favicon.ico"].URI = "/favicon.ico";
+sites["/favicon.ico"].Action = "fs~/favicon.ico";
+sites["/favicon.ico"].Owner = "Gilgamech";
+sites["/favicon.ico"].AccessList = "";
 //how to allow only certain permission levels to do something? 
-siteOptions["/favicon.ico"].allowedVerbs = ["GET","HEAD","OPTIONS"]
+sites["/favicon.ico"].allowedVerbs = ["GET","HEAD","OPTIONS","MERGE"]
 //Default, Get, Head, Post, Put, Delete, Trace, Options, Merge, Patch"
-siteOptions["/favicon.ico"].notes = "";
+sites["/favicon.ico"].notes = "";
+sites["/favicon.ico"].PutData = "";
+
+sites["/Gilgamech.html"] = new Object();
+sites["/Gilgamech.html"].URI = "/Gilgamech.html";
+sites["/Gilgamech.html"].Action = "uri~GET~https://www.Gilgamech.com~0";
+sites["/Gilgamech.html"].Owner = "Gilgamech";
+sites["/Gilgamech.html"].AccessList = "";
+//how to allow only certain permission levels to do something? 
+sites["/Gilgamech.html"].allowedVerbs = ["GET","HEAD","OPTIONS","POST","PUT","DELETE","MERGE"]
+//Default, Get, Head, Post, Put, Delete, Trace, Options, Merge, Patch"
+sites["/Gilgamech.html"].notes = "";
+sites["/Gilgamech.html"].PutData = "";
+
+sites["/increment"] = new Object();
+sites["/increment"].URI = "/increment";
+sites["/increment"].Action = "math~PutData++";
+sites["/increment"].Owner = "Gilgamech";
+sites["/increment"].AccessList = "";
+//how to allow only certain permission levels to do something? 
+sites["/increment"].allowedVerbs = ["GET","HEAD","OPTIONS","POST","PUT","DELETE","MERGE"]
+//Default, Get, Head, Post, Put, Delete, Trace, Options, Merge, Patch"
+sites["/increment"].notes = "";
+sites["/increment"].PutData = 1;
+
+sites["/decrement"] = new Object();
+sites["/decrement"].URI = "/decrement";
+sites["/decrement"].Action = "math~PutData--";
+sites["/decrement"].Owner = "Gilgamech";
+sites["/decrement"].AccessList = "";
+//how to allow only certain permission levels to do something? 
+sites["/decrement"].allowedVerbs = ["GET","HEAD","OPTIONS","POST","PUT","DELETE","MERGE"]
+//Default, Get, Head, Post, Put, Delete, Trace, Options, Merge, Patch"
+sites["/decrement"].notes = "";
+sites["/decrement"].PutData = 1000000;
 
 var responseData = "Hola Mundo";
 var error404 = "<HTML><body>404 Not Found</body><HTML>";
@@ -102,18 +134,19 @@ const server = http.createServer((request, response) => {
 	  default:
 	}//end switch pagename
 	
-	if (siteOptions[pagename] == null) {
+	if (sites[pagename] == null) {
 		console.log("New page "+pagename);
-		siteOptions[pagename] = new Object();
-		siteOptions[pagename].URI = pagename;
-		siteOptions[pagename].Action = "";
-		siteOptions[pagename].Owner = "";
-		siteOptions[pagename].AccessList = "";
-		siteOptions[pagename].allowedVerbs = ["GET","HEAD","OPTIONS","POST","PUT","DELETE","MERGE"]
-		siteOptions[pagename].notes = "";
+		sites[pagename] = new Object();
+		sites[pagename].URI = pagename;
+		sites[pagename].Action = "";
+		sites[pagename].Owner = "";
+		sites[pagename].AccessList = "";
+		sites[pagename].allowedVerbs = ["GET","HEAD","OPTIONS","POST","PUT","DELETE","MERGE"]
+		sites[pagename].notes = "";
+		sites[pagename].PutData = "";
 	}
 
-	if (siteOptions[pagename].allowedVerbs.includes(request.method)) {
+	if (sites[pagename].allowedVerbs.includes(request.method)) {
 		let body = '';
 		switch(request.method) {
 			case "HEAD":
@@ -121,7 +154,7 @@ const server = http.createServer((request, response) => {
 				response.end();
 				break; //end HEAD
 			case "GET":
-				if (sites[pagename] == null) {
+				if (sites[pagename].PutData == null) {
 					response.writeHead(404, {'Content-Type': 'text/html'});
 					response.end(error404);
 				}else{
@@ -135,15 +168,15 @@ const server = http.createServer((request, response) => {
 					body += chunk.toString(); // convert Buffer to string
 				});
 				request.on('end', () => {
-					if (siteOptions[pagename] == null) {
+					if (sites[pagename] == null) {
 						console.log(pagename+" empty, populating.")
-						siteOptions[pagename] = body;
+						sites[pagename] = body;
 					} else {
 						console.log(pagename+" exists, appending.")
-						siteOptions[pagename] += body;
+						sites[pagename] += body;
 					}
-					dataSave(siteOptions);
-					responseData = "<HTML><body>Upsert "+siteOptions[pagename]+"</body><HTML>";
+					dataSave(sites);
+					responseData = "<HTML><body>Upsert "+sites[pagename]+"</body><HTML>";
 					console.log(request.method+" complete from "+request.socket.remoteAddress+" for page "+pagename);
 					response.writeHead(statusCode, {'Content-Type': contentType});
 					response.end(responseData);
@@ -160,9 +193,9 @@ const server = http.createServer((request, response) => {
 //how to perform operation on remote data? Like get int from URL, divide by 2? (Verb:URL:CacheExpiry) / 2
 //blank or just "$PutData" is serve put data
 //if "$PutData" isn't in actions, then it ignores the put data. 
-					sites[pagename] = body;
+					sites[pagename].PutData = body;
 					dataSave(sites);
-					responseData = "<HTML><body>Upsert "+sites[pagename]+"</body><HTML>";
+					responseData = "<HTML><body>Upsert "+sites[pagename].PutData+"</body><HTML>";
 					console.log(request.method+" complete from "+request.socket.remoteAddress+" for page "+pagename);
 					
 					response.writeHead(statusCode, {'Content-Type': contentType});
@@ -171,14 +204,14 @@ const server = http.createServer((request, response) => {
 				break; //end POST
 			case "DELETE":
 				responseData = "<HTML><body>Delete "+pagename+"</body><HTML>";
-				sites[pagename] = null;
+				sites[pagename].PutData = null;
 				dataSave(sites);
 				
 				response.writeHead(statusCode, {'Content-Type': contentType});
 				response.end(responseData);
 				break; //end DELETE
 			case "MERGE":
-				responseData = JSON.stringify(siteOptions[pagename]);
+				responseData = JSON.stringify(sites[pagename]);
 				
 				response.writeHead(statusCode, {'Content-Type': contentType});
 				response.end(responseData);
