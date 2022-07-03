@@ -396,16 +396,20 @@ function webRequest(method, location, callback, JSON,file,cached) {
 		res.setEncoding('utf8');
 		res.on('data', d => {
 			process.stdout.write(d);
+			if (JSON) {
+				returnVar = JSON.parse(returnVar);
+			};
 		});
+		if (file) {
+			req.write(file);
+		};
 	});
-	if (JSON) {data = JSON.parse(data)};
 
 	request.on('error', error => {
 	  console.error(error);
 	});
 
 
-	if(data) {req.write(data)};
 	req.end();
 
 }// end webRequest
