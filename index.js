@@ -391,8 +391,9 @@ console.log(protocol+" request method "+method+" for path "+path+" from host "+h
 		console.log(`statusCode: ${res.statusCode}`);
 		var returnVar = '';
 		res.setEncoding('utf8');
-		res.on('data', d => {
-			process.stdout.write(d);
+		res.on('data', function (chunk) {
+			returnVar += chunk;
+		});
 		res.on('end', function () {
 			if (JSON) {
 				returnVar = JSON.parse(returnVar);
