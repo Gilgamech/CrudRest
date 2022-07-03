@@ -287,3 +287,56 @@ function webRequest(method, location, callback, JSON,file,cached) {
 	req.end();
 
 }// end webRequest
+function refreshKey($user,$sessionID,$sessionKey,$callback) {
+	sparational.sequelize.query("SELECT sessionuser FROM Sessions WHERE sessionid = '"+$sessionID+"';").then(([$SessionResults, metadata]) => {
+//console.log(JSON.stringify($SessionResults))
+		if ($user==$SessionResults[0].sessionuser) {
+
+
+		$sessionID = getBadPW()
+		$sessionKey = getBadPW()
+		$output = ""+$user+":" + $sessionID +":" + $sessionKey 
+		sparational.sequelize.query("UPDATE Sessions SET logintime = current_timestamp, sessionid = '"+$sessionID+"', sessionkey = '"+$sessionKey+"' WHERE sessionuser='"+$user+"';INSERT INTO Sessions (sessionuser, sessionid,sessionkey) SELECT '"+$user+"','"+$sessionID+"','"+$sessionKey+"' WHERE NOT EXISTS (SELECT 1 FROM Sessions WHERE sessionuser='"+$user+"');").then(([$SessionResults, metadata]) => {
+		
+			var $output = $user + ":" + $sessionID + ":" + $sessionKey
+			$callback($output)
+
+		}).catch(function(err) {
+			var $output = "Invalid refreshKey attempt: "+$user
+			writeLog($output+" error: "+ err.message +" - sessionID: " + $sessionID)
+			$callback($output)
+		})//end Pages query
+
+
+		} else {
+			var $output = "Invalid starspar attempt: bad session key for user: "+$user
+			writeLog($output+" sessionID: " + $sessionID)
+			$callback($output)
+		}//end if user
+	}).catch(function(err) {
+		var $output = "Session error: "+err.message
+		writeLog($output)
+		$callback($output)
+	});//end Session query
+
+};
+function checkKey($user,$sessionID,$sessionKey,$callback) {
+	sparational.sequelize.query("SELECT sessionuser FROM Sessions WHERE sessionid = '"+$sessionID+"';").then(([$sessionuser, metadata]) => {
+//console.log(JSON.stringify($sessionuser))
+		if ($user==$sessionuser[0]) {
+		var $output = $sessionuser[0] + ":" + $sessionID + ":" + $sessionKey
+		$callback($output)
+
+		} else {
+			var $output = "Invalid checkKey attempt: "+$user
+			writeLog($output+" - sessionID: " + $sessionID)
+			$callback($output)
+		}//end if user
+	}).catch(function(err) {
+		var $output = "Invalid checkKey attempt: "+$user
+		writeLog($output+" error: "+ err.message +" - sessionID: " + $sessionID)
+		$callback($output)
+	});//end Session query
+
+};
+
