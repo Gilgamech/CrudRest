@@ -208,7 +208,6 @@ var responseData = "";
 					body += chunk.toString(); // convert Buffer to string
 				});
 				request.on('end', () => {
-//must be in JSON format, listing URI, action on data, list of users who can modify, if public or private, notes. URI must match or upload fails.
 					sites[pagename].PutData = body;
 					dataSave(sites);
 					responseData = "<HTML><body>Upsert "+sites[pagename].PutData+"</body><HTML>";
@@ -253,21 +252,13 @@ server.listen((serverPort), () => {
     console.log("Server is Running on port "+serverPort);
 })
 
-function readUpstream(path, dict) {
-	return dict[path];
-}// end readUpstream
-
-function writeDownstream(path, method, body) {
-	console.log(body);
-}// end writeDownstream
-
 function dataSave(dict) {
 	fs.writeFile("CrudRestStorage.txt", dict, (err) => {
 		if (err) {
 			console.log(err);
 		}
 	});
-	writeDownstream("/log", "PUT", "dataSave");
+	console.log("dataRead");
 }
 
 function webRequest(method, location, callback, JSON,file,cached) {
