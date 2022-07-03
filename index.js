@@ -11,6 +11,12 @@ const fs = require('fs');
 const url  = require('url');
 const serverPort = 80;//443;
 
+var error404 = "<HTML><body>404 Not Found</body><HTML>";
+var error405 = "<HTML><body>405 Method Not Allowed.</body><HTML>";
+var pagename = "/index.html";
+var optionsData = 'HTTP/1.1 200 OK\nAllow: GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS\nAccess-Control-Allow-Origin: https://Gilgamech.com\nAccess-Control-Allow-Methods: GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS\nAccess-Control-Allow-Headers: Content-Type'
+const files = fs.readdirSync("/home/app");
+
 var sites = new Object();
 
 sites["/index.html"] = new Object();
@@ -41,12 +47,6 @@ sites["/increment"] = {"URI":"/increment","Action":"math~PutData++","Owner":"Gil
 
 sites["/decrement"] = {"URI":"/decrement","Action":"math~PutData--","Owner":"Gilgamech","AccessList":"","allowedVerbs":["GET","HEAD","OPTIONS","POST","PUT","DELETE","MERGE"],"notes":"","PutData":1000000};
 
-var error404 = "<HTML><body>404 Not Found</body><HTML>";
-var error405 = "<HTML><body>405 Method Not Allowed.</body><HTML>";
-var pagename = "/index.html";
-var optionsData = 'HTTP/1.1 200 OK\nAllow: GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS\nAccess-Control-Allow-Origin: https://Gilgamech.com\nAccess-Control-Allow-Methods: GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS\nAccess-Control-Allow-Headers: Content-Type'
-var statusCode = 200;
-const files = fs.readdirSync("/home/app");
 
 fs.readFile("/home/app/custerr/404.htm", 'utf8', function (err,data) {
 	error404 =  data;
@@ -56,7 +56,7 @@ fs.readFile("/home/app/custerr/404.htm", 'utf8', function (err,data) {
 });
 
 const server = http.createServer((request, response) => {
-	statusCode = 200;
+var statusCode = 200;
 var responseData = "";
 	console.log(request.method+" request from "+request.socket.remoteAddress+" for page "+pagename);
 
@@ -253,7 +253,17 @@ server.listen((serverPort), () => {
 })
 
 function dataSave(dict) {
-	fs.writeFile("CrudRestStorage.txt", dict, (err) => {
+	fs.writeFile("/home/app/CrudRestStorage.txt", JSON.stringify(dict), (err) => {
+		if (err) {
+			console.log(err);
+		}
+	});
+	console.log("dataSave");
+}
+
+function dataLoad(dict,callback) {
+	fs.readFile("/home/app/CrudRestStorage.txt", 'utf8', function (err,data) {
+		callback = JSON.parse(data);
 		if (err) {
 			console.log(err);
 		}
