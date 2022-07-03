@@ -68,7 +68,6 @@ sites["/decrement"].allowedVerbs = ["GET","HEAD","OPTIONS","POST","PUT","DELETE"
 sites["/decrement"].notes = "";
 sites["/decrement"].PutData = 1000000;
 
-var responseData = "Hola Mundo";
 var error404 = "<HTML><body>404 Not Found</body><HTML>";
 var error405 = "<HTML><body>405 Method Not Allowed.</body><HTML>";
 var pagename = "/index.html";
@@ -85,7 +84,7 @@ fs.readFile("/home/app/custerr/404.htm", 'utf8', function (err,data) {
 
 const server = http.createServer((request, response) => {
 	statusCode = 200;
-
+var responseData = "";
 	console.log(request.method+" request from "+request.socket.remoteAddress+" for page "+pagename);
 
 	if (request.url=='/'){
