@@ -393,6 +393,7 @@ console.log(protocol+" request method "+method+" for path "+path+" from host "+h
 		res.setEncoding('utf8');
 		res.on('data', d => {
 			process.stdout.write(d);
+		res.on('end', function () {
 			if (JSON) {
 				returnVar = JSON.parse(returnVar);
 			};
