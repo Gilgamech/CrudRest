@@ -157,7 +157,59 @@ var responseData = "";
 					response.writeHead(404, {'Content-Type': 'text/html'});
 					response.end(error404);
 				}else{
-					responseData = readUpstream(pagename  , sites);
+					//take action
+
+//URL redirect / cache. list of URLs - LB between them. Format is url:Verb:URL:CacheExpiry,
+//Filesystem redirect / cache. List of files, LB between them? Format is fs:/filename.ext, everything lives under /home/app?
+//data++ increments the data (hope it's an int!) data-- decriments, will come up with a list.  data/2 divides it in half. Performs the operation then serves. 
+//how to perform operation on remote data? Like get int from URL, divide by 2? (Verb:URL:CacheExpiry) / 2
+//blank or just "$PutData" is serve put data
+//if "$PutData" isn't in actions, then it ignores the put data. 
+
+				var splitAction = sites[pagename].Action.split("~");
+				switch(splitAction[0]) {
+					case "uri":
+						var expiry = splitAction[3];
+						if (sites[pagename].PutData == "") {
+							webRequest(splitAction[1], splitAction[2],function(data){
+								sites[pagename].PutData = data;
+								console.log("data: "+data);
+								responseData = sites[pagename].PutData;
+							});
+						} else {
+							responseData = sites[pagename].PutData;
+						}
+						break;
+					case "fs":
+						fs.readFile("/home/app"+splitAction[1], function (err,data) {
+							responseData = data;
+							if (err) {
+								console.log(err);
+							}
+						});
+						break;
+					case "math":
+						switch(splitAction[1]) {
+							case "PutData++":
+								sites[pagename].PutData++;
+								responseData = sites[pagename].PutData;
+								break;
+							case "PutData--":
+								sites[pagename].PutData--;
+								responseData = sites[pagename].PutData;
+								break;
+							default:
+								responseData = "Bad Math";
+								break;
+						}//end switch splitAction[1]
+					default:
+						//responseData = JSON.stringify(sites[pagename].PutData);
+						responseData = sites[pagename].PutData;
+						if (typeof responseData == "number"){
+							responseData = JSON.stringify(responseData);
+						}
+						break;
+				}//end switch splitAction[0]
 					response.writeHead(statusCode, {'Content-Type': contentType});
 					response.end(responseData);
 				};//end if sites
@@ -187,11 +239,6 @@ var responseData = "";
 				});
 				request.on('end', () => {
 //must be in JSON format, listing URI, action on data, list of users who can modify, if public or private, notes. URI must match or upload fails.
-//URL - redirect / cache there. list of URLs - LB between them. Format is Verb:URL:CacheExpiry,
-//data++ increments the data (hope it's an int!) data-- decriments, will come up with a list.  data/2 divides it in half. Performs the operation then serves. 
-//how to perform operation on remote data? Like get int from URL, divide by 2? (Verb:URL:CacheExpiry) / 2
-//blank or just "$PutData" is serve put data
-//if "$PutData" isn't in actions, then it ignores the put data. 
 					sites[pagename].PutData = body;
 					dataSave(sites);
 					responseData = "<HTML><body>Upsert "+sites[pagename].PutData+"</body><HTML>";
