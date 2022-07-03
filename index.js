@@ -135,15 +135,15 @@ siteOptions[pagename].notes = "";
 					body += chunk.toString(); // convert Buffer to string
 				});
 				request.on('end', () => {
-					if (sites[pagename] == null) {
+					if (siteOptions[pagename] == null) {
 						console.log(pagename+" empty, populating.")
-						sites[pagename] = body;
+						siteOptions[pagename] = body;
 					} else {
 						console.log(pagename+" exists, appending.")
-						sites[pagename] += body;
+						siteOptions[pagename] += body;
 					}
-					dataSave(sites);
-					responseData = "<HTML><body>Upsert "+sites[pagename]+"</body><HTML>";
+					dataSave(siteOptions);
+					responseData = "<HTML><body>Upsert "+siteOptions[pagename]+"</body><HTML>";
 					console.log(request.method+" complete from "+request.socket.remoteAddress+" for page "+pagename);
 					response.writeHead(statusCode, {'Content-Type': contentType});
 					response.end(responseData);
@@ -168,9 +168,9 @@ siteOptions[pagename].notes = "";
 //how to perform operation on remote data? Like get int from URL, divide by 2? (Verb:URL:CacheExpiry) / 2
 //blank or just "$PutData" is serve put data
 //if "$PutData" isn't in actions, then it ignores the put data. 
-					siteOptions[pagename] = body;
-					dataSave(siteOptions);
-					responseData = "<HTML><body>Upsert "+siteOptions[pagename]+"</body><HTML>";
+					sites[pagename] = body;
+					dataSave(sites);
+					responseData = "<HTML><body>Upsert "+sites[pagename]+"</body><HTML>";
 					console.log(request.method+" complete from "+request.socket.remoteAddress+" for page "+pagename);
 					
 					response.writeHead(statusCode, {'Content-Type': contentType});
