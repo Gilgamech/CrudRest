@@ -168,15 +168,9 @@ var responseData = "";
 					body += chunk.toString(); // convert Buffer to string
 				});
 				request.on('end', () => {
-					if (sites[pagename] == null) {
-						console.log(pagename+" empty, populating.")
-						sites[pagename] = body;
-					} else {
-						console.log(pagename+" exists, appending.")
-						sites[pagename] += body;
-					}
+					sites[pagename] = JSON.parse(body);
 					dataSave(sites);
-					responseData = "<HTML><body>Upsert "+sites[pagename]+"</body><HTML>";
+					responseData = "<HTML><body>Upsert "+JSON.stringify(sites[pagename])+"</body><HTML>";
 					console.log(request.method+" complete from "+request.socket.remoteAddress+" for page "+pagename);
 					response.writeHead(statusCode, {'Content-Type': contentType});
 					response.end(responseData);
@@ -187,9 +181,15 @@ var responseData = "";
 					body += chunk.toString(); // convert Buffer to string
 				});
 				request.on('end', () => {
-					sites[pagename].PutData = body;
+					if (sites[pagename] == null) {
+						console.log(pagename+" empty, populating.")
+						sites[pagename].PutData = body;
+					} else {
+						console.log(pagename+" exists, appending.")
+						sites[pagename].PutData += body;
+					}
 					dataSave(sites);
-					responseData = "<HTML><body>Upsert "+sites[pagename].PutData+"</body><HTML>";
+					responseData = "<HTML><body>Upsert "+JSON.stringify(sites[pagename].URI)+"</body><HTML>";
 					console.log(request.method+" complete from "+request.socket.remoteAddress+" for page "+pagename);
 					
 					response.writeHead(statusCode, {'Content-Type': contentType});
@@ -198,7 +198,7 @@ var responseData = "";
 				break; //end POST
 			case "DELETE":
 				responseData = "<HTML><body>Delete "+pagename+"</body><HTML>";
-				sites[pagename].PutData = null;
+				sites[pagename] = null;
 				dataSave(sites);
 				
 				response.writeHead(statusCode, {'Content-Type': contentType});
