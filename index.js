@@ -400,15 +400,14 @@ function webRequest(method, location, callback, JSON,file,cached) {
 				returnVar = JSON.parse(returnVar);
 			};
 		});
+		req.on('error', error => {
+			var errMsg = "problem with request: {error.message}"
+			console.error(errMsg);
+		});
 		if (file) {
 			req.write(file);
 		};
 	});
-
-	request.on('error', error => {
-	  console.error(error);
-	});
-
 
 	req.end();
 
