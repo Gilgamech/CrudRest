@@ -174,12 +174,9 @@ var responseData = "";
 						if (sites[pagename].PutData == "") {
 							webRequest(splitAction[1], splitAction[2],function(data){
 								sites[pagename].PutData = data;
-								console.log("data: "+data);
-								responseData = sites[pagename].PutData;
 							});
-						} else {
-							responseData = sites[pagename].PutData;
 						}
+						responseData = sites[pagename].PutData;
 						break;
 					case "fs":
 						fs.readFile("/home/app"+splitAction[1], function (err,data) {
