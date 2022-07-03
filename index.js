@@ -178,7 +178,7 @@ siteOptions[pagename].notes = "";
 				response.end(responseData);
 				break; //end DELETE
 			case "MERGE":
-				responseData = siteOptions[pagename];
+				responseData = JSON.stringify(siteOptions[pagename]);
 				
 				response.writeHead(statusCode, {'Content-Type': contentType});
 				response.end(responseData);
@@ -198,7 +198,6 @@ siteOptions[pagename].notes = "";
 		response.writeHead(405, {'Content-Type': 'text/html'});
 		response.end(error405);
 	}
-
 })
 
 server.listen((serverPort), () => {
