@@ -104,13 +104,13 @@ const server = http.createServer((request, response) => {
 	
 	if (siteOptions[pagename] == null) {
 		console.log("New page "+pagename);
-siteOptions[pagename] = new Object();
-siteOptions[pagename].URI = pagename;
-siteOptions[pagename].Action = "";
-siteOptions[pagename].Owner = "";
-siteOptions[pagename].AccessList = "";
-siteOptions[pagename].allowedVerbs = ["GET","HEAD","OPTIONS","POST","PUT","DELETE","MERGE"]
-siteOptions[pagename].notes = "";
+		siteOptions[pagename] = new Object();
+		siteOptions[pagename].URI = pagename;
+		siteOptions[pagename].Action = "";
+		siteOptions[pagename].Owner = "";
+		siteOptions[pagename].AccessList = "";
+		siteOptions[pagename].allowedVerbs = ["GET","HEAD","OPTIONS","POST","PUT","DELETE","MERGE"]
+		siteOptions[pagename].notes = "";
 	}
 
 	if (siteOptions[pagename].allowedVerbs.includes(request.method)) {
