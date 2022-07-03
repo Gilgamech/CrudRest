@@ -302,18 +302,16 @@ function dataSave(dict) {
 }
 
 function webRequest(method, location, callback, JSON,file,cached) {
-	var locsplit2 =locsplit[1].split("/")
-	var port
 	var port = 80;
 	var locationSplit = location.split(":");
+	var protocol = locationSplit[0]
 	if (protocol == "https"){
 		port = 443;
 	}
-	locsplit2.shift();
-	locsplit2.shift();//This tosses out the first 2 blank array entries.
-	var host = locsplit2[0]
-	locsplit2.shift();//This one tosses out the host, so only the path is left.
-	var path = locsplit2.join("/")
+	var locationSplit2 = locationSplit[1].split("/");
+	var host = locationSplit2[2]
+	var path = "/"+locationSplit2.slice(3,locationSplit2.length).join("/")
+console.log(protocol+" request method "+method+" for path "+path+" from host "+host+" on port "+port)
 
 	var contentType = 'text/plain';
 	var encodingType = '';
