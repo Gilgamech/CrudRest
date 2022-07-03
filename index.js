@@ -19,32 +19,11 @@ const files = fs.readdirSync("/home/app");
 
 var sites = new Object();
 
-sites["/index.html"] = new Object();
-sites["/index.html"].URI = "/index.html";
-sites["/index.html"].Action = "fs~/index.html";
-sites["/index.html"].Owner = "Gilgamech";
-sites["/index.html"].AccessList = "";
-//how to allow only certain permission levels to do something? 
-sites["/index.html"].allowedVerbs = ["GET","HEAD","OPTIONS"]
-//Default, Get, Head, Post, Put, Delete, Trace, Options, Merge, Patch"
-sites["/index.html"].notes = "";
-sites["/index.html"].PutData = ''
 
-sites["/favicon.ico"] = new Object();
-sites["/favicon.ico"].URI = "/favicon.ico";
-sites["/favicon.ico"].Action = "fs~/favicon.ico";
-sites["/favicon.ico"].Owner = "Gilgamech";
-sites["/favicon.ico"].AccessList = "";
-//how to allow only certain permission levels to do something? 
-sites["/favicon.ico"].allowedVerbs = ["GET","HEAD","OPTIONS","MERGE"]
-//Default, Get, Head, Post, Put, Delete, Trace, Options, Merge, Patch"
-sites["/favicon.ico"].notes = "";
-sites["/favicon.ico"].PutData = "";
-
+sites["/index.html"] = {"URI":"/index.html","Action":"fs~/index.html","Owner":"Gilgamech","AccessList":"","allowedVerbs":["GET","HEAD","OPTIONS","MERGE"],"notes":"","PutData":""};
+sites["/favicon.ico"] = {"URI":"/favicon.ico","Action":"fs~/favicon.ico","Owner":"Gilgamech","AccessList":"","allowedVerbs":["GET","HEAD","OPTIONS","MERGE"],"notes":"","PutData":""};
 sites["/Gilgamech.html"] = {"URI":"/Gilgamech.html","Action":"uri~GET~https://www.Gilgamech.com~0","Owner":"Gilgamech","AccessList":"","allowedVerbs":["GET","HEAD","OPTIONS","POST","PUT","DELETE","MERGE"],"notes":"","PutData":""};
-
 sites["/increment"] = {"URI":"/increment","Action":"math~PutData++","Owner":"Gilgamech","AccessList":"","allowedVerbs":["GET","HEAD","OPTIONS","POST","PUT","DELETE","MERGE"],"notes":"","PutData":1};
-
 sites["/decrement"] = {"URI":"/decrement","Action":"math~PutData--","Owner":"Gilgamech","AccessList":"","allowedVerbs":["GET","HEAD","OPTIONS","POST","PUT","DELETE","MERGE"],"notes":"","PutData":1000000};
 
 
