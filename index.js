@@ -2,7 +2,7 @@
 //Title: Basic Webserver
 //Made by: Stephen Gillie
 //Created on: 6/17/2022
-//Updated on: 6/30/2022
+//Updated on: 7/3/2022
 //Notes: The goal for CrudRest is to be, in different modes, a webserver, database, load balancer, in-memory cache, message queue, pub sub hub, login IdP, password manager, and a variety of other uses.
 
 const http = require("http");
@@ -19,13 +19,12 @@ const files = fs.readdirSync("/home/app");
 
 var sites = new Object();
 
-
-//Valid actions: fs (read file), uri (caching proxy), math (transform PutData), PutData (read PutData)
-sites["/index.html"] = {"URI":"/index.html","Action":"fs~/index.html","Owner":"Gilgamech","AccessList":"","allowedVerbs":["GET","HEAD","OPTIONS","MERGE"],"notes":"","PutData":""};
-sites["/favicon.ico"] = {"URI":"/favicon.ico","Action":"fs~/favicon.ico","Owner":"Gilgamech","AccessList":"","allowedVerbs":["GET","HEAD","OPTIONS","MERGE"],"notes":"","PutData":""};
-sites["/Gilgamech.html"] = {"URI":"/Gilgamech.html","Action":"uri~GET~https://www.Gilgamech.com~0","Owner":"Gilgamech","AccessList":"","allowedVerbs":["GET","HEAD","OPTIONS","POST","PUT","DELETE","MERGE"],"notes":"","PutData":""};
-sites["/increment"] = {"URI":"/increment","Action":"math~PutData++","Owner":"Gilgamech","AccessList":"","allowedVerbs":["GET","HEAD","OPTIONS","POST","PUT","DELETE","MERGE"],"notes":"","PutData":1};
-sites["/decrement"] = {"URI":"/decrement","Action":"math~PutData--","Owner":"Gilgamech","AccessList":"","allowedVerbs":["GET","HEAD","OPTIONS","POST","PUT","DELETE","MERGE"],"notes":"","PutData":1000000};
+//Valid Actions: fs (read file), uri (caching proxy), math (transform PutData), PutData (read PutData)
+sites["/index.html"] = {"URI":"/index.html","Action":"fs~/index.html","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "MERGE"]},"notes":"","PutData":""};
+sites["/favicon.ico"] = {"URI":"/favicon.ico","Action":"fs~/favicon.ico","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "MERGE"]},"notes":"","PutData":""};
+sites["/Gilgamech.html"] = {"URI":"/Gilgamech.html","Action":"uri~GET~https://www.Gilgamech.com~0","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":""};
+sites["/increment"] = {"URI":"/increment","Action":"math~PutData++","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":1};
+sites["/decrement"] = {"URI":"/decrement","Action":"math~PutData--","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":1000000};
 
 
 fs.readFile("/home/app/custerr/404.htm", 'utf8', function (err,data) {
@@ -40,6 +39,7 @@ const server = http.createServer((request, response) => {
 	var responseData = "";
 	var contentType = 'text/plain';
 	var encodingType = '';
+	var userName = "Everyone"
 	console.log(request.method+" request from "+request.socket.remoteAddress+" for page "+pagename);
 
 	if (request.url=='/'){
@@ -89,17 +89,10 @@ const server = http.createServer((request, response) => {
 	
 	if (sites[pagename] == null) {
 		console.log("New page "+pagename);
-		sites[pagename] = new Object();
-		sites[pagename].URI = pagename;
-		sites[pagename].Action = "fs~"+pagename;
-		sites[pagename].Owner = "";
-		sites[pagename].AccessList = "";
-		sites[pagename].allowedVerbs = ["GET","HEAD","OPTIONS","POST","PUT","DELETE","MERGE"]
-		sites[pagename].notes = "";
-		sites[pagename].PutData = "";
+		sites[pagename] = {"URI":pagename,"Action":"fs~"+pagename,"Owner":"","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":""};
 	}
 
-	if (sites[pagename].allowedVerbs.includes(request.method)) {
+	if (sites[pagename].AccessList[userName].includes(request.method)) {
 		response.writeHead(statusCode, {'Content-Type': contentType});
 		let body = '';
 		switch(request.method) {
