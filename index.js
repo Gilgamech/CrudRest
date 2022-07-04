@@ -16,6 +16,8 @@ var error404 = "404 Not Found";
 var error405 = "405 Method Not Allowed.";
 var pagename = "/index.html";
 var optionsData = 'HTTP/1.1 200 OK\nAllow: GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS\nAccess-Control-Allow-Origin: https://Gilgamech.com\nAccess-Control-Allow-Methods: GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS\nAccess-Control-Allow-Headers: Content-Type'
+var mathOperators = ["+","-","*","/"]
+
 const files = fs.readdirSync("/home/app"); 
 
 var sites = new Object();
@@ -30,13 +32,13 @@ fs.readFile(crudRestDataFile, 'utf8', function (err,data) {
 sites["/index.html"] = {"URI":"/index.html","Action":"fs~/index.html","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "MERGE"]},"notes":"","PutData":""};
 sites["/favicon.ico"] = {"URI":"/favicon.ico","Action":"fs~/favicon.ico","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "MERGE"]},"notes":"","PutData":""};
 sites["/Gilgamech.html"] = {"URI":"/Gilgamech.html","Action":"uri~GET~https://www.Gilgamech.com~0","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":""};
-sites["/increment"] = {"URI":"/increment","Action":"math~PutData++","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":1};
-sites["/decrement"] = {"URI":"/decrement","Action":"math~PutData--","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":1000000};
+sites["/increment"] = {"URI":"/increment","Action":"math~%increment+1","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":1};
+sites["/decrement"] = {"URI":"/decrement","Action":"math~%decrement-1","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":1000000};
 
-sites["/FruitBotwin"] = {"URI":"/increment","Action":"math~PutData++","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":1};
-sites["/FruitBotloss"] = {"URI":"/increment","Action":"math~PutData++","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":1};
-sites["/FruitBottie"] = {"URI":"/increment","Action":"math~PutData++","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":1};
-sites["/FruitBottotals"] = {"URI":"/increment","Action":"text~[{FruitBotwins: %FruitBotwin, botstie: %FruitBottie, simplebotwins: %FruitBotloss }];","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":1};
+sites["/FruitBotwin"] = {"URI":"/increment","Action":"math~%FruitBotwin+1","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":1};
+sites["/FruitBotloss"] = {"URI":"/increment","Action":"math~%FruitBotloss+1","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":1};
+sites["/FruitBottie"] = {"URI":"/increment","Action":"math~%FruitBottie+1","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":1};
+sites["/FruitBottotals"] = {"URI":"/increment","Action":"math~[{FruitBotwins: %FruitBotwin, botstie: %FruitBottie, simplebotwins: %FruitBotloss }]","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":1};
 
 fs.readFile("/home/app/custerr/404.htm", 'utf8', function (err,data) {
 	error404 =  data;
@@ -143,31 +145,51 @@ const server = http.createServer((request, response) => {
 					});
 					break;//end fs
 				case "math":
-					switch(splitAction[1]) {
-						case "PutData++":
-							sites[pagename].PutData++;
-							responseData = sites[pagename].PutData;
-							responseData = JSON.stringify(responseData);
-							break;//end ++
-						case "PutData--":
-							sites[pagename].PutData--;
-							responseData = sites[pagename].PutData;
-							responseData = JSON.stringify(responseData);
-							break;//end --
-//data/2 divides it in half. Performs the operation then serves. 
-						default://splitAction[1]
-							responseData = "Unsupported Operation in Math Action.";
-							break;
-					}//end switch splitAction[1]
+					//Replace from putData
+					//Spread out operators by adding spaces between them, then remove any doubled spaces if they already had spaces there. Then split into a word array.
+					responseData = splitAction[1].replace(/\+/g," + ").replace(/-/g," - ").replace(/\*/g," * ").replace(/\//g," / ").replace(/,/g," , ").replace(/]/g," ] ").replace(/}/g," } ").replace(/  /g," ");
+					responseSplit = responseData.split(" ");
+					//Go through the word array, and replace any paths (Use % instead of / to denote website directory or path, to avoid confusion with mathematical division.)
+					for (let datum of responseSplit) {
+						if (datum.includes("%")) {
+							responseData = responseData.replace(datum,sites[datum.replace(/%/g,"/")].PutData)
+						}
+					}
+
+					//Perform any operations
+					for (let a of responseData.split("")) {
+						if (mathOperators.includes(a)) {
+							var Operator = a;
+							var firstElement = responseData.split(Operator)[0] * 1;
+							var secondElement = responseData.split(Operator)[1] * 1;
+							var replaceVar = firstElement+" "+Operator+" "+secondElement;
+							switch (Operator) {
+								case "+":
+									responseData = responseData.replace(replaceVar,firstElement + secondElement);
+									break;//end plus
+								case "-":
+									responseData = responseData.replace(replaceVar,firstElement - secondElement);
+									break;//end plus
+								case "*":
+									responseData = responseData.replace(replaceVar,firstElement * secondElement);
+									break;//end plus
+								case "/":
+									responseData = responseData.replace(replaceVar,firstElement / secondElement);
+									break;//end plus
+								default://Operator
+									console.log("err default")
+									break;
+							}//end switch Operator
+						}// end if mathOperators
+					}//end for let a 
+
+					//Store at current location
+					sites[pagename].PutData = responseData;
+
+					//Return as response.
+					responseData = sites[pagename].PutData;
 					response.writeHead(statusCode, {'Content-Type': contentType});
 					response.end(responseData);
-					break;//end math
-					case "text":
-						responseData = splitAction[1].replace("PutData",sites[pagename].PutData).replace("%FruitBotwin",sites["/FruitBotwin"].PutData).replace("%FruitBottie",sites["/FruitBottie"].PutData).replace("%FruitBotloss",sites["/FruitBotloss"].PutData)
-	//"Action":"text~[{FruitBotwins: %FruitBotwin, botstie: %FruitBottie, simplebotwins: %FruitBotloss }];"
-						response.writeHead(statusCode, {'Content-Type': contentType});
-						response.end(responseData);
-					break;//end text
 				default://splitAction[0]
 						responseData = sites[pagename].PutData;
 						if (typeof responseData == "number"){
