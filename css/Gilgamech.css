@@ -1,0 +1,356 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<!--
+/*Main*/
+html,body {
+	width: auto !important;
+	overflow-x: hidden !important;
+}
+html {
+}
+body {
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+	background-color:#44c;
+}
+a {
+color: #44c;
+}
+.img-rounded {
+	text-align:center; 
+	padding: 0 20vw; 
+	border-radius: 15px;
+}
+/*SPARational*/
+.deleteme {
+	visibility: visible;
+}
+.dropdown:hover .dropdown-content {
+	display: block;
+}
+div.dropdown-content a:link{
+	text-decoration:none;
+	color:#9d9d9d;
+}
+div.dropdown-content a:visited{
+	text-decoration:none;
+	color:#7f7f7f;
+}
+nav {
+	color: #A3C7B2;
+	margin:0;
+	padding:0;
+	border:0;
+	text-align:center;
+	background-color:#000;
+	margin-top: 3em;
+	width: 100%;
+}
+div.content {
+	padding-top: 3em;
+	/* top 5px plus height 30px */ margin: 2px 1em 0 5px;
+}
+div.top {
+	top:0;
+	margin:0;
+	padding:0;
+	font-variant: small-caps;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight:bold;
+	text-align:left;
+	position: fixed;
+	width: 100%;
+}
+div.top a:link{
+	text-decoration:none;
+	color:#000;
+}
+div.top a:visited {
+	color:#000;
+}
+/*RGB page*/
+.contentItems {
+	font-size: initial;
+}
+.contentTitles {
+	text-align: center;
+	font-size: xx-large;
+	background-color:#eee;
+	color:#000;
+}
+.colorRow {
+	text-align: center;
+	font-size: x-large;
+	color:#fff;
+	border:white;
+}
+.contentRow {
+	text-align: center;
+	font-size: x-large;
+	border:white;
+}
+/*Quote bubbles*/
+.quotation {
+font-weight: bold;
+}
+/* Page Title bar*/
+.pageTitle {
+	font-variant: small-caps;
+	font-size: 7.99vw;
+	color: #fff; 
+	text-decoration: none;
+}
+.titleContainer {
+	text-align: center;
+}
+/*Tables*/
+table, table td {
+border-collapse: collapse;
+border: 1px solid #000;
+padding: 3px;
+}
+table td, table th {
+padding: 4px;
+border: 1px solid #000;
+/*border-radius: 15px;*/
+}
+table th {
+padding: 6px 3px 3px 6px;
+border: 1px solid #000;
+background: #6af;
+text-align:center;
+}
+/*Images fit viewport*/
+img {
+max-width: 100vw;
+max-height: 100vh;
+height: auto;
+object-fit: contain
+}
+/*Text bubbles*/
+.textBubbleBG {
+	padding: 10px;
+	background: #eee;
+	border: 1px solid #000;
+	border-radius: 15px;
+	overflow:  auto;
+}
+
+textarea {
+	border-radius: 15px;
+	width: 75vw;
+	height: 10vh;
+}
+
+/* Copyright container */
+.copyright {
+	color: #fff;
+	font-weight: bold;
+	text-align: center;
+}
+
+/*History page*/
+.dateTimeCol {
+background: #ffb;
+}
+.eventOrNote {
+background: #dff;
+}
+.reference {
+background: #fdb;
+text-align: center;
+}
+
+#navContainer {
+ margin: 0 auto;
+}
+ 
+#game_view {
+	display: block;
+	margin: 0px auto;
+	border: 1px solid black;
+	background: #fff;
+	max-height: 80vh;
+	max-width: 95vw;
+}
+ 
+/*Nav bar*/
+nav {
+	margin: 0;
+	background-color:#000;
+}
+nav ul {
+	padding: 0;
+	margin: 0 2vw; /*Space from left edge to first menu item*/
+	list-style: none;
+	position: relative;
+ } 
+nav ul li {
+	display:inline-block;
+	background-color:#000;
+}
+nav a {
+ display:block;
+ padding:0 2vw; /*Space between menu items*/
+ color:#FFF;
+ font-size:3vw;
+ line-height: 6vw; /*how tall is the menu bar*/
+ text-decoration:none;
+}
+nav a:hover { 
+ background-color: #333; 
+}
+nav ul ul {
+ display: none;
+ position: absolute;
+ top: 6vw; /*Needs to match nav a line-height for menu to line up*/
+} 
+nav ul li:hover > ul {
+ display:inherit;
+} 
+nav ul ul li {
+ left:-9vw;  /*Left edge of dropdown menu */
+ width:25vw; /*Width of dropdown menu section*/
+ float:none;
+ display:list-item;
+ position: relative;
+}
+nav ul ul ul li {
+ top: -6vw; /*Negative of nav ul ul top*/
+ left: 23vw;  /*nav ul ul li width - nav a padding (2nd value)*/
+}
+
+/* https://css-tricks.com/custom-scrollbars-in-webkit */ ::-webkit-scrollbar {
+	width: 12px;
+}
+/* Track */ ::-webkit-scrollbar-track {
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+}
+/* Handle */ ::-webkit-scrollbar-thumb {
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+	background: rgba(200,200,200,0.8);
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+}
+::-webkit-scrollbar-thumb:window-inactive {
+	background: rgba(255,0,0,0.4);
+}
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+
+/*Responsive iFrame https://www.benmarshall.me/responsive-iframes/*/
+.iframe-container {
+  overflow: hidden;
+  /* 16:9 aspect ratio */
+  padding-top: 56.25%;
+  position: relative;
+}
+.iframe-container iframe {
+   border: 0;
+   height: 100%;
+   left: 0;
+   position: absolute;
+   top: 0;
+   width: 100%;
+}
+
+
+.PSComment { color: #888 }
+.PSVariable { color: #22c}
+
+.htmlTag:before {content:  "<";}
+.htmlTag {background-color: #6f6}
+.htmlTag:after {content:  ">";}
+
+.codeComment { color: #888 }
+.codeVariable { color: #22c}
+.codeQuote { color: #c63}
+.codeType { color: #272}
+
+.codeLine { background-color: #ddd}
+
+.codeWrapper {
+	margin-left: 2vw;
+	background: #ccc;
+	font-family: monospace;
+	font-size: 1rem;
+	overflow-x: auto;
+}
+.code {
+	background: #ccc;
+	font-family: monospace;
+	font-size: 1rem;
+	overflow-x: auto;
+}
+.commentHeader {
+	display: block;
+	margin-block-start: 1.33em;
+	margin-block-end: 1.33em;
+	margin-inline-start: 0px;
+	margin-inline-end: 0px;
+	font-weight: bold;
+}
+.red0{background-color:#fdf2f1}
+.red1{background-color:#fae5e3}
+.red2{background-color:#f8d8d5}
+.red3{background-color:#f5cbc7}
+.red4{background-color:#f3beb9}
+.red5{background-color:#f0b1ab}
+.red6{background-color:#eea49d}
+.red7{background-color:#eb978f}
+.red8{background-color:#e98a81}
+.red9{background-color:#e67c73}
+
+.blue0{background-color:#edf3fe}
+.blue1{background-color:#dae7fd}
+.blue2{background-color:#c7dbfc}
+.blue3{background-color:#b4cffb}
+.blue4{background-color:#a1c2fa}
+.blue5{background-color:#8eb6f9}
+.blue6{background-color:#7baaf8}
+.blue7{background-color:#689ef7}
+.blue8{background-color:#5592f6}
+.blue9{background-color:#4285f4}
+
+.popup {
+	background: #9df;
+	border-radius: 15px;
+}
+.popup span {
+	position: absolute;
+	/*margin: top  right bottom left*/
+	margin-left: auto;
+	margin-right: auto;
+	margin: 15px 5px 0 -30px;
+	text-align: center;
+	
+	padding: 3px 3px 3px 3px;
+	border-style:solid;
+	border-color:black;
+	border-width:1px;
+	border-radius: 15px;
+	background: #fff;
+	color: #000;
+	
+	display: none;
+}
+.popup:hover span {
+	display: inherit;
+} 
+
+.maxValueInArray{
+
+  background: green;
+  color: white;
+}
+
+input {
+	border-radius: 15px;
+	width: 100px;
+}
+-->
