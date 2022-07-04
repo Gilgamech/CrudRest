@@ -93,10 +93,10 @@ const server = http.createServer((request, response) => {
 	}
 
 	if (sites[pagename].AccessList[userName].includes(request.method)) {
-		response.writeHead(statusCode, {'Content-Type': contentType});
 		let body = '';
 		switch(request.method) {
 			case "HEAD":
+				response.writeHead(statusCode, {'Content-Type': contentType});
 				response.end();
 				break; //end HEAD
 			case "GET":
@@ -109,10 +109,12 @@ const server = http.createServer((request, response) => {
 						webRequest(splitAction[1], splitAction[2],function(data){
 							sites[pagename].PutData = data;
 							responseData = sites[pagename].PutData;
+							response.writeHead(statusCode, {'Content-Type': contentType});
 							response.end(responseData);
 						});
 					} else {
 						responseData = sites[pagename].PutData;
+						response.writeHead(statusCode, {'Content-Type': contentType});
 						response.end(responseData);
 					}
 					break;
@@ -125,6 +127,7 @@ const server = http.createServer((request, response) => {
 							response.end(error404);
 						}
 						responseData = data;
+						response.writeHead(statusCode, {'Content-Type': contentType});
 						response.end(responseData);
 					});
 					break;
@@ -146,12 +149,14 @@ const server = http.createServer((request, response) => {
 							responseData = "Bad Math";
 							break;
 					}//end switch splitAction[1]
+					response.writeHead(statusCode, {'Content-Type': contentType});
 					response.end(responseData);
 				default:
 						responseData = sites[pagename].PutData;
 						if (typeof responseData == "number"){
 							responseData = JSON.stringify(responseData);
 						}
+						response.writeHead(statusCode, {'Content-Type': contentType});
 						response.end(responseData);
 					break;
 				}//end switch splitAction[0]
@@ -184,6 +189,7 @@ const server = http.createServer((request, response) => {
 					responseData = "<HTML><body>Upsert "+JSON.stringify(sites[pagename].URI)+"</body><HTML>";
 					console.log(request.method+" complete from "+request.socket.remoteAddress+" for page "+pagename);
 					
+					response.writeHead(statusCode, {'Content-Type': contentType});
 					response.end(responseData);
 				});
 				break; //end POST
@@ -192,6 +198,7 @@ const server = http.createServer((request, response) => {
 				sites[pagename] = null;
 				dataSave(sites);
 				
+				response.writeHead(statusCode, {'Content-Type': contentType});
 				response.end(responseData);
 				break; //end DELETE
 			case "MERGE":
@@ -202,6 +209,7 @@ const server = http.createServer((request, response) => {
 			case "OPTIONS":
 				responseData = optionsData;
 					
+				response.writeHead(statusCode, {'Content-Type': contentType});
 				response.end(responseData);
 				break; //end POST
 			default:
