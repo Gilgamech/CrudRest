@@ -124,17 +124,21 @@ const server = http.createServer((request, response) => {
 							sites[pagename].PutData = data;
 							responseData = sites[pagename].PutData;
 							response.end(responseData);
-					case "fs":
-						fs.readFile("/home/app"+splitAction[1], function (err,data) {
-							responseData = data;
-							response.end(responseData);
-							if (err) {
-								console.log(err);
-							}
 						});
-						break;
 						response.end(responseData);
 					}
+					break;
+				case "fs":
+//List of files, LB between them? 
+					fs.readFile("/home/app"+splitAction[1], function (err,data) {
+						if (err) {
+							console.log("404 error: "+splitAction[1]+" not found.");
+							response.writeHead(404, {'Content-Type': 'text/html'});
+							response.end(error404);
+						}
+						responseData = data;
+						response.end(responseData);
+					});
 					break;
 				case "math":
 //how to perform operation on remote data? Like get int from URL, divide by 2? (Verb:URL:CacheExpiry) / 2
