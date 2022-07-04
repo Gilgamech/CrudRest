@@ -107,12 +107,6 @@ const server = http.createServer((request, response) => {
 				response.end();
 				break; //end HEAD
 			case "GET":
-				if (sites[pagename].PutData == null) {
-					response.writeHead(404, {'Content-Type': 'text/html'});
-					response.end(error404);
-				}else{
-					//take action
-
 //URL redirect / cache. list of URLs - LB between them. Format is url:Verb:URL:CacheExpiry,
 //Filesystem redirect / cache. List of files, LB between them? Format is fs:/filename.ext, everything lives under /home/app?
 //data++ increments the data (hope it's an int!) data-- decriments, will come up with a list.  data/2 divides it in half. Performs the operation then serves. 
