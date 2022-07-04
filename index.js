@@ -166,11 +166,40 @@ const server = http.createServer((request, response) => {
 					body += chunk.toString(); // convert Buffer to string
 				});
 				request.on('end', () => {
-					sites[pagename] = JSON.parse(body);
-					dataSave(sites);
-					responseData = "<HTML><body>Upsert "+JSON.stringify(sites[pagename])+"</body><HTML>";
-					console.log(request.method+" complete from "+request.socket.remoteAddress+" for page "+pagename);
+					var inputData = JSON.parse(body);
+				try {
+					statusCode=400;
+					if (pagename != inputData.URI) {
+						responseData = "Upsert "+JSON.stringify(sites[pagename])+" failed: URI does not match server location.";
+						console.log(request.method+" failed from "+request.socket.remoteAddress+" for page "+pagename+" : URI does not match server location.");
+						response.writeHead(statusCode, {'Content-Type': contentType});
+						response.end(responseData);
+					} else if (inputData.AccessList == "") {
+						responseData = "Upsert "+JSON.stringify(sites[pagename])+" failed: AccessList too short.";
+						console.log(request.method+" failed from "+request.socket.remoteAddress+" for page "+pagename+" : AccessList too short.");
+						response.writeHead(statusCode, {'Content-Type': contentType});
+						response.end(responseData);
+					} else if (inputData.Action == "") {
+						responseData = "Upsert "+JSON.stringify(sites[pagename])+" failed: Action too short.";
+						console.log(request.method+" failed from "+request.socket.remoteAddress+" for page "+pagename+" : Action too short.");
+						response.writeHead(statusCode, {'Content-Type': contentType});
+						response.end(responseData);
+					} else {
+						statusCode=200;
+						sites[pagename] = inputData;
+						dataSave(sites);
+						responseData = "Upsert "+JSON.stringify(sites[pagename])+" successful";
+						console.log(request.method+" complete from "+request.socket.remoteAddress+" for page "+pagename);
+						response.writeHead(statusCode, {'Content-Type': contentType});
+						response.end(responseData);
+					}; //end if pagename
+				} catch (err) {
+					statusCode=400;
+					responseData = "Upsert "+JSON.stringify(sites[pagename])+" failed: "+err;
+					console.log(request.method+" failed from "+request.socket.remoteAddress+" for page "+pagename+" : "+err);
+					response.writeHead(statusCode, {'Content-Type': contentType});
 					response.end(responseData);
+				} //end try
 				});
 				break; //end PUT
 			case "POST":
