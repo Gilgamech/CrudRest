@@ -11,8 +11,8 @@ const fs = require('fs');
 const url  = require('url');
 const serverPort = 80;//443;
 
-var error404 = "<HTML><body>404 Not Found</body><HTML>";
-var error405 = "<HTML><body>405 Method Not Allowed.</body><HTML>";
+var error404 = "404 Not Found";
+var error405 = "405 Method Not Allowed.";
 var pagename = "/index.html";
 var optionsData = 'HTTP/1.1 200 OK\nAllow: GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS\nAccess-Control-Allow-Origin: https://Gilgamech.com\nAccess-Control-Allow-Methods: GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS\nAccess-Control-Allow-Headers: Content-Type'
 const files = fs.readdirSync("/home/app");
@@ -186,7 +186,7 @@ const server = http.createServer((request, response) => {
 						sites[pagename].PutData += body;
 					}
 					dataSave(sites);
-					responseData = "<HTML><body>Upsert "+JSON.stringify(sites[pagename].URI)+"</body><HTML>";
+					responseData = "Upsert "+JSON.stringify(sites[pagename].URI)+"";
 					console.log(request.method+" complete from "+request.socket.remoteAddress+" for page "+pagename);
 					
 					response.writeHead(statusCode, {'Content-Type': contentType});
@@ -194,7 +194,7 @@ const server = http.createServer((request, response) => {
 				});
 				break; //end POST
 			case "DELETE":
-				responseData = "<HTML><body>Delete "+pagename+"</body><HTML>";
+				responseData = "Delete "+pagename+"";
 				sites[pagename] = null;
 				dataSave(sites);
 				
