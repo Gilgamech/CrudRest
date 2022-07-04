@@ -10,6 +10,7 @@ const https = require("https");
 const fs = require('fs');
 const url  = require('url');
 const serverPort = 80;//443;
+const crudRestDataFile = "/home/app/CrudRestStorage.txt"
 
 var error404 = "404 Not Found";
 var error405 = "405 Method Not Allowed.";
@@ -255,7 +256,7 @@ server.listen((serverPort), () => {
 })
 
 function dataSave(dict) {
-	fs.writeFile("/home/app/CrudRestStorage.txt", JSON.stringify(dict), (err) => {
+	fs.writeFile(crudRestDataFile, JSON.stringify(dict), (err) => {
 		if (err) {
 			console.log(err);
 		}
@@ -264,7 +265,7 @@ function dataSave(dict) {
 }
 
 function dataLoad(dict,callback) {
-	fs.readFile("/home/app/CrudRestStorage.txt", 'utf8', function (err,data) {
+	fs.readFile(crudRestDataFile, 'utf8', function (err,data) {
 		callback = JSON.parse(data);
 		if (err) {
 			console.log(err);
