@@ -133,34 +133,36 @@ const server = http.createServer((request, response) => {
 							}
 						});
 						break;
-					case "math":
-						switch(splitAction[1]) {
-							case "PutData++":
-								sites[pagename].PutData++;
-								responseData = sites[pagename].PutData;
-								responseData = JSON.stringify(responseData);
-								break;
-							case "PutData--":
-								sites[pagename].PutData--;
-								responseData = sites[pagename].PutData;
-								responseData = JSON.stringify(responseData);
-								break;
-							default:
-								responseData = "Bad Math";
-								break;
-						}//end switch splitAction[1]
 						response.end(responseData);
-					default:
 					}
 					break;
+				case "math":
+//how to perform operation on remote data? Like get int from URL, divide by 2? (Verb:URL:CacheExpiry) / 2
+					switch(splitAction[1]) {
+						case "PutData++":
+							sites[pagename].PutData++;
+							responseData = sites[pagename].PutData;
+							responseData = JSON.stringify(responseData);
+							break;
+						case "PutData--":
+							sites[pagename].PutData--;
+							responseData = sites[pagename].PutData;
+							responseData = JSON.stringify(responseData);
+							break;
+//data/2 divides it in half. Performs the operation then serves. 
+						default:
+							responseData = "Bad Math";
+							break;
+					}//end switch splitAction[1]
+					response.end(responseData);
+				default:
 						responseData = sites[pagename].PutData;
 						if (typeof responseData == "number"){
 							responseData = JSON.stringify(responseData);
 						}
 						response.end(responseData);
-						break;
+					break;
 				}//end switch splitAction[0]
-				};//end if sites
 				break; //end GET
 			case "PUT":
 				request.on('data', chunk => {
