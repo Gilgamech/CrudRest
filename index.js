@@ -33,6 +33,10 @@ sites["/Gilgamech.html"] = {"URI":"/Gilgamech.html","Action":"uri~GET~https://ww
 sites["/increment"] = {"URI":"/increment","Action":"math~PutData++","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":1};
 sites["/decrement"] = {"URI":"/decrement","Action":"math~PutData--","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":1000000};
 
+sites["/FruitBotwin"] = {"URI":"/increment","Action":"math~PutData++","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":1};
+sites["/FruitBotloss"] = {"URI":"/increment","Action":"math~PutData++","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":1};
+sites["/FruitBottie"] = {"URI":"/increment","Action":"math~PutData++","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":1};
+sites["/FruitBottotals"] = {"URI":"/increment","Action":"text~[{FruitBotwins: %FruitBotwin, botstie: %FruitBottie, simplebotwins: %FruitBotloss }];","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":1};
 
 fs.readFile("/home/app/custerr/404.htm", 'utf8', function (err,data) {
 	error404 =  data;
@@ -158,6 +162,12 @@ const server = http.createServer((request, response) => {
 					response.writeHead(statusCode, {'Content-Type': contentType});
 					response.end(responseData);
 					break;//end math
+					case "text":
+						responseData = splitAction[1].replace("PutData",sites[pagename].PutData).replace("%FruitBotwin",sites["/FruitBotwin"].PutData).replace("%FruitBottie",sites["/FruitBottie"].PutData).replace("%FruitBotloss",sites["/FruitBotloss"].PutData)
+	//"Action":"text~[{FruitBotwins: %FruitBotwin, botstie: %FruitBottie, simplebotwins: %FruitBotloss }];"
+						response.writeHead(statusCode, {'Content-Type': contentType});
+						response.end(responseData);
+					break;//end text
 				default://splitAction[0]
 						responseData = sites[pagename].PutData;
 						if (typeof responseData == "number"){
