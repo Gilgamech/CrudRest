@@ -15,10 +15,9 @@ var error404 = "404 Not Found";
 var error405 = "405 Method Not Allowed.";
 var pagename = "/index.html";
 var optionsData = 'HTTP/1.1 200 OK\nAllow: GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS\nAccess-Control-Allow-Origin: https://Gilgamech.com\nAccess-Control-Allow-Methods: GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS\nAccess-Control-Allow-Headers: Content-Type'
-const files = fs.readdirSync("/home/app");
+const files = fs.readdirSync("/home/app"); 
 
 var sites = new Object();
-
 //Valid Actions: fs (read file), uri (caching proxy), math (transform PutData), PutData (read PutData)
 sites["/index.html"] = {"URI":"/index.html","Action":"fs~/index.html","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "MERGE"]},"notes":"","PutData":""};
 sites["/favicon.ico"] = {"URI":"/favicon.ico","Action":"fs~/favicon.ico","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "MERGE"]},"notes":"","PutData":""};
@@ -132,7 +131,6 @@ const server = http.createServer((request, response) => {
 					});
 					break;
 				case "math":
-//how to perform operation on remote data? Like get int from URL, divide by 2? (Verb:URL:CacheExpiry) / 2
 					switch(splitAction[1]) {
 						case "PutData++":
 							sites[pagename].PutData++;
