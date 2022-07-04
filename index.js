@@ -121,88 +121,88 @@ const server = http.createServer((request, response) => {
 				switch(splitAction[0]) {
 					case "uri":
 //List of URLs - LB between them. Format is url:Verb:URL:CacheExpiry,
-					var expiry = splitAction[3];
-					if (sites[pagename].PutData == "") {
-						webRequest(splitAction[1], splitAction[2],function(data){
-							sites[pagename].PutData = data;
+						var expiry = splitAction[3];
+						if (sites[pagename].PutData == "") {
+							webRequest(splitAction[1], splitAction[2],function(data){
+								sites[pagename].PutData = data;
+								responseData = sites[pagename].PutData;
+								response.writeHead(statusCode, {'Content-Type': contentType});
+								response.end(responseData);
+							});
+						} else {
 							responseData = sites[pagename].PutData;
 							response.writeHead(statusCode, {'Content-Type': contentType});
 							response.end(responseData);
-						});
-					} else {
-						responseData = sites[pagename].PutData;
-						response.writeHead(statusCode, {'Content-Type': contentType});
-						response.end(responseData);
-					}
-					break;//end uri
-				case "fs":
+						}
+						break;//end uri
+					case "fs":
 //List of files, LB between them? 
-					fs.readFile("/home/app"+splitAction[1], function (err,data) {
-						if (err) {
-							console.log("404 error: "+splitAction[1]+" not found.");
-							response.writeHead(404, {'Content-Type': 'text/html'});
-							response.end(error404);
+						fs.readFile("/home/app"+splitAction[1], function (err,data) {
+							if (err) {
+								console.log("404 error: "+splitAction[1]+" not found.");
+								response.writeHead(404, {'Content-Type': 'text/html'});
+								response.end(error404);
+							}
+							responseData = data;
+							response.writeHead(statusCode, {'Content-Type': contentType});
+							response.end(responseData);
+						});
+						break;//end fs
+					case "math":
+						//Replace from putData
+						//Spread out operators by adding spaces between them, then remove any doubled spaces if they already had spaces there. Then split into a word array.
+						responseData = splitAction[1].replace(/\+/g," + ").replace(/-/g," - ").replace(/\*/g," * ").replace(/\//g," / ").replace(/,/g," , ").replace(/]/g," ] ").replace(/}/g," } ").replace(/  /g," ");
+						responseSplit = responseData.split(" ");
+						//Go through the word array, and replace any paths (Use % instead of / to denote website directory or path, to avoid confusion with mathematical division.)
+						for (let datum of responseSplit) {
+							if (datum.includes("%")) {
+								responseData = responseData.replace(datum,sites[datum.replace(/%/g,"/")].PutData)
+							}
 						}
-						responseData = data;
-						response.writeHead(statusCode, {'Content-Type': contentType});
-						response.end(responseData);
-					});
-					break;//end fs
-				case "math":
-					//Replace from putData
-					//Spread out operators by adding spaces between them, then remove any doubled spaces if they already had spaces there. Then split into a word array.
-					responseData = splitAction[1].replace(/\+/g," + ").replace(/-/g," - ").replace(/\*/g," * ").replace(/\//g," / ").replace(/,/g," , ").replace(/]/g," ] ").replace(/}/g," } ").replace(/  /g," ");
-					responseSplit = responseData.split(" ");
-					//Go through the word array, and replace any paths (Use % instead of / to denote website directory or path, to avoid confusion with mathematical division.)
-					for (let datum of responseSplit) {
-						if (datum.includes("%")) {
-							responseData = responseData.replace(datum,sites[datum.replace(/%/g,"/")].PutData)
-						}
-					}
 
-					//Perform any operations
-					for (let a of responseData.split("")) {
-						if (mathOperators.includes(a)) {
-							var Operator = a;
-							var firstElement = responseData.split(Operator)[0] * 1;
-							var secondElement = responseData.split(Operator)[1] * 1;
-							var replaceVar = firstElement+" "+Operator+" "+secondElement;
-							switch (Operator) {
-								case "+":
-									responseData = responseData.replace(replaceVar,firstElement + secondElement);
-									break;//end plus
-								case "-":
-									responseData = responseData.replace(replaceVar,firstElement - secondElement);
-									break;//end plus
-								case "*":
-									responseData = responseData.replace(replaceVar,firstElement * secondElement);
-									break;//end plus
-								case "/":
-									responseData = responseData.replace(replaceVar,firstElement / secondElement);
-									break;//end plus
-								default://Operator
-									console.log("err default")
-									break;
-							}//end switch Operator
-						}// end if mathOperators
-					}//end for let a 
+						//Perform any operations
+						for (let a of responseData.split("")) {
+							if (mathOperators.includes(a)) {
+								var Operator = a;
+								var firstElement = responseData.split(Operator)[0] * 1;
+								var secondElement = responseData.split(Operator)[1] * 1;
+								var replaceVar = firstElement+" "+Operator+" "+secondElement;
+								switch (Operator) {
+									case "+":
+										responseData = responseData.replace(replaceVar,firstElement + secondElement);
+										break;//end plus
+									case "-":
+										responseData = responseData.replace(replaceVar,firstElement - secondElement);
+										break;//end plus
+									case "*":
+										responseData = responseData.replace(replaceVar,firstElement * secondElement);
+										break;//end plus
+									case "/":
+										responseData = responseData.replace(replaceVar,firstElement / secondElement);
+										break;//end plus
+									default://Operator
+										console.log("err default")
+										break;
+								}//end switch Operator
+							}// end if mathOperators
+						}//end for let a 
 
-					//Store at current location
-					sites[pagename].PutData = responseData;
+						//Store at current location
+						sites[pagename].PutData = responseData;
 
-					//Return as response.
-					responseData = sites[pagename].PutData;
-					response.writeHead(statusCode, {'Content-Type': contentType});
-					response.end(responseData);
-				default://splitAction[0]
+						//Return as response.
 						responseData = sites[pagename].PutData;
-						if (typeof responseData == "number"){
-							responseData = JSON.stringify(responseData);
-						}
 						response.writeHead(statusCode, {'Content-Type': contentType});
 						response.end(responseData);
-					break;
-				}//end switch splitAction[0]
+					default://splitAction[0]
+							responseData = sites[pagename].PutData;
+							if (typeof responseData == "number"){
+								responseData = JSON.stringify(responseData);
+							}
+							response.writeHead(statusCode, {'Content-Type': contentType});
+							response.end(responseData);
+						break;
+					}//end switch splitAction[0]
 				} else {
 					response.writeHead(400, {'Content-Type': 'text/html'});
 					response.end("<HTML><body>Site Action URI mismatch.</body></HTML>");
