@@ -35,10 +35,12 @@ sites["/Gilgamech.html"] = {"URI":"/Gilgamech.html","Action":"uri~GET~https://ww
 sites["/increment"] = {"URI":"/increment","Action":"math~%increment+1","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":1};
 sites["/decrement"] = {"URI":"/decrement","Action":"math~%decrement-1","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":1000000};
 
-sites["/FruitBotwin"] = {"URI":"/increment","Action":"math~%FruitBotwin+1","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":1};
-sites["/FruitBotloss"] = {"URI":"/increment","Action":"math~%FruitBotloss+1","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":1};
-sites["/FruitBottie"] = {"URI":"/increment","Action":"math~%FruitBottie+1","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":1};
-sites["/FruitBottotals"] = {"URI":"/increment","Action":"math~[{FruitBotwins: %FruitBotwin, botstie: %FruitBottie, simplebotwins: %FruitBotloss }]","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":1};
+sites["/test"] = {"URI":"/decrement","Action":"math~%decrement-1","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":1000000};
+
+sites["/FruitBotwin"] = {"URI":"/FruitBotwin","Action":"math~%FruitBotwin+1","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":1};
+sites["/FruitBotloss"] = {"URI":"/FruitBotloss","Action":"math~%FruitBotloss+1","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":1};
+sites["/FruitBottie"] = {"URI":"/FruitBottie","Action":"math~%FruitBottie+1","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":1};
+sites["/FruitBottotals"] = {"URI":"/FruitBottotals","Action":"math~[{FruitBotwins: %FruitBotwin, botstie: %FruitBottie, simplebotwins: %FruitBotloss }]","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":1};
 
 fs.readFile("/home/app/custerr/404.htm", 'utf8', function (err,data) {
 	error404 =  data;
@@ -113,9 +115,11 @@ const server = http.createServer((request, response) => {
 				response.end();
 				break; //end HEAD
 			case "GET":
-			var splitAction = sites[pagename].Action.split("~");
-			switch(splitAction[0]) {
-				case "uri":
+			if (pagename == sites[pagename].URI) {
+//Split action into lines by semicolons.
+				var splitAction = sites[pagename].Action.split("~");
+				switch(splitAction[0]) {
+					case "uri":
 //List of URLs - LB between them. Format is url:Verb:URL:CacheExpiry,
 					var expiry = splitAction[3];
 					if (sites[pagename].PutData == "") {
@@ -199,6 +203,10 @@ const server = http.createServer((request, response) => {
 						response.end(responseData);
 					break;
 				}//end switch splitAction[0]
+				} else {
+					response.writeHead(400, {'Content-Type': 'text/html'});
+					response.end("<HTML><body>Site Action URI mismatch.</body></HTML>");
+				}
 				break; //end GET
 			case "PUT":
 				request.on('data', chunk => {
