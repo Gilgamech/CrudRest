@@ -100,10 +100,10 @@ var responseData = "";
 	}
 
 	if (sites[pagename].allowedVerbs.includes(request.method)) {
+		response.writeHead(statusCode, {'Content-Type': contentType});
 		let body = '';
 		switch(request.method) {
 			case "HEAD":
-				response.writeHead(statusCode, {'Content-Type': contentType});
 				response.end();
 				break; //end HEAD
 			case "GET":
@@ -160,7 +160,6 @@ var responseData = "";
 						}
 						break;
 				}//end switch splitAction[0]
-					response.writeHead(statusCode, {'Content-Type': contentType});
 					response.end(responseData);
 				};//end if sites
 				break; //end GET
@@ -173,7 +172,6 @@ var responseData = "";
 					dataSave(sites);
 					responseData = "<HTML><body>Upsert "+JSON.stringify(sites[pagename])+"</body><HTML>";
 					console.log(request.method+" complete from "+request.socket.remoteAddress+" for page "+pagename);
-					response.writeHead(statusCode, {'Content-Type': contentType});
 					response.end(responseData);
 				});
 				break; //end PUT
@@ -193,7 +191,6 @@ var responseData = "";
 					responseData = "<HTML><body>Upsert "+JSON.stringify(sites[pagename].URI)+"</body><HTML>";
 					console.log(request.method+" complete from "+request.socket.remoteAddress+" for page "+pagename);
 					
-					response.writeHead(statusCode, {'Content-Type': contentType});
 					response.end(responseData);
 				});
 				break; //end POST
@@ -202,19 +199,16 @@ var responseData = "";
 				sites[pagename] = null;
 				dataSave(sites);
 				
-				response.writeHead(statusCode, {'Content-Type': contentType});
 				response.end(responseData);
 				break; //end DELETE
 			case "MERGE":
 				responseData = JSON.stringify(sites[pagename]);
 				
-				response.writeHead(statusCode, {'Content-Type': contentType});
 				response.end(responseData);
 				break; //end POST
 			case "OPTIONS":
 				responseData = optionsData;
 					
-				response.writeHead(statusCode, {'Content-Type': contentType});
 				response.end(responseData);
 				break; //end POST
 			default:
