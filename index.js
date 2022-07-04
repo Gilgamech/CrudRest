@@ -107,13 +107,6 @@ const server = http.createServer((request, response) => {
 				response.end();
 				break; //end HEAD
 			case "GET":
-//URL redirect / cache. list of URLs - LB between them. Format is url:Verb:URL:CacheExpiry,
-//Filesystem redirect / cache. List of files, LB between them? Format is fs:/filename.ext, everything lives under /home/app?
-//data++ increments the data (hope it's an int!) data-- decriments, will come up with a list.  data/2 divides it in half. Performs the operation then serves. 
-//how to perform operation on remote data? Like get int from URL, divide by 2? (Verb:URL:CacheExpiry) / 2
-//blank or just "$PutData" is serve put data
-//if "$PutData" isn't in actions, then it ignores the put data. 
-
 			var splitAction = sites[pagename].Action.split("~");
 			switch(splitAction[0]) {
 				case "uri":
@@ -125,6 +118,8 @@ const server = http.createServer((request, response) => {
 							responseData = sites[pagename].PutData;
 							response.end(responseData);
 						});
+					} else {
+						responseData = sites[pagename].PutData;
 						response.end(responseData);
 					}
 					break;
