@@ -114,21 +114,16 @@ const server = http.createServer((request, response) => {
 //blank or just "$PutData" is serve put data
 //if "$PutData" isn't in actions, then it ignores the put data. 
 
-				var splitAction = sites[pagename].Action.split("~");
-				switch(splitAction[0]) {
-					case "uri":
-						var expiry = splitAction[3];
-						if (sites[pagename].PutData == "") {
-							webRequest(splitAction[1], splitAction[2],function(data){
-								sites[pagename].PutData = data;
-								responseData = sites[pagename].PutData;
-								response.end(responseData);
-							});
-						} else {
+			var splitAction = sites[pagename].Action.split("~");
+			switch(splitAction[0]) {
+				case "uri":
+//List of URLs - LB between them. Format is url:Verb:URL:CacheExpiry,
+					var expiry = splitAction[3];
+					if (sites[pagename].PutData == "") {
+						webRequest(splitAction[1], splitAction[2],function(data){
+							sites[pagename].PutData = data;
 							responseData = sites[pagename].PutData;
 							response.end(responseData);
-						}
-						break;
 					case "fs":
 						fs.readFile("/home/app"+splitAction[1], function (err,data) {
 							responseData = data;
@@ -156,6 +151,8 @@ const server = http.createServer((request, response) => {
 						}//end switch splitAction[1]
 						response.end(responseData);
 					default:
+					}
+					break;
 						responseData = sites[pagename].PutData;
 						if (typeof responseData == "number"){
 							responseData = JSON.stringify(responseData);
