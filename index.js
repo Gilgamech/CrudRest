@@ -20,9 +20,10 @@ const files = fs.readdirSync("/home/app");
 
 var sites = new Object();
 fs.readFile(crudRestDataFile, 'utf8', function (err,data) {
-	sites =  data;
 	if (err) {
 		console.log(err);
+	} else {
+		sites =  data;
 	}
 });
 //Valid Actions: fs (read file), uri (caching proxy), math (transform PutData), PutData (read PutData)
