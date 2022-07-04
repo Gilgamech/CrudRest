@@ -20,6 +20,7 @@ const files = fs.readdirSync("/home/app");
 var sites = new Object();
 
 
+//Valid actions: fs (read file), uri (caching proxy), math (transform PutData), PutData (read PutData)
 sites["/index.html"] = {"URI":"/index.html","Action":"fs~/index.html","Owner":"Gilgamech","AccessList":"","allowedVerbs":["GET","HEAD","OPTIONS","MERGE"],"notes":"","PutData":""};
 sites["/favicon.ico"] = {"URI":"/favicon.ico","Action":"fs~/favicon.ico","Owner":"Gilgamech","AccessList":"","allowedVerbs":["GET","HEAD","OPTIONS","MERGE"],"notes":"","PutData":""};
 sites["/Gilgamech.html"] = {"URI":"/Gilgamech.html","Action":"uri~GET~https://www.Gilgamech.com~0","Owner":"Gilgamech","AccessList":"","allowedVerbs":["GET","HEAD","OPTIONS","POST","PUT","DELETE","MERGE"],"notes":"","PutData":""};
@@ -90,7 +91,7 @@ var responseData = "";
 		console.log("New page "+pagename);
 		sites[pagename] = new Object();
 		sites[pagename].URI = pagename;
-		sites[pagename].Action = "";
+		sites[pagename].Action = "fs~"+pagename;
 		sites[pagename].Owner = "";
 		sites[pagename].AccessList = "";
 		sites[pagename].allowedVerbs = ["GET","HEAD","OPTIONS","POST","PUT","DELETE","MERGE"]
