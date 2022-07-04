@@ -19,6 +19,12 @@ var optionsData = 'HTTP/1.1 200 OK\nAllow: GET,POST,PUT,PATCH,DELETE,HEAD,OPTION
 const files = fs.readdirSync("/home/app"); 
 
 var sites = new Object();
+fs.readFile(crudRestDataFile, 'utf8', function (err,data) {
+	sites =  data;
+	if (err) {
+		console.log(err);
+	}
+});
 //Valid Actions: fs (read file), uri (caching proxy), math (transform PutData), PutData (read PutData)
 sites["/index.html"] = {"URI":"/index.html","Action":"fs~/index.html","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "MERGE"]},"notes":"","PutData":""};
 sites["/favicon.ico"] = {"URI":"/favicon.ico","Action":"fs~/favicon.ico","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "MERGE"]},"notes":"","PutData":""};
