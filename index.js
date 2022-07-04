@@ -124,7 +124,7 @@ const server = http.createServer((request, response) => {
 						response.writeHead(statusCode, {'Content-Type': contentType});
 						response.end(responseData);
 					}
-					break;
+					break;//end uri
 				case "fs":
 //List of files, LB between them? 
 					fs.readFile("/home/app"+splitAction[1], function (err,data) {
@@ -137,27 +137,28 @@ const server = http.createServer((request, response) => {
 						response.writeHead(statusCode, {'Content-Type': contentType});
 						response.end(responseData);
 					});
-					break;
+					break;//end fs
 				case "math":
 					switch(splitAction[1]) {
 						case "PutData++":
 							sites[pagename].PutData++;
 							responseData = sites[pagename].PutData;
 							responseData = JSON.stringify(responseData);
-							break;
+							break;//end ++
 						case "PutData--":
 							sites[pagename].PutData--;
 							responseData = sites[pagename].PutData;
 							responseData = JSON.stringify(responseData);
-							break;
+							break;//end --
 //data/2 divides it in half. Performs the operation then serves. 
-						default:
+						default://splitAction[1]
 							responseData = "Unsupported Operation in Math Action.";
 							break;
 					}//end switch splitAction[1]
 					response.writeHead(statusCode, {'Content-Type': contentType});
 					response.end(responseData);
-				default:
+					break;//end math
+				default://splitAction[0]
 						responseData = sites[pagename].PutData;
 						if (typeof responseData == "number"){
 							responseData = JSON.stringify(responseData);
