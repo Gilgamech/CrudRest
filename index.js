@@ -146,7 +146,7 @@ const server = http.createServer((request, response) => {
 							break;
 //data/2 divides it in half. Performs the operation then serves. 
 						default:
-							responseData = "Bad Math";
+							responseData = "Unsupported Operation in Math Action.";
 							break;
 					}//end switch splitAction[1]
 					response.writeHead(statusCode, {'Content-Type': contentType});
