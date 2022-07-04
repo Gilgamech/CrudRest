@@ -127,13 +127,18 @@ var responseData = "";
 						if (sites[pagename].PutData == "") {
 							webRequest(splitAction[1], splitAction[2],function(data){
 								sites[pagename].PutData = data;
+								responseData = sites[pagename].PutData;
+								response.end(responseData);
 							});
+						} else {
+							responseData = sites[pagename].PutData;
+							response.end(responseData);
 						}
-						responseData = sites[pagename].PutData;
 						break;
 					case "fs":
 						fs.readFile("/home/app"+splitAction[1], function (err,data) {
 							responseData = data;
+							response.end(responseData);
 							if (err) {
 								console.log(err);
 							}
@@ -144,23 +149,26 @@ var responseData = "";
 							case "PutData++":
 								sites[pagename].PutData++;
 								responseData = sites[pagename].PutData;
+								responseData = JSON.stringify(responseData);
 								break;
 							case "PutData--":
 								sites[pagename].PutData--;
 								responseData = sites[pagename].PutData;
+								responseData = JSON.stringify(responseData);
 								break;
 							default:
 								responseData = "Bad Math";
 								break;
 						}//end switch splitAction[1]
+						response.end(responseData);
 					default:
 						responseData = sites[pagename].PutData;
 						if (typeof responseData == "number"){
 							responseData = JSON.stringify(responseData);
 						}
+						response.end(responseData);
 						break;
 				}//end switch splitAction[0]
-					response.end(responseData);
 				};//end if sites
 				break; //end GET
 			case "PUT":
