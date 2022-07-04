@@ -36,8 +36,10 @@ fs.readFile("/home/app/custerr/404.htm", 'utf8', function (err,data) {
 });
 
 const server = http.createServer((request, response) => {
-var statusCode = 200;
-var responseData = "";
+	var statusCode = 200;
+	var responseData = "";
+	var contentType = 'text/plain';
+	var encodingType = '';
 	console.log(request.method+" request from "+request.socket.remoteAddress+" for page "+pagename);
 
 	if (request.url=='/'){
@@ -46,8 +48,6 @@ var responseData = "";
 		pagename = request.url;
 	};
 
-	var contentType = 'text/plain';
-	var encodingType = '';
 	switch(pagename.split(".")[1]) {
 	  case "css":
 		contentType = 'text/css'
