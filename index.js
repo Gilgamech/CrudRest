@@ -19,7 +19,6 @@ var error405 = "405 Method Not Allowed.";
 var pagename = "/index.html";
 var optionsData = 'HTTP/1.1 200 OK\nAllow: GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS\nAccess-Control-Allow-Origin: https://Gilgamech.com\nAccess-Control-Allow-Methods: GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS\nAccess-Control-Allow-Headers: Content-Type'
 var mathOperators = ["+","-","*","/"]
-
 var sites = new Object();
 	
 fs.readFile(inMemCacheFile, function (err,data) {
@@ -113,6 +112,7 @@ const server = http.createServer((request, response) => {
 						var URItoLoad = splitAction[2]
 						//List of URLs - LB between them.
 						var URIList = splitAction[2].split(",");
+//Replace comma-split list of sites with semicolon-split list of actions. 
 						if (URIList.length > 1){
 							//disable caching for now.
 							sites[pagename].PutData = ""
@@ -157,7 +157,6 @@ const server = http.createServer((request, response) => {
 						}
 						break;//end uri
 					case "fs":
-//List of files, LB between them? 
 						fs.readFile(wwwFolder+splitAction[1], function (err,data) {
 							if (err) {
 								console.log("404 error: "+splitAction[1]+" not found.");
@@ -283,6 +282,7 @@ const server = http.createServer((request, response) => {
 						console.log(pagename+" exists, appending.")
 						sites[pagename].PutData += body;
 					}
+//Should this also save the individual file, along with the cache?
 					responseData = request.method+JSON.stringify(sites[pagename].URI);
 					console.log(request.method+" complete from "+request.socket.remoteAddress+" for page "+pagename);
 					
@@ -344,7 +344,7 @@ function webRequest(method, location, callback, JSON,file,cached) {
 	var locationSplit2 = locationSplit[1].split("/");
 	var host = locationSplit2[2]
 	var path = "/"+locationSplit2.slice(3,locationSplit2.length).join("/")
-console.log(protocol+" request method "+method+" for path "+path+" from host "+host+" on port "+port)
+	console.log(protocol+" request method "+method+" for path "+path+" from host "+host+" on port "+port)
 
 	var contentType = 'text/plain';
 	var encodingType = '';
