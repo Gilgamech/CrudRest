@@ -409,7 +409,7 @@ console.log(protocol+" request method "+method+" for path "+path+" from host "+h
 	};
 
 	const req = https.request(options, res => {
-		console.log(`statusCode: ${res.statusCode}`);
+		console.log("statusCode:"+res.statusCode);
 		var returnVar = '';
 		res.setEncoding(encodingType);
 		res.on('data', function (chunk) {
@@ -423,7 +423,7 @@ console.log(protocol+" request method "+method+" for path "+path+" from host "+h
 		});
 	});
 	req.on('error', error => {
-		var errMsg = "problem with request: ${error.message}"
+		var errMsg = "problem with request: "+error.message
 		console.error(errMsg);
 	});
 	if (file) {
