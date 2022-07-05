@@ -10,7 +10,7 @@ const https = require("https");
 const fs = require('fs');
 const url  = require('url');
 const serverPort = 80;
-const crudRestDataFile = "/home/app/CrudRestStorage.txt"
+const inMemCacheFile = "/inMemCacheFile.txt"
 
 var error404 = "404 Not Found";
 var error405 = "405 Method Not Allowed.";
@@ -20,7 +20,8 @@ var mathOperators = ["+","-","*","/"]
 const files = fs.readdirSync("/home/app");
 
 var sites = new Object();
-fs.readFile(crudRestDataFile, 'utf8', function (err,data) {
+	
+fs.readFile(inMemCacheFile, function (err,data) {
 	if (err) {
 		console.log(err);
 	} else {
@@ -107,6 +108,7 @@ const server = http.createServer((request, response) => {
 	if (sites[pagename] == null) {
 		console.log("New page "+pagename);
 		sites[pagename] = {"URI":pagename,"Action":"fs~"+pagename,"Owner":"","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":""};
+		dataSave(sites,inMemCacheFile);
 	}
 
 	if (sites[pagename].AccessList[userName].includes(request.method)) {
