@@ -253,10 +253,10 @@ const server = http.createServer((request, response) => {
 					} else {
 						statusCode=200;
 						sites[pagename] = inputData;
-						dataSave(sites);
 						responseData = request.method+JSON.stringify(sites[pagename])+" successful";
 						console.log(request.method+" complete from "+request.socket.remoteAddress+" for page "+pagename);
 						response.writeHead(statusCode, {'Content-Type': contentType});
+						dataSave(sites,inMemCacheFile);
 						response.end(responseData);
 					}; //end if pagename
 				} catch (err) {
@@ -280,20 +280,20 @@ const server = http.createServer((request, response) => {
 						console.log(pagename+" exists, appending.")
 						sites[pagename].PutData += body;
 					}
-					dataSave(sites);
 					responseData = request.method+JSON.stringify(sites[pagename].URI);
 					console.log(request.method+" complete from "+request.socket.remoteAddress+" for page "+pagename);
 					
 					response.writeHead(statusCode, {'Content-Type': contentType});
+					dataSave(sites,inMemCacheFile);
 					response.end(responseData);
 				});
 				break; //end POST
 			case "DELETE":
 				sites[pagename] = null;
-				dataSave(sites);
 				responseData = request.method+pagename+" successful";
 				
 				response.writeHead(statusCode, {'Content-Type': contentType});
+				dataSave(sites,inMemCacheFile);
 				response.end(responseData);
 				break; //end DELETE
 			case "MERGE":
@@ -322,13 +322,13 @@ server.listen((serverPort), () => {
 	console.log("Server is Running on port "+serverPort);
 })
 
-function dataSave(dict) {
-	fs.writeFile(crudRestDataFile, JSON.stringify(dict), (err) => {
-		if (err) {
-			console.log(err);
+function dataSave(dict,filename) {
+	fs.writeFile(filename, JSON.stringify(dict), (err) => {
+			console.log("dataSave err: "+err);
+		} else {
+			console.log("dataSave successful.");
 		}
 	});
-	console.log("dataSave");
 }
 
 function webRequest(method, location, callback, JSON,file,cached) {
