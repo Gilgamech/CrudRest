@@ -331,16 +331,6 @@ function dataSave(dict) {
 	console.log("dataSave");
 }
 
-function dataLoad(dict,callback) {
-	fs.readFile(crudRestDataFile, 'utf8', function (err,data) {
-		callback = JSON.parse(data);
-		if (err) {
-			console.log(err);
-		}
-	});
-	console.log("dataRead");
-}
-
 function webRequest(method, location, callback, JSON,file,cached) {
 	var port = 80;
 	var locationSplit = location.split(":");
