@@ -10,14 +10,15 @@ const https = require("https");
 const fs = require('fs');
 const url  = require('url');
 const serverPort = 80;
+const wwwFolder = "/home/app"
 const inMemCacheFile = "/inMemCacheFile.txt"
+const files = fs.readdirSync(wwwFolder);
 
 var error404 = "404 Not Found";
 var error405 = "405 Method Not Allowed.";
 var pagename = "/index.html";
 var optionsData = 'HTTP/1.1 200 OK\nAllow: GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS\nAccess-Control-Allow-Origin: https://Gilgamech.com\nAccess-Control-Allow-Methods: GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS\nAccess-Control-Allow-Headers: Content-Type'
 var mathOperators = ["+","-","*","/"]
-const files = fs.readdirSync("/home/app");
 
 var sites = new Object();
 	
@@ -30,7 +31,7 @@ fs.readFile(inMemCacheFile, function (err,data) {
 	}
 });
 
-fs.readFile("/home/app/custerr/404.htm", 'utf8', function (err,data) {
+fs.readFile(wwwFolder+"/custerr/404.htm", 'utf8', function (err,data) {
 	error404 =  data;
 	if (err) {
 		console.log(err);
@@ -155,7 +156,7 @@ const server = http.createServer((request, response) => {
 						break;//end uri
 					case "fs":
 //List of files, LB between them? 
-						fs.readFile("/home/app"+splitAction[1], function (err,data) {
+						fs.readFile(wwwFolder+splitAction[1], function (err,data) {
 							if (err) {
 								console.log("404 error: "+splitAction[1]+" not found.");
 								response.writeHead(404, {'Content-Type': 'text/html'});
