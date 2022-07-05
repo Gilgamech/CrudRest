@@ -23,9 +23,10 @@ var sites = new Object();
 	
 fs.readFile(inMemCacheFile, function (err,data) {
 	if (err) {
-		console.log(err);
+		console.log("dataRead err: "+err);
 	} else {
 		sites =  data;
+		console.log("dataRead successful.");
 	}
 });
 
