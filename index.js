@@ -28,22 +28,6 @@ fs.readFile(inMemCacheFile, function (err,data) {
 		sites =  data;
 	}
 });
-//Valid Actions: fs (read file), uri (caching proxy), math (transform PutData), PutData (read PutData)
-sites["/index.html"] = {"URI":"/index.html","Action":"fs~/index.html","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "MERGE"]},"notes":"","PutData":""};
-sites["/favicon.ico"] = {"URI":"/favicon.ico","Action":"fs~/favicon.ico","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "MERGE"]},"notes":"","PutData":""};
-
-//sites["/Gilgamech.html"] = {"URI":"/Gilgamech.html","Action":"uri~GET~https://www.Gilgamech.com~0","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":""};
-sites["/Gilgamech.html"] = {"URI":"/Gilgamech.html","Action":"uri~GET~https://www.Gilgamech.com,https://gilgamech.neocities.org~0","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":""};
-
-sites["/increment"] = {"URI":"/increment","Action":"math~%increment+1","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":1};
-sites["/decrement"] = {"URI":"/decrement","Action":"math~%decrement-1","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":1000000};
-
-sites["/test"] = {"URI":"/decrement","Action":"math~%decrement-1","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":1000000};
-
-sites["/FruitBotwin"] = {"URI":"/FruitBotwin","Action":"math~%FruitBotwin+1","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":1};
-sites["/FruitBotloss"] = {"URI":"/FruitBotloss","Action":"math~%FruitBotloss+1","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":1};
-sites["/FruitBottie"] = {"URI":"/FruitBottie","Action":"math~%FruitBottie+1","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":1};
-sites["/FruitBottotals"] = {"URI":"/FruitBottotals","Action":"math~[{FruitBotwins: %FruitBotwin, botstie: %FruitBottie, simplebotwins: %FruitBotloss }]","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":1};
 
 fs.readFile("/home/app/custerr/404.htm", 'utf8', function (err,data) {
 	error404 =  data;
@@ -464,57 +448,3 @@ console.log(protocol+" request method "+method+" for path "+path+" from host "+h
 	};
 	req.end();
 };
-
-function refreshKey($user,$sessionID,$sessionKey,$callback) {
-	sparational.sequelize.query("SELECT sessionuser FROM Sessions WHERE sessionid = '"+$sessionID+"';").then(([$SessionResults, metadata]) => {
-//console.log(JSON.stringify($SessionResults))
-		if ($user==$SessionResults[0].sessionuser) {
-
-
-		$sessionID = getBadPW()
-		$sessionKey = getBadPW()
-		$output = ""+$user+":" + $sessionID +":" + $sessionKey 
-		sparational.sequelize.query("UPDATE Sessions SET logintime = current_timestamp, sessionid = '"+$sessionID+"', sessionkey = '"+$sessionKey+"' WHERE sessionuser='"+$user+"';INSERT INTO Sessions (sessionuser, sessionid,sessionkey) SELECT '"+$user+"','"+$sessionID+"','"+$sessionKey+"' WHERE NOT EXISTS (SELECT 1 FROM Sessions WHERE sessionuser='"+$user+"');").then(([$SessionResults, metadata]) => {
-		
-			var $output = $user + ":" + $sessionID + ":" + $sessionKey
-			$callback($output)
-
-		}).catch(function(err) {
-			var $output = "Invalid refreshKey attempt: "+$user
-			writeLog($output+" error: "+ err.message +" - sessionID: " + $sessionID)
-			$callback($output)
-		})//end Pages query
-
-
-		} else {
-			var $output = "Invalid starspar attempt: bad session key for user: "+$user
-			writeLog($output+" sessionID: " + $sessionID)
-			$callback($output)
-		}//end if user
-	}).catch(function(err) {
-		var $output = "Session error: "+err.message
-		writeLog($output)
-		$callback($output)
-	});//end Session query
-
-};
-function checkKey($user,$sessionID,$sessionKey,$callback) {
-	sparational.sequelize.query("SELECT sessionuser FROM Sessions WHERE sessionid = '"+$sessionID+"';").then(([$sessionuser, metadata]) => {
-//console.log(JSON.stringify($sessionuser))
-		if ($user==$sessionuser[0]) {
-		var $output = $sessionuser[0] + ":" + $sessionID + ":" + $sessionKey
-		$callback($output)
-
-		} else {
-			var $output = "Invalid checkKey attempt: "+$user
-			writeLog($output+" - sessionID: " + $sessionID)
-			$callback($output)
-		}//end if user
-	}).catch(function(err) {
-		var $output = "Invalid checkKey attempt: "+$user
-		writeLog($output+" error: "+ err.message +" - sessionID: " + $sessionID)
-		$callback($output)
-	});//end Session query
-
-};
-
