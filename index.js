@@ -31,7 +31,10 @@ fs.readFile(crudRestDataFile, 'utf8', function (err,data) {
 //Valid Actions: fs (read file), uri (caching proxy), math (transform PutData), PutData (read PutData)
 sites["/index.html"] = {"URI":"/index.html","Action":"fs~/index.html","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "MERGE"]},"notes":"","PutData":""};
 sites["/favicon.ico"] = {"URI":"/favicon.ico","Action":"fs~/favicon.ico","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "MERGE"]},"notes":"","PutData":""};
-sites["/Gilgamech.html"] = {"URI":"/Gilgamech.html","Action":"uri~GET~https://www.Gilgamech.com~0","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":""};
+
+//sites["/Gilgamech.html"] = {"URI":"/Gilgamech.html","Action":"uri~GET~https://www.Gilgamech.com~0","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":""};
+sites["/Gilgamech.html"] = {"URI":"/Gilgamech.html","Action":"uri~GET~https://www.Gilgamech.com,https://gilgamech.neocities.org~0","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":""};
+
 sites["/increment"] = {"URI":"/increment","Action":"math~%increment+1","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":1};
 sites["/decrement"] = {"URI":"/decrement","Action":"math~%decrement-1","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":1000000};
 
@@ -116,14 +119,43 @@ const server = http.createServer((request, response) => {
 				break; //end HEAD
 			case "GET":
 			if (pagename == sites[pagename].URI) {
-//Split action into lines by semicolons.
+				//Split action into array by tildes.
 				var splitAction = sites[pagename].Action.split("~");
 				switch(splitAction[0]) {
 					case "uri":
-//List of URLs - LB between them. Format is url:Verb:URL:CacheExpiry,
+						var URItoLoad = splitAction[2]
+						//List of URLs - LB between them.
+						var URIList = splitAction[2].split(",");
+						if (URIList.length > 1){
+							//disable caching for now.
+							sites[pagename].PutData = ""
+							//How to specify different LB types - weighted, round robin, etc?
+							var LBNum = 0;
+							
+							if (sites[pagename].notes.includes("LB:")){
+								//If the LB tag exists, split by semicolon then sort through them to find it. 
+								var newNote = "";
+								for (let note of sites[pagename].notes.split(";")) {
+									if (note.includes("LB:")){
+										//When on the note with LB, derive the LB page number.
+										LBNum = note.split(":")[1]*1;
+									} else {
+										newNote += note;
+									}//end if note
+								}//end for let note
+									var LBPage = (LBNum+1)%(URIList.length);
+									sites[pagename].notes = newNote+" LB:"+LBPage+";";
+						console.log("LB: "+JSON.stringify(sites[pagename].notes))
+									URItoLoad = URIList[LBPage]
+							} else {
+								URItoLoad = URIList[LBNum]
+								sites[pagename].notes = sites[pagename].notes + "LB:"+LBNum+";";
+						console.log("NO LB: "+JSON.stringify(sites[pagename].notes))
+							}
+						}//end if URIList
 						var expiry = splitAction[3];
 						if (sites[pagename].PutData == "") {
-							webRequest(splitAction[1], splitAction[2],function(data){
+							webRequest(splitAction[1], URItoLoad,function(data){
 								sites[pagename].PutData = data;
 								responseData = sites[pagename].PutData;
 								response.writeHead(statusCode, {'Content-Type': contentType});
