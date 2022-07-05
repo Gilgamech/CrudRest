@@ -2,14 +2,14 @@
 //Title: Basic Webserver
 //Made by: Stephen Gillie
 //Created on: 6/17/2022
-//Updated on: 7/3/2022
+//Updated on: 7/5/2022
 //Notes: The goal for CrudRest is to be, in different modes, a webserver, database, load balancer, in-memory cache, message queue, pub sub hub, login IdP, password manager, and a variety of other uses.
 
 const http = require("http");
 const https = require("https");
 const fs = require('fs');
 const url  = require('url');
-const serverPort = 80;//443;
+const serverPort = 80;
 const crudRestDataFile = "/home/app/CrudRestStorage.txt"
 
 var error404 = "404 Not Found";
@@ -17,8 +17,7 @@ var error405 = "405 Method Not Allowed.";
 var pagename = "/index.html";
 var optionsData = 'HTTP/1.1 200 OK\nAllow: GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS\nAccess-Control-Allow-Origin: https://Gilgamech.com\nAccess-Control-Allow-Methods: GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS\nAccess-Control-Allow-Headers: Content-Type'
 var mathOperators = ["+","-","*","/"]
-
-const files = fs.readdirSync("/home/app"); 
+const files = fs.readdirSync("/home/app");
 
 var sites = new Object();
 fs.readFile(crudRestDataFile, 'utf8', function (err,data) {
@@ -332,7 +331,7 @@ const server = http.createServer((request, response) => {
 })
 
 server.listen((serverPort), () => {
-    console.log("Server is Running on port "+serverPort);
+	console.log("Server is Running on port "+serverPort);
 })
 
 function dataSave(dict) {
