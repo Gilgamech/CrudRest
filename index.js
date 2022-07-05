@@ -146,11 +146,13 @@ const server = http.createServer((request, response) => {
 								sites[pagename].PutData = data;
 								responseData = sites[pagename].PutData;
 								response.writeHead(statusCode, {'Content-Type': contentType});
+								dataSave(sites,inMemCacheFile);
 								response.end(responseData);
 							});
 						} else {
 							responseData = sites[pagename].PutData;
 							response.writeHead(statusCode, {'Content-Type': contentType});
+							dataSave(sites,inMemCacheFile);
 							response.end(responseData);
 						}
 						break;//end uri
@@ -212,6 +214,7 @@ const server = http.createServer((request, response) => {
 						//Return as response.
 						responseData = sites[pagename].PutData;
 						response.writeHead(statusCode, {'Content-Type': contentType});
+						dataSave(sites,inMemCacheFile);
 						response.end(responseData);
 					default://splitAction[0]
 							responseData = sites[pagename].PutData;
