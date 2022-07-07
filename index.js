@@ -18,10 +18,9 @@ const defaultVerbs = ["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"
 var error405 = "Method Not Allowed.";
 var optionsData = 'HTTP/1.1 200 OK\nAllow: GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS\nAccess-Control-Allow-Origin: https://Gilgamech.com\nAccess-Control-Allow-Methods: GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS\nAccess-Control-Allow-Headers: Content-Type'
 var mathOperators = ["+","-","*","/"]
+var saveDateTime = 0;
 var sites = new Object();
 
-var saveDateTime = 0;
-	
 fs.readFile(inMemCacheFile, function (err,data) {
 	if (err) {
 		console.log("dataRead err: "+err);
