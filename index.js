@@ -17,7 +17,6 @@ const defaultVerbs = ["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"
 
 var error404 = "404 Not Found";
 var error405 = "405 Method Not Allowed.";
-var pagename = "/index.html";
 var optionsData = 'HTTP/1.1 200 OK\nAllow: GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS\nAccess-Control-Allow-Origin: https://Gilgamech.com\nAccess-Control-Allow-Methods: GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS\nAccess-Control-Allow-Headers: Content-Type'
 var mathOperators = ["+","-","*","/"]
 var sites = new Object();
@@ -46,6 +45,8 @@ const server = http.createServer((request, response) => {
 	var contentType = 'text/plain';
 	var encodingType = '';
 	var userName = "Everyone"
+	var allowedVerbs = "";
+	var pagename = request.url;
 	console.log(request.method+" request from "+request.socket.remoteAddress+" for page "+pagename);
 
 	if (request.url=='/'){
@@ -99,7 +100,6 @@ const server = http.createServer((request, response) => {
 		dataSave(sites,inMemCacheFile);
 	}
 	
-	var allowedVerbs = "";
 	var jsonAccessList = JSON.stringify(sites[pagename].AccessList);
 	
 	if (jsonAccessList.includes("Everyone") && jsonAccessList.includes(userName)){
