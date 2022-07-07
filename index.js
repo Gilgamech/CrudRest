@@ -327,6 +327,7 @@ server.listen((serverPort), () => {
 
 function dataSave(dict,filename) {
 	fs.writeFile(filename, JSON.stringify(dict), (err) => {
+		if (err) {
 			console.log("dataSave err: "+err);
 		} else {
 			console.log("dataSave successful.");
