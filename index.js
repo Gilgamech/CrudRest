@@ -21,6 +21,8 @@ var pagename = "/index.html";
 var optionsData = 'HTTP/1.1 200 OK\nAllow: GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS\nAccess-Control-Allow-Origin: https://Gilgamech.com\nAccess-Control-Allow-Methods: GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS\nAccess-Control-Allow-Headers: Content-Type'
 var mathOperators = ["+","-","*","/"]
 var sites = new Object();
+
+var saveDateTime = 0;
 	
 fs.readFile(inMemCacheFile, function (err,data) {
 	if (err) {
@@ -329,13 +331,19 @@ server.listen((serverPort), () => {
 })
 
 function dataSave(dict,filename) {
-	fs.writeFile(filename, JSON.stringify(dict), (err) => {
-		if (err) {
-			console.log("dataSave err: "+err);
-		} else {
-			console.log("dataSave successful.");
-		}
-	});
+	var date = new Date();
+	if (saveDateTime < date) {
+		saveDateTime = date.valueOf()+5000;
+		fs.writeFile(filename, JSON.stringify(dict), (err) => {
+			if (err) {
+				console.log("dataSave err: "+err);
+			} else {
+				console.log("dataSave successful.");
+			}
+		});
+	} else {
+		//console.log("not yet")
+	}
 }
 
 function webRequest(method, location, callback, JSON,file,cached) {
