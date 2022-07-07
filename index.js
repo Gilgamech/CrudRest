@@ -13,6 +13,7 @@ const serverPort = 80;
 const wwwFolder = "/home/app"
 const inMemCacheFile = "/inMemCacheFile.txt"
 const files = fs.readdirSync(wwwFolder);
+const defaultVerbs = ["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"];
 
 var error404 = "404 Not Found";
 var error405 = "405 Method Not Allowed.";
@@ -92,11 +93,13 @@ const server = http.createServer((request, response) => {
 	
 	if (sites[pagename] == null) {
 		console.log("New page "+pagename);
-		sites[pagename] = {"URI":pagename,"Action":"fs~"+pagename,"Owner":"","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","PutData":""};
+		sites[pagename] = {"URI":pagename,"Action":"fs~"+pagename,"Owner":"","AccessList":{"Everyone":defaultVerbs},"notes":"","PutData":""};
 		dataSave(sites,inMemCacheFile);
 	}
+	
+	var allowedVerbs = [...new Set([...sites[pagename].AccessList["Everyone"], ...sites[pagename].AccessList[userName]])]
 
-	if (sites[pagename].AccessList[userName].includes(request.method)) {
+	if (allowedVerbs.includes(request.method)) {
 		let body = '';
 		switch(request.method) {
 			case "HEAD":
