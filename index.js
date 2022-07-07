@@ -15,8 +15,7 @@ const inMemCacheFile = "/inMemCacheFile.txt"
 const files = fs.readdirSync(wwwFolder);
 const defaultVerbs = ["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"];
 
-var error404 = "404 Not Found";
-var error405 = "405 Method Not Allowed.";
+var error405 = "Method Not Allowed.";
 var optionsData = 'HTTP/1.1 200 OK\nAllow: GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS\nAccess-Control-Allow-Origin: https://Gilgamech.com\nAccess-Control-Allow-Methods: GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS\nAccess-Control-Allow-Headers: Content-Type'
 var mathOperators = ["+","-","*","/"]
 var sites = new Object();
@@ -32,8 +31,8 @@ fs.readFile(inMemCacheFile, function (err,data) {
 	}
 });
 
-fs.readFile(wwwFolder+"/custerr/404.htm", 'utf8', function (err,data) {
-	error404 =  data;
+fs.readFile(wwwFolder+"/err.html", 'utf8', function (err,data) {
+	errorPage =  data;
 	if (err) {
 		console.log(err);
 	}
@@ -129,9 +128,11 @@ const server = http.createServer((request, response) => {
 					case "fs":
 						fs.readFile(wwwFolder+splitAction[1], function (err,data) {
 							if (err) {
-								console.log("404 error: "+splitAction[1]+" not found.");
-								response.writeHead(404, {'Content-Type': 'text/html'});
-								response.end(error404);
+								statusCode=404;
+								var outMsg = "Not found."
+								console.log(statusCode+" "+outMsg);
+								response.writeHead(statusCode, {'Content-Type': 'text/html'});
+								response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",outMsg));
 							}
 							responseData = data;
 							response.writeHead(statusCode, {'Content-Type': getContentType(splitAction[1])});
@@ -196,7 +197,7 @@ const server = http.createServer((request, response) => {
 					}//end switch splitAction[0]
 				} else {
 					response.writeHead(400, {'Content-Type': 'text/html'});
-					response.end("<HTML><body>Site Action URI mismatch.</body></HTML>");
+					response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText","Site Action URI mismatch"));
 				}
 				break; //end GET
 			case "PUT":
@@ -205,23 +206,28 @@ const server = http.createServer((request, response) => {
 				});
 				request.on('end', () => {
 					var inputData = JSON.parse(body);
-				try {
 					statusCode=400;
+					responseData = request.method+" "+JSON.stringify(sites[pagename])+" failed: "
+					var consoleMsg = request.method+" failed from "+request.socket.remoteAddress+" for page "+pagename+": "
+				try {
 					if (pagename != inputData.URI) {
-						responseData = request.method+JSON.stringify(sites[pagename])+" failed: URI does not match server location.";
-						console.log(request.method+" failed from "+request.socket.remoteAddress+" for page "+pagename+" : URI does not match server location.");
+						var outMsg = "URI does not match server location."
+						responseData += outMsg;
+						console.log(consoleMsg+outMsg);
 						response.writeHead(statusCode, {'Content-Type': contentType});
-						response.end(responseData);
+						response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",responseData));
 					} else if (inputData.AccessList == "") {
-						responseData = request.method+JSON.stringify(sites[pagename])+" failed: AccessList too short.";
-						console.log(request.method+" failed from "+request.socket.remoteAddress+" for page "+pagename+" : AccessList too short.");
+						var outMsg = "AccessList too short."
+						responseData += outMsg;
+						console.log(consoleMsg+outMsg);
 						response.writeHead(statusCode, {'Content-Type': contentType});
-						response.end(responseData);
+						response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",responseData));
 					} else if (inputData.Action == "") {
-						responseData = request.method+JSON.stringify(sites[pagename])+" failed: Action too short.";
-						console.log(request.method+" failed from "+request.socket.remoteAddress+" for page "+pagename+" : Action too short.");
+						var outMsg = "Action too short."
+						responseData += outMsg;
+						console.log(consoleMsg+outMsg);
 						response.writeHead(statusCode, {'Content-Type': contentType});
-						response.end(responseData);
+						response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",responseData));
 					} else {
 						statusCode=200;
 						sites[pagename] = inputData;
@@ -231,12 +237,12 @@ const server = http.createServer((request, response) => {
 						dataSave(sites,inMemCacheFile);
 						response.end(responseData);
 					}; //end if pagename
-				} catch (err) {
+				} catch (outMsg) {
 					statusCode=400;
-					responseData = request.method+JSON.stringify(sites[pagename])+" failed: "+err;
-					console.log(request.method+" failed from "+request.socket.remoteAddress+" for page "+pagename+" : "+err);
+					responseData += outMsg;
+					console.log(consoleMsg+outMsg);
 					response.writeHead(statusCode, {'Content-Type': contentType});
-					response.end(responseData);
+					response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",responseData));
 				} //end try
 				});
 				break; //end PUT
@@ -281,13 +287,15 @@ const server = http.createServer((request, response) => {
 				response.end(responseData);
 				break; //end POST
 			default:
-				response.writeHead(405, {'Content-Type': 'text/html'});
-				response.end(error405);
+				statusCode = 405;
+				response.writeHead(statusCode, {'Content-Type': 'text/html'});
+				response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",error405));
 				break; //end default
 		}//end switch
 	} else {
-		response.writeHead(405, {'Content-Type': 'text/html'});
-		response.end(error405);
+		statusCode = 405;
+		response.writeHead(statusCode, {'Content-Type': 'text/html'});
+		response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",error405));
 	}
 })
 
