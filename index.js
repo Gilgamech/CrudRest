@@ -48,13 +48,6 @@ const server = http.createServer((request, response) => {
 	var allowedVerbs = "";
 	var pagename = request.url;
 	console.log(request.method+" request from "+request.socket.remoteAddress+" for page "+pagename);
-
-	if (request.url=='/'){
-		pagename = "/index.html";
-	} else {
-		pagename = request.url;
-	};
-
 	
 	if (sites[pagename] == null) {
 		console.log("New page "+pagename);
