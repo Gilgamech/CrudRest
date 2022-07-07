@@ -55,48 +55,10 @@ const server = http.createServer((request, response) => {
 		pagename = request.url;
 	};
 
-	switch(pagename.split(".")[1]) {
-	  case "css":
-		contentType = 'text/css'
-		break;
-	  case "gif":
-		contentType = 'image/gif'
-		break;
-	  case "htm":
-		contentType = 'text/html'
-		break;
-	  case "html":
-		contentType = 'text/html'
-		break;
-	  case "ico":
-		contentType = 'image/x-icon'
-		break;
-	  case "jpg":
-		contentType = 'image/jpeg'
-		break;
-	  case "js":
-		contentType = 'application/javascript'
-		break;
-	  case "pdf":
-		contentType = 'application/pdf'
-		break;
-	  case "png":
-		contentType = 'image/png'
-		break;
-	  case "scad":
-		break;
-	  case "txt":
-		break;
-	  case "png":
-		contentType = 'image/png'
-		break;
-	  default:
-		break;
-	}//end switch pagename
 	
 	if (sites[pagename] == null) {
 		console.log("New page "+pagename);
-		sites[pagename] = {"URI":pagename,"Action":"fs~"+pagename,"Owner":"","AccessList":{"Everyone":defaultVerbs},"notes":"","PutData":""};
+		sites[pagename] = {"URI":pagename,"Action":"fs~"+pagename+"~"+contentType,"Owner":"","AccessList":{"Everyone":defaultVerbs},"notes":"","PutData":""};
 		dataSave(sites,inMemCacheFile);
 	}
 	
@@ -115,7 +77,7 @@ const server = http.createServer((request, response) => {
 		let body = '';
 		switch(request.method) {
 			case "HEAD":
-				response.writeHead(statusCode, {'Content-Type': contentType});
+				response.writeHead(statusCode, {'Content-Type': getContentType(pagename)});
 				response.end();
 				break; //end HEAD
 			case "GET":
@@ -160,13 +122,13 @@ const server = http.createServer((request, response) => {
 							webRequest(splitAction[1], URItoLoad,function(data){
 								sites[pagename].PutData = data;
 								responseData = sites[pagename].PutData;
-								response.writeHead(statusCode, {'Content-Type': contentType});
+								response.writeHead(statusCode, {'Content-Type': getContentType(pagename)});
 								dataSave(sites,inMemCacheFile);
 								response.end(responseData);
 							});
 						} else {
 							responseData = sites[pagename].PutData;
-							response.writeHead(statusCode, {'Content-Type': contentType});
+							response.writeHead(statusCode, {'Content-Type': getContentType(pagename)});
 							dataSave(sites,inMemCacheFile);
 							response.end(responseData);
 						}
@@ -179,7 +141,7 @@ const server = http.createServer((request, response) => {
 								response.end(error404);
 							}
 							responseData = data;
-							response.writeHead(statusCode, {'Content-Type': contentType});
+							response.writeHead(statusCode, {'Content-Type': getContentType(splitAction[1])});
 							response.end(responseData);
 						});
 						break;//end fs
@@ -227,7 +189,7 @@ const server = http.createServer((request, response) => {
 
 						//Return as response.
 						responseData = sites[pagename].PutData;
-						response.writeHead(statusCode, {'Content-Type': contentType});
+						response.writeHead(statusCode, {'Content-Type': getContentType(pagename)});
 						dataSave(sites,inMemCacheFile);
 						response.end(responseData);
 					default://splitAction[0]
@@ -235,7 +197,7 @@ const server = http.createServer((request, response) => {
 							if (typeof responseData == "number"){
 								responseData = JSON.stringify(responseData);
 							}
-							response.writeHead(statusCode, {'Content-Type': contentType});
+							response.writeHead(statusCode, {'Content-Type': getContentType(pagename)});
 							response.end(responseData);
 						break;
 					}//end switch splitAction[0]
@@ -356,6 +318,50 @@ function dataSave(dict,filename) {
 	}
 }
 
+function getContentType(pagename) {
+		switch(pagename.split(".")[1]) {
+	  case "css":
+		return 'text/css'
+		break;
+	  case "gif":
+		return 'image/gif'
+		break;
+	  case "htm":
+		return 'text/html'
+		break;
+	  case "html":
+		return 'text/html'
+		break;
+	  case "ico":
+		return 'image/x-icon'
+		break;
+	  case "jpg":
+		return 'image/jpeg'
+		break;
+	  case "js":
+		return 'application/javascript'
+		break;
+	  case "pdf":
+		return 'application/pdf'
+		break;
+	  case "png":
+		return 'image/png'
+		break;
+	  case "scad":
+		return 'text/plain'
+		break;
+	  case "txt":
+		return 'text/plain'
+		break;
+	  case "png":
+		return 'image/png'
+		break;
+	  default:
+		return 'text/plain'
+		break;
+	}//end switch pagename
+}
+
 function webRequest(method, location, callback, JSON,file,cached) {
 	var port = 80;
 	var locationSplit = location.split(":");
@@ -367,53 +373,13 @@ function webRequest(method, location, callback, JSON,file,cached) {
 	var host = locationSplit2[2]
 	var path = "/"+locationSplit2.slice(3,locationSplit2.length).join("/")
 	console.log(protocol+" request method "+method+" for path "+path+" from host "+host+" on port "+port)
-
-	var contentType = 'text/plain';
 	var encodingType = '';
-	switch(pagename.split(".")[1]) {
-	  case "css":
-		contentType = 'text/css'
-		break;
-	  case "gif":
-		contentType = 'image/gif'
-		break;
-	  case "htm":
-		contentType = 'text/html'
-		break;
-	  case "html":
-		contentType = 'text/html'
-		break;
-	  case "ico":
-		contentType = 'image/x-icon'
-		break;
-	  case "jpg":
-		contentType = 'image/jpeg'
-		break;
-	  case "js":
-		contentType = 'application/javascript'
-		break;
-	  case "pdf":
-		contentType = 'application/pdf'
-		break;
-	  case "png":
-		contentType = 'image/png'
-		break;
-	  case "scad":
-		break;
-	  case "txt":
-		break;
-	  case "png":
-		contentType = 'image/png'
-		break;
-	  default:
-		break;
-	}//end switch pagename
 
 	var $headers = {};
 	switch (method) {
 		case "POST":
 		$headers= {
-			'Content-Type': 'text/plain',
+			'Content-Type': getContentType(file),
 			'Content-Length': Buffer.byteLength($file)
 		}
 		break;
@@ -424,7 +390,7 @@ function webRequest(method, location, callback, JSON,file,cached) {
 		break;
 	case 'PUT':
 		$headers= {
-			'Content-Type': 'application/json',
+			'Content-Type': getContentType(file),
 			'Content-Length': Buffer.byteLength($file)
 		}
 		break;
