@@ -3,7 +3,7 @@
 //Made by: Stephen Gillie
 //Created on: 6/17/2022
 //Updated on: 7/5/2022
-//Notes: The goal for CrudRest is to be, in different modes, a webserver, database, load balancer, in-memory cache, message queue, pub sub hub, login IdP, password manager, and a variety of other uses.
+//Notes: The goal for CrudRest is to be, in different configurations, a webserver, database, load balancer, in-memory cache, message queue, pub sub hub, login IdP, password manager, and a variety of other uses.
 
 const http = require("http");
 const https = require("https");
@@ -99,7 +99,17 @@ const server = http.createServer((request, response) => {
 		dataSave(sites,inMemCacheFile);
 	}
 	
-	var allowedVerbs = [...new Set([...sites[pagename].AccessList["Everyone"], ...sites[pagename].AccessList[userName]])]
+	var allowedVerbs = "";
+	var jsonAccessList = JSON.stringify(sites[pagename].AccessList);
+	
+	if (jsonAccessList.includes("Everyone") && jsonAccessList.includes(userName)){
+		allowedVerbs = [...new Set([...sites[pagename].AccessList["Everyone"], ...sites[pagename].AccessList[userName]])]
+	} else if (jsonAccessList.includes("Everyone")){
+		allowedVerbs = sites[pagename].AccessList["Everyone"]
+	} else if (jsonAccessList.includes(userName)){
+		allowedVerbs = sites[pagename].AccessList[userName]
+	} else {
+	}
 
 	if (allowedVerbs.includes(request.method)) {
 		let body = '';
