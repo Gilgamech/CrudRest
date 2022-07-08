@@ -146,7 +146,7 @@ const server = http.createServer((request, response) => {
 							response.end(responseData);
 						}
 						break;//end fs
-					case "math":
+					case "data":
 						//Replace from putData
 						//Spread out operators by adding spaces between them, then remove any doubled spaces if they already had spaces there. Then split into a word array.
 						responseData = splitAction[1].replace(/\+/g," + ").replace(/-/g," - ").replace(/\*/g," * ").replace(/\//g," / ").replace(/,/g," , ").replace(/]/g," ] ").replace(/}/g," } ").replace(/  /g," ");
