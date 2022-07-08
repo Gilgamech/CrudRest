@@ -64,9 +64,13 @@ const server = http.createServer((request, response) => {
 		dataSave(sites,inMemCacheFile);
 	}
 	
-	if (JSON.stringify(Users).includes(request.headers["token"])) {
-		if (Users[request.headers["token"]].expiry > now.valueOf()) {//If the date is still smaller than the expiry
-			userName = Users[request.headers["token"]];
+	if (JSON.stringify(request.headers).includes("Bearer ")) {
+		var incomingToken = request.headers["token"].split(" ")[1]
+		if (JSON.stringify(Users).includes(incomingToken)) {
+			if (Users[Users[incomingToken]].expiry > now.valueOf()) {//If the date is still smaller than the expiry
+			//Users[token] holds the username, Users[username] holds the expiry.
+				userName = Users[incomingToken];
+			}
 		}
 	}
 	
