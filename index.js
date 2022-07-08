@@ -12,7 +12,6 @@ const url  = require('url');
 const serverPort = 80;
 const wwwFolder = "/home/app"
 const inMemCacheFile = "/inMemCacheFile.txt"
-const files = fs.readdirSync(wwwFolder);
 const defaultVerbs = ["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"];
 
 var error405 = "Method Not Allowed.";
@@ -49,7 +48,7 @@ const server = http.createServer((request, response) => {
 	
 	if (sites[pagename] == null) {
 		console.log("New page "+pagename);
-		sites[pagename] = {"URI":pagename,"Action":"fs~"+pagename+"~"+contentType,"Owner":"","AccessList":{"Everyone":defaultVerbs},"notes":"","Data":""};
+		sites[pagename] = {"URI":pagename,"Action":"fs~"+pagename,"Owner":"","AccessList":{"Everyone":defaultVerbs},"notes":"","Data":""};
 		dataSave(sites,inMemCacheFile);
 	}
 	
@@ -106,7 +105,7 @@ const server = http.createServer((request, response) => {
 								URItoLoad = URIList[LBNum]
 								sites[pagename].notes = sites[pagename].notes + "LB:"+LBNum+";";
 						console.log("NO LB: "+JSON.stringify(sites[pagename].notes))
-							}
+							}//end if sites pagename
 						}//end if URIList
 						var expiry = splitAction[3];
 						if (sites[pagename].Data == "") {
@@ -185,7 +184,7 @@ const server = http.createServer((request, response) => {
 							}// end if mathOperators
 						}//end for let a 
 
-						//Store at current location
+						//Store at current location, after reverting closing tags.
 						sites[pagename].Data = responseData.replace(/\<\$/,"</");
 
 						//Return as response.
