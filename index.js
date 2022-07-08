@@ -49,7 +49,7 @@ const server = http.createServer((request, response) => {
 	
 	if (sites[pagename] == null) {
 		console.log("New page "+pagename);
-		sites[pagename] = {"URI":pagename,"Action":"fs~"+pagename+"~"+contentType,"Owner":"","AccessList":{"Everyone":defaultVerbs},"notes":"","PutData":""};
+		sites[pagename] = {"URI":pagename,"Action":"fs~"+pagename+"~"+contentType,"Owner":"","AccessList":{"Everyone":defaultVerbs},"notes":"","Data":""};
 		dataSave(sites,inMemCacheFile);
 	}
 	
@@ -83,7 +83,7 @@ const server = http.createServer((request, response) => {
 //Replace comma-split list of sites with semicolon-split list of actions. 
 						if (URIList.length > 1){
 							//disable caching for now.
-							sites[pagename].PutData = ""
+							sites[pagename].Data = ""
 							//How to specify different LB types - weighted, round robin, etc?
 							var LBNum = 0;
 							
@@ -109,23 +109,23 @@ const server = http.createServer((request, response) => {
 							}
 						}//end if URIList
 						var expiry = splitAction[3];
-						if (sites[pagename].PutData == "") {
+						if (sites[pagename].Data == "") {
 							webRequest(splitAction[1], URItoLoad,function(data){
-								sites[pagename].PutData = data;
-								responseData = sites[pagename].PutData;
+								sites[pagename].Data = data;
+								responseData = sites[pagename].Data;
 								response.writeHead(statusCode, {'Content-Type': getContentType(pagename)});
 								dataSave(sites,inMemCacheFile);
 								response.end(responseData);
 							});
 						} else {
-							responseData = sites[pagename].PutData;
+							responseData = sites[pagename].Data;
 							response.writeHead(statusCode, {'Content-Type': getContentType(pagename)});
 							dataSave(sites,inMemCacheFile);
 							response.end(responseData);
 						}
 						break;//end uri
 					case "fs":
-						if (sites[pagename].PutData == "") {
+						if (sites[pagename].Data == "") {
 							fs.readFile(wwwFolder+splitAction[1], function (err,data) {
 								if (err) {
 									statusCode=404;
@@ -134,13 +134,13 @@ const server = http.createServer((request, response) => {
 									response.writeHead(statusCode, {'Content-Type': 'text/html'});
 									response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",outMsg));
 								}
-								sites[pagename].PutData = data;
-								responseData = sites[pagename].PutData;
+								sites[pagename].Data = data;
+								responseData = sites[pagename].Data;
 								response.writeHead(statusCode, {'Content-Type': getContentType(splitAction[1])});
 								response.end(responseData);
 							});
 						} else {
-							responseData = sites[pagename].PutData;
+							responseData = sites[pagename].Data;
 							response.writeHead(statusCode, {'Content-Type': getContentType(splitAction[1])});
 							dataSave(sites,inMemCacheFile);
 							response.end(responseData);
@@ -154,7 +154,7 @@ const server = http.createServer((request, response) => {
 						//Go through the word array, and replace any paths (Use % instead of / to denote website directory or path, to avoid confusion with mathematical division.)
 						for (let datum of responseSplit) {
 							if (datum.includes("%")) {
-								responseData = responseData.replace(datum,sites[datum.replace(/%/g,"/")].PutData)
+								responseData = responseData.replace(datum,sites[datum.replace(/%/g,"/")].Data)
 							}
 						}
 
@@ -186,15 +186,15 @@ const server = http.createServer((request, response) => {
 						}//end for let a 
 
 						//Store at current location
-						sites[pagename].PutData = responseData;
+						sites[pagename].Data = responseData;
 
 						//Return as response.
-						responseData = sites[pagename].PutData;
+						responseData = sites[pagename].Data;
 						response.writeHead(statusCode, {'Content-Type': getContentType(pagename)});
 						dataSave(sites,inMemCacheFile);
 						response.end(responseData);
 					default://splitAction[0]
-							responseData = sites[pagename].PutData;
+							responseData = sites[pagename].Data;
 							if (typeof responseData == "number"){
 								responseData = JSON.stringify(responseData);
 							}
@@ -260,10 +260,10 @@ const server = http.createServer((request, response) => {
 				request.on('end', () => {
 					if (sites[pagename] == null) {
 						console.log(pagename+" empty, populating.")
-						sites[pagename].PutData = body;
+						sites[pagename].Data = body;
 					} else {
 						console.log(pagename+" exists, appending.")
-						sites[pagename].PutData += body;
+						sites[pagename].Data += body;
 					}
 //Should this also save the individual file, along with the cache?
 					responseData = request.method+JSON.stringify(sites[pagename].URI);
