@@ -431,8 +431,7 @@ function webRequest(method, location, callback, JSON,file,cached) {
 		});
 	});
 	req.on('error', error => {
-		var errMsg = "problem with request: "+error.message
-		console.error(errMsg);
+		console.error("problem with request: "+error.message);
 	});
 	if (file) {
 		req.write(file);
