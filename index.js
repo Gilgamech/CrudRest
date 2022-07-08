@@ -128,10 +128,10 @@ const server = http.createServer((request, response) => {
 							fs.readFile(wwwFolder+splitAction[1], function (err,data) {
 								if (err) {
 									statusCode=404;
-									var outMsg = "Not found."
-									console.log(statusCode+" "+outMsg);
+									let errMsg = "Not found."
+									console.log(statusCode+" "+errMsg);
 									response.writeHead(statusCode, {'Content-Type': 'text/html'});
-									response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",outMsg));
+									response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",errMsg));
 								}
 								sites[pagename].Data = data;
 								responseData = sites[pagename].Data;
