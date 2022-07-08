@@ -2,7 +2,7 @@
 //Title: Basic Webserver
 //Made by: Stephen Gillie
 //Created on: 6/17/2022
-//Updated on: 7/5/2022
+//Updated on: 7/8/2022
 //Notes: The goal for CrudRest is to be, in different configurations, a webserver, database, load balancer, in-memory cache, message queue, pub sub hub, login IdP, password manager, and a variety of other uses.
 
 const http = require("http");
@@ -19,6 +19,7 @@ var optionsData = 'HTTP/1.1 200 OK\nAllow: GET,POST,PUT,PATCH,DELETE,HEAD,OPTION
 var mathOperators = ["+","-","*","/"]
 var saveDateTime = 0;
 var sites = new Object();
+var Users = new Object();
 
 fs.readFile(inMemCacheFile, function (err,data) {
 	if (err) {
@@ -65,6 +66,7 @@ const server = http.createServer((request, response) => {
 
 	if (allowedVerbs.includes(request.method)) {
 		let body = '';
+		//Split action into array by tildes.
 		switch(request.method) {
 			case "HEAD":
 				response.writeHead(statusCode, {'Content-Type': getContentType(pagename)});
@@ -72,7 +74,6 @@ const server = http.createServer((request, response) => {
 				break; //end HEAD
 			case "GET":
 			if (pagename == sites[pagename].URI) {
-				//Split action into array by tildes.
 				var splitAction = sites[pagename].Action.split("~");
 				switch(splitAction[0]) {
 					case "uri":
@@ -85,7 +86,6 @@ const server = http.createServer((request, response) => {
 							sites[pagename].Data = ""
 							//How to specify different LB types - weighted, round robin, etc?
 							var LBNum = 0;
-							
 							if (sites[pagename].notes.includes("LB:")){
 								//If the LB tag exists, split by semicolon then sort through them to find it. 
 								var newNote = "";
@@ -95,8 +95,8 @@ const server = http.createServer((request, response) => {
 										LBNum = note.split(":")[1]*1;
 									} else {
 										newNote += note;
-									}//end if note
-								}//end for let note
+									}; //end if note
+								}; //end for let note
 									var LBPage = (LBNum+1)%(URIList.length);
 									sites[pagename].notes = newNote+" LB:"+LBPage+";";
 						console.log("LB: "+JSON.stringify(sites[pagename].notes))
@@ -105,8 +105,8 @@ const server = http.createServer((request, response) => {
 								URItoLoad = URIList[LBNum]
 								sites[pagename].notes = sites[pagename].notes + "LB:"+LBNum+";";
 						console.log("NO LB: "+JSON.stringify(sites[pagename].notes))
-							}//end if sites pagename
-						}//end if URIList
+							}; //end if sites pagename
+						}; //end if URIList
 						var expiry = splitAction[3];
 						if (sites[pagename].Data == "") {
 							webRequest(splitAction[1], URItoLoad,function(data){
@@ -180,9 +180,9 @@ const server = http.createServer((request, response) => {
 									default://Operator
 										console.log("err default")
 										break;
-								}//end switch Operator
-							}// end if mathOperators
-						}//end for let a 
+								}; //end switch Operator
+							}; //end if mathOperators
+						}; //end for let a 
 
 						//Store at current location, after reverting closing tags.
 						sites[pagename].Data = responseData.replace(/\<\$/,"</");
@@ -200,7 +200,7 @@ const server = http.createServer((request, response) => {
 							response.writeHead(statusCode, {'Content-Type': getContentType(pagename)});
 							response.end(responseData);
 						break;
-					}//end switch splitAction[0]
+					}; //end switch splitAction[0]
 				} else {
 					response.writeHead(400, {'Content-Type': 'text/html'});
 					response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText","Site Action URI mismatch"));
@@ -212,44 +212,45 @@ const server = http.createServer((request, response) => {
 				});
 				request.on('end', () => {
 					var inputData = JSON.parse(body);
+					let errMsg = "";
 					statusCode=400;
 					responseData = request.method+" "+JSON.stringify(sites[pagename])+" failed: "
 					var consoleMsg = request.method+" failed from "+request.socket.remoteAddress+" for page "+pagename+": "
-				try {
-					if (pagename != inputData.URI) {
-						var outMsg = "URI does not match server location."
-						responseData += outMsg;
-						console.log(consoleMsg+outMsg);
+					try {//Verify inputs
+						if (pagename != inputData.URI) {
+							errMsg = "URI does not match server location."
+							responseData += errMsg;
+							console.log(consoleMsg+errMsg);
+							response.writeHead(statusCode, {'Content-Type': contentType});
+							response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",responseData));
+						} else if (inputData.AccessList == "") {
+							errMsg = "AccessList too short."
+							responseData += errMsg;
+							console.log(consoleMsg+errMsg);
+							response.writeHead(statusCode, {'Content-Type': contentType});
+							response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",responseData));
+						} else if (inputData.Action == "") {
+							errMsg = "Action too short."
+							responseData += errMsg;
+							console.log(consoleMsg+errMsg);
+							response.writeHead(statusCode, {'Content-Type': contentType});
+							response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",responseData));
+						} else {
+							statusCode=200;
+							sites[pagename] = inputData;
+							responseData = request.method+JSON.stringify(sites[pagename])+" successful";
+							console.log(request.method+" complete from "+request.socket.remoteAddress+" for page "+pagename);
+							response.writeHead(statusCode, {'Content-Type': contentType});
+							dataSave(sites,inMemCacheFile);
+							response.end(responseData);
+						}; //end if pagename
+					} catch (errMsg) {
+						statusCode=400;
+						responseData += errMsg;
+						console.log(consoleMsg+errMsg);
 						response.writeHead(statusCode, {'Content-Type': contentType});
 						response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",responseData));
-					} else if (inputData.AccessList == "") {
-						var outMsg = "AccessList too short."
-						responseData += outMsg;
-						console.log(consoleMsg+outMsg);
-						response.writeHead(statusCode, {'Content-Type': contentType});
-						response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",responseData));
-					} else if (inputData.Action == "") {
-						var outMsg = "Action too short."
-						responseData += outMsg;
-						console.log(consoleMsg+outMsg);
-						response.writeHead(statusCode, {'Content-Type': contentType});
-						response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",responseData));
-					} else {
-						statusCode=200;
-						sites[pagename] = inputData;
-						responseData = request.method+JSON.stringify(sites[pagename])+" successful";
-						console.log(request.method+" complete from "+request.socket.remoteAddress+" for page "+pagename);
-						response.writeHead(statusCode, {'Content-Type': contentType});
-						dataSave(sites,inMemCacheFile);
-						response.end(responseData);
-					}; //end if pagename
-				} catch (outMsg) {
-					statusCode=400;
-					responseData += outMsg;
-					console.log(consoleMsg+outMsg);
-					response.writeHead(statusCode, {'Content-Type': contentType});
-					response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",responseData));
-				} //end try
+					}; //end try
 				});
 				break; //end PUT
 			case "POST":
@@ -297,7 +298,7 @@ const server = http.createServer((request, response) => {
 				response.writeHead(statusCode, {'Content-Type': 'text/html'});
 				response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",error405));
 				break; //end default
-		}//end switch
+		}; //end switch
 	} else {
 		statusCode = 405;
 		response.writeHead(statusCode, {'Content-Type': 'text/html'});
@@ -366,7 +367,7 @@ function getContentType(pagename) {
 	  default:
 		return 'text/plain'
 		break;
-	}//end switch pagename
+	}; //end switch pagename
 }
 
 function webRequest(method, location, callback, JSON,file,cached) {
