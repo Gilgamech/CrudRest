@@ -67,6 +67,7 @@ const server = http.createServer((request, response) => {
 	if (allowedVerbs.includes(request.method)) {
 		let body = '';
 		//Split action into array by tildes.
+		var splitAction = sites[pagename].Action.split("~");
 		switch(request.method) {
 			case "HEAD":
 				response.writeHead(statusCode, {'Content-Type': getContentType(pagename)});
@@ -74,7 +75,6 @@ const server = http.createServer((request, response) => {
 				break; //end HEAD
 			case "GET":
 			if (pagename == sites[pagename].URI) {
-				var splitAction = sites[pagename].Action.split("~");
 				switch(splitAction[0]) {
 					case "uri":
 						var URItoLoad = splitAction[2]
