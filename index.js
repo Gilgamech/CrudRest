@@ -125,18 +125,26 @@ const server = http.createServer((request, response) => {
 						}
 						break;//end uri
 					case "fs":
-						fs.readFile(wwwFolder+splitAction[1], function (err,data) {
-							if (err) {
-								statusCode=404;
-								var outMsg = "Not found."
-								console.log(statusCode+" "+outMsg);
-								response.writeHead(statusCode, {'Content-Type': 'text/html'});
-								response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",outMsg));
-							}
-							responseData = data;
+						if (sites[pagename].PutData == "") {
+							fs.readFile(wwwFolder+splitAction[1], function (err,data) {
+								if (err) {
+									statusCode=404;
+									var outMsg = "Not found."
+									console.log(statusCode+" "+outMsg);
+									response.writeHead(statusCode, {'Content-Type': 'text/html'});
+									response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",outMsg));
+								}
+								sites[pagename].PutData = data;
+								responseData = sites[pagename].PutData;
+								response.writeHead(statusCode, {'Content-Type': getContentType(splitAction[1])});
+								response.end(responseData);
+							});
+						} else {
+							responseData = sites[pagename].PutData;
 							response.writeHead(statusCode, {'Content-Type': getContentType(splitAction[1])});
+							dataSave(sites,inMemCacheFile);
 							response.end(responseData);
-						});
+						}
 						break;//end fs
 					case "math":
 						//Replace from putData
