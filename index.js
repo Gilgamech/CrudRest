@@ -17,6 +17,7 @@ const defaultVerbs = ["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"
 var error405 = "Method Not Allowed.";
 var optionsData = 'HTTP/1.1 200 OK\nAllow: GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS\nAccess-Control-Allow-Origin: https://Gilgamech.com\nAccess-Control-Allow-Methods: GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS\nAccess-Control-Allow-Headers: Content-Type'
 var mathOperators = ["+","-","*","/"]
+var now = new Date();
 var saveDateTime = 0;
 var sites = new Object();
 var Users = new Object();
@@ -45,7 +46,7 @@ const server = http.createServer((request, response) => {
 	var userName = "Everyone"
 	var allowedVerbs = "";
 	var pagename = request.url;
-	console.log(request.method+" request from "+request.socket.remoteAddress+" for page "+pagename);
+	console.log(now.toISOString()+" - "+request.method+" request from "+request.socket.remoteAddress+" for page "+pagename);
 	
 	if (sites[pagename] == null) {
 		console.log("New page "+pagename);
@@ -311,9 +312,8 @@ server.listen((serverPort), () => {
 })
 
 function dataSave(dict,filename) {
-	var date = new Date();
-	if (saveDateTime < date) {
-		saveDateTime = date.valueOf()+5000;
+	if (saveDateTime < now) {//if the date has increased by more than 5000 ms since saveDateTime was last updated...
+		saveDateTime = now.valueOf()+5000;
 		fs.writeFile(filename, JSON.stringify(dict), (err) => {
 			if (err) {
 				console.log("dataSave err: "+err);
