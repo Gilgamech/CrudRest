@@ -55,6 +55,7 @@ const server = http.createServer((request, response) => {
 	var contentType = 'text/plain';
 	var encodingType = '';
 	var userName = "Everyone"
+	var incomingToken = '';
 	var allowedVerbs = "";
 	var pagename = request.url;
 	
