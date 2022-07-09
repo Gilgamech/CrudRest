@@ -37,6 +37,27 @@
 - DELETE - Deletes the path's Putfile. 
 - MERGE - Read only display of Putfile. (I ran out of verbs.)
 
+### Available Actions
+
+- uri
+	- Format: "uri\~FullPathOrListOfFullPaths\~cacheExpiry"
+	- Performs the requested verb against the requested resource or resources, then stores the data in the Putfile Data property, then serves from there. 
+	- All examples here simply GET the remote resource, but PUT, POST, and all other verbs are available. 
+	- Automatically caches single-site Actions. Multi-site caching, invalidation, and expiry functionality to come.
+- fs
+	- Format: "fs\~/path\~cacheExpiry"
+	- Loads a file from the filesystem, stores it in the path's Data property, and serves it from there.
+	- Caches indefinitely. Cache invalidation, and expiry functionality to come.
+- data
+	- Formats:
+		- "data\~%path\~cacheExpiry"
+		- "data\~%path %otherPath\~cacheExpiry"
+		- "data\~%path mathOp %otherPath\~cacheExpiry"
+		- "data\~%path mathOp integer\~cacheExpiry"
+		- "data\~integer mathOp integer\~cacheExpiry"
+		- "data\~%path &lt;htmlTag&gt;ArbitraryTextGoesHere&lt;/htmlTag&gt; %otherPath\~cacheExpiry"
+	- Populates the Path Variables with the Data property of their Putfile, then performs any math operations in the Action. Stores the output in this path's PutFile's Data property before responding with it.
+
 ## Filesystem source
 
 - Filesystem source is the default Action for paths. 
@@ -69,6 +90,19 @@
 
 ## URI source
 
+#### Cache 1 remote site (CDN presence edge)
+
+- Method: Put
+- Location: http://localhost/BobbyTables.html
+    1. URI: /BobbyTables.html
+    2. Action:  uri\~GET\~https://www.Gilgamech.com\~0
+    3. Owner: BobbyTables
+    4. AccessList: Everyone: \[GET HEAD OPTIONS POST PUT DELETE MERGE\]
+    5. notes:
+    6. Data: 
+
+A single URI in the Action causes the URI to become cached at that path. Caching functionality is still in progress.
+
 #### Load-balance between 2 websites
 
 - Method: Put
@@ -80,7 +114,7 @@
     5. notes:
     6. Data: 
 
-The Action can hold numerous URLs. For traditional load balancing, these would be internal locations, such as https://server1/ and https://server2/. External URLs with very different pages are being used here for demonstration only.
+The Action can hold numerous URIs. For traditional load balancing, these would be internal locations, such as https://server1/ and https://server2/. External URIs with very different pages are being used here mostly for demonstration.
 
 ## In-memory source
 
