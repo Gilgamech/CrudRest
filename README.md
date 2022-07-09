@@ -56,6 +56,7 @@
 		- "data\~%path mathOp integer\~cacheExpiry"
 		- "data\~integer mathOp integer\~cacheExpiry"
 		- "data\~%path &lt;htmlTag&gt;ArbitraryTextGoesHere&lt;/htmlTag&gt; %otherPath\~cacheExpiry"
+	- "mathOp" here is short for mathematical operation, represented by the common symbols "+", "-", "\*", and "/". Currently only the basic 4 operations of addition, subtraction, multiplication, and division are supported, but plans are to make this section much more robust and use a C-ish language.
 	- Populates the Path Variables with the Data property of their Putfile, then performs any math operations in the Action. Stores the output in this path's PutFile's Data property before responding with it.
 
 ## Filesystem source
