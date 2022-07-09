@@ -56,7 +56,6 @@ const server = http.createServer((request, response) => {
 	var userName = "Everyone"
 	var allowedVerbs = "";
 	var pagename = request.url;
-	console.log(now.toISOString()+" - "+request.method+" request from "+request.socket.remoteAddress+" for page "+pagename);
 	
 	if (sites[pagename] == null) {
 		console.log("New page "+pagename);
@@ -74,6 +73,7 @@ const server = http.createServer((request, response) => {
 			//console.log(JSON.stringify(Users))
 		}
 	} catch {}
+	console.log("At "+now.toISOString()+" user "+userName+" made "+request.method+" request from "+request.socket.remoteAddress+" for page "+pagename);
 	
 	var jsonAccessList = JSON.stringify(sites[pagename].AccessList);
 	if (jsonAccessList.includes("Everyone") && jsonAccessList.includes(userName)){
@@ -321,7 +321,6 @@ const server = http.createServer((request, response) => {
 //Should this also save the individual file, along with the cache?
 					responseData = request.method+JSON.stringify(sites[pagename].URI);
 					console.log(request.method+" complete from "+request.socket.remoteAddress+" for page "+pagename);
-					
 					response.writeHead(statusCode, {'Content-Type': contentType});
 					dataSave(sites,inMemCacheFile);
 					response.end(responseData);
@@ -330,19 +329,16 @@ const server = http.createServer((request, response) => {
 			case "DELETE":
 				sites[pagename] = null;
 				responseData = request.method+pagename+" successful";
-				
 				response.writeHead(statusCode, {'Content-Type': contentType});
 				dataSave(sites,inMemCacheFile);
 				response.end(responseData);
 				break; //end DELETE
 			case "MERGE":
 				responseData = JSON.stringify(sites[pagename]);
-				
 				response.end(responseData);
 				break; //end POST
 			case "OPTIONS":
 				responseData = optionsData;
-					
 				response.writeHead(statusCode, {'Content-Type': contentType});
 				response.end(responseData);
 				break; //end POST
