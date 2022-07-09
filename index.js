@@ -167,7 +167,7 @@ const server = http.createServer((request, response) => {
 					case "data":
 						//Replace from Data
 						//Spread out operators by adding spaces between them, then remove any doubled spaces if they already had spaces there. Then split into a word array.
-						responseData = splitAction[1].replace(/\<\//,"<$").replace(/\+/g," + ").replace(/\+/g," + ").replace(/-/g," - ").replace(/\*/g," * ").replace(/\//g," / ").replace(/,/g," , ").replace(/]/g," ] ").replace(/}/g," } ").replace(/  /g," ");
+						responseData = splitAction[1].replace(/\<\//g,"<$").replace(/\+/g," + ").replace(/\+/g," + ").replace(/-/g," - ").replace(/\*/g," * ").replace(/\//g," / ").replace(/,/g," , ").replace(/]/g," ] ").replace(/}/g," } ").replace(/  /g," ");
 						responseSplit = responseData.split(" ");
 						//Go through the word array, and replace any paths (Use % instead of / to denote website directory or path, to avoid confusion with mathematical division.)
 						for (let datum of responseSplit) {
@@ -204,7 +204,7 @@ const server = http.createServer((request, response) => {
 						}; //end for let a 
 
 						//Store at current location, after reverting closing tags.
-						sites[pagename].Data = responseData.replace(/\<\$/,"</");
+						sites[pagename].Data = responseData.replace(/\<\$/g,"</");
 
 						//Return as response.
 						responseData = sites[pagename].Data;
