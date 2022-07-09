@@ -281,6 +281,38 @@ const server = http.createServer((request, response) => {
 					if (sites[pagename] == null) {
 						console.log(pagename+" empty, populating.")
 						sites[pagename].Data = body;
+					} else if (sites[pagename].URI == pagename) {
+						switch(splitAction[0]) {
+							case "login":
+							body = JSON.parse(body);
+							console.log("body: "+JSON.stringify(body))
+							let token = randomToken();
+							if (JSON.stringify(Users).includes(body.username)) {
+								if (Users[body.username].password == body.password) {
+									userName = body.username;
+									Users[userName].token = token; 
+									Users[userName].expiry = now.valueOf()+86400000;
+									Users[token] = userName;
+									dataSave(Users,userFile);
+									responseData = "Bearer "+JSON.stringify(Users[userName].token);
+								} else {
+									statusCode = 401;
+									responseData = "Bad Password";
+								}; // end if users body 
+							} else {
+								userName = body.username;
+								Users[userName] = {"password":body.password, "email":body.email, "token":token, "expiry":now.valueOf()+86400000}
+								dataSave(Users,userFile);
+								responseData = "Bearer "+JSON.stringify(Users[body.username].token);
+							}; //end users includes
+							response.writeHead(statusCode, {'Content-Type': contentType});
+							response.end(responseData);
+							break; //end login
+						default:
+							console.log(pagename+" exists, appending.")
+							sites[pagename].Data += body;
+							break; //end login
+						}; //end switch
 					} else {
 						console.log(pagename+" exists, appending.")
 						sites[pagename].Data += body;
@@ -329,6 +361,10 @@ const server = http.createServer((request, response) => {
 server.listen((serverPort), () => {
 	console.log("Server is Running on port "+serverPort);
 })
+
+function randomToken(){
+	return crypto.randomBytes(16).toString('hex');
+}
 
 function dataSave(dict,filename) {
 	if (saveDateTime < now) {//if the date has increased by more than 5000 ms since saveDateTime was last updated...
