@@ -6,13 +6,14 @@
 - Use __Path Variables__ to call another internal path. These use percents instead of path slashes, such as %increment below. This helps prevent confusion with Divide functionality explained further down.
 
 - Each path can respond differently. Serve paths with static content locally, forward paths with dynamic content across an array of other hosts, and host a cached copy of remote data on another path.
-- A Putfile is uploaded in the Body of a PUT request. Example Putfile:
+- A Putfile is uploaded in the Body of a PUT request. 
+- Example Putfile:
         {
           "URI": "/increment",
           "Action": "data~%increment+1",
           "Owner": "BobbyTables",
           "AccessList": {
-            "Everyone": [
+            "Everyone": \[
               "GET",
               "HEAD",
               "OPTIONS",
@@ -20,7 +21,7 @@
               "PUT",
               "DELETE",
               "MERGE"
-            ]
+            \]
           },
           "notes": "",
           "Data": ""
