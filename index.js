@@ -235,11 +235,20 @@ const server = http.createServer((request, response) => {
 					body += chunk.toString(); // convert Buffer to string
 				});
 				request.on('end', () => {
-					var inputData = JSON.parse(body);
+					var inputData = "";
 					let errMsg = "";
 					statusCode=400;
 					responseData = request.method+" "+JSON.stringify(sites[pagename])+" failed: "
 					var consoleMsg = "At "+now.toISOString()+" user "+userName+"'s "+request.method+" failed from "+request.socket.remoteAddress+" for page "+pagename+": "
+					try {
+						inputData = JSON.parse(body);
+					} catch(errMsg) {
+						statusCode=400;
+						responseData += errMsg;
+						console.log(consoleMsg+errMsg);
+						response.writeHead(statusCode, {'Content-Type': contentType});
+						response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",responseData));
+					}
 					try {//Verify inputs
 						if (pagename != inputData.URI) {
 							errMsg = "URI does not match server location."
