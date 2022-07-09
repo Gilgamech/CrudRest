@@ -238,7 +238,7 @@ const server = http.createServer((request, response) => {
 					let errMsg = "";
 					statusCode=400;
 					responseData = request.method+" "+JSON.stringify(sites[pagename])+" failed: "
-					var consoleMsg = request.method+" failed from "+request.socket.remoteAddress+" for page "+pagename+": "
+					var consoleMsg = "At "+now.toISOString()+" user "+userName+"'s "+request.method+" failed from "+request.socket.remoteAddress+" for page "+pagename+": "
 					try {//Verify inputs
 						if (pagename != inputData.URI) {
 							errMsg = "URI does not match server location."
@@ -262,7 +262,7 @@ const server = http.createServer((request, response) => {
 							statusCode=200;
 							sites[pagename] = inputData;
 							responseData = request.method+JSON.stringify(sites[pagename])+" successful";
-							console.log(request.method+" complete from "+request.socket.remoteAddress+" for page "+pagename);
+							console.log("At "+now.toISOString()+" user "+userName+"'s "+request.method+" complete from "+request.socket.remoteAddress+" for page "+pagename);
 							response.writeHead(statusCode, {'Content-Type': contentType});
 							dataSave(sites,inMemCacheFile);
 							response.end(responseData);
@@ -322,7 +322,7 @@ const server = http.createServer((request, response) => {
 					}
 //Should this also save the individual file, along with the cache?
 					responseData = request.method+JSON.stringify(sites[pagename].URI);
-					console.log(request.method+" complete from "+request.socket.remoteAddress+" for page "+pagename);
+					console.log("At "+now.toISOString()+" user "+userName+"'s "+request.method+" complete from "+request.socket.remoteAddress+" for page "+pagename);
 					response.writeHead(statusCode, {'Content-Type': contentType});
 					dataSave(sites,inMemCacheFile);
 					response.end(responseData);
@@ -371,9 +371,9 @@ function dataSave(dict,filename) {
 		saveDateTime = now.valueOf()+5000;
 		fs.writeFile(filename, JSON.stringify(dict), (err) => {
 			if (err) {
-				console.log("dataSave err: "+err);
+				console.log(filename+" save err: "+err);
 			} else {
-				console.log("dataSave successful.");
+				console.log(filename+" save successful.");
 			}
 		});
 	} else {
