@@ -256,6 +256,6 @@ Response body will include the Bearer token, which is the word "Bearer" and a sp
 - Method: Get
 - Location: http://localhost/test2
 - Headers
-    - token: Bearer 5ff23b8c1562689dbaa11b0891e0a29c
+    - token: Bearer 133770ce9b120l375deba7ec0ce01223251
 
 Reusing the user-specific permissions test from above - this time we're logged in as the user with access (BobbyTables) so we should get a 200 OK response, with 500k in the body (since it performed a division operation on its data).
