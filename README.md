@@ -181,7 +181,7 @@ This path divides. Same situations and caveats as previous. Also useful as a con
 
 - Method: Put
 - Location: http://localhost/RobbieRotten.html
-	1. URI: /page.html
+	1. URI: /RobbieRotten.html
 	2. Action: data\~%header.html &lt;div class="textBubbleBG"&gt;&lt;h1&gt;We Are Number 1!&lt;/h1&gt;&lt;/div&gt;  %footer.html
 	3. Owner: BobbyTables
 	4. AccessList: Everyone: \[GET HEAD OPTIONS POST PUT DELETE MERGE\]
@@ -247,7 +247,7 @@ The login Action here pushes POST requests on this path down the Login code path
 
 - Method: Response
 - Location: http://localhost/login
-- Body: Bearer 133770ce9b120l375deba7ec0ce01223251
+- Body: Bearer 133770ce9b1201375deba7ec0ce01223251
 
 Response body will include the Bearer token, which is the word "Bearer" and a space followed by a random string from a cryptographic module. All subsequent requests must include this token in a header named "token" to receive a logged-in response.
 
@@ -256,6 +256,6 @@ Response body will include the Bearer token, which is the word "Bearer" and a sp
 - Method: Get
 - Location: http://localhost/test2
 - Headers
-    - token: Bearer 133770ce9b120l375deba7ec0ce01223251
+    - token: Bearer 133770ce9b1201375deba7ec0ce01223251
 
 Reusing the user-specific permissions test from above - this time we're logged in as the user with access (BobbyTables) so we should get a 200 OK response, with 500k in the body (since it performed a division operation on its data).
