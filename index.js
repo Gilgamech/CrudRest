@@ -19,7 +19,6 @@ const defaultVerbs = ["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"
 var error405 = "Method Not Allowed.";
 var optionsData = 'HTTP/1.1 200 OK\nAllow: GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS\nAccess-Control-Allow-Origin: https://Gilgamech.com\nAccess-Control-Allow-Methods: GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS\nAccess-Control-Allow-Headers: Content-Type'
 var mathOperators = ["+","-","*","/"]
-var now = new Date();
 var saveDateTime = 0;
 var sites = new Object();
 var Users = new Object();
@@ -50,6 +49,7 @@ fs.readFile(wwwFolder+"/err.html", 'utf8', function (err,data) {
 });
 
 const server = http.createServer((request, response) => {
+	var now = new Date();
 	var statusCode = 200;
 	var responseData = "";
 	var contentType = 'text/plain';
@@ -365,6 +365,7 @@ function randomToken(){
 }
 
 function dataSave(dict,filename) {
+	var now = new Date();
 	if (saveDateTime < now) {//if the date has increased by more than 5000 ms since saveDateTime was last updated...
 		saveDateTime = now.valueOf()+5000;
 		fs.writeFile(filename, JSON.stringify(dict), (err) => {
