@@ -94,8 +94,8 @@
 #### Cache 1 remote site (CDN presence edge)
 
 - Method: Put
-- Location: http://localhost/BobbyTables.html
-    1. URI: /BobbyTables.html
+- Location: http://localhost/CdnEdge.html
+    1. URI: /CdnEdge.html
     2. Action:  uri\~GET\~https://www.Gilgamech.com\~0
     3. Owner: BobbyTables
     4. AccessList: Everyone: \[GET HEAD OPTIONS POST PUT DELETE MERGE\]
@@ -107,8 +107,8 @@ A single URI in the Action causes the URI to become cached at that path. Caching
 #### Load-balance between 2 websites
 
 - Method: Put
-- Location: http://localhost/BobbyTables.html
-    1. URI: /BobbyTables.html
+- Location: http://localhost/LoadBalance.html
+    1. URI: /LoadBalance.html
     2. Action:  uri\~GET\~https://www.Gilgamech.com , https://Gilgamech.Neocities.org\ ~0
     3. Owner: BobbyTables
     4. AccessList: Everyone: \[GET HEAD OPTIONS POST PUT DELETE MERGE\]
@@ -256,4 +256,4 @@ Response body will include the Bearer token, which is the word "Bearer" and a sp
 - Headers
     - token: Bearer 5ff23b8c1562689dbaa11b0891e0a29c
 
-Reusing an above test - this time we're logged in as the user with access (BobbyTables) so we should get a 200 OK response, with 500k in the body (since it performed a division operation on its data).
+Reusing the user-specific permissions test from above - this time we're logged in as the user with access (BobbyTables) so we should get a 200 OK response, with 500k in the body (since it performed a division operation on its data).
