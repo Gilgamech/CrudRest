@@ -172,7 +172,12 @@ const server = http.createServer((request, response) => {
 						//Go through the word array, and replace any paths (Use % instead of / to denote website directory or path, to avoid confusion with mathematical division.)
 						for (let datum of responseSplit) {
 							if (datum.includes("%")) {
-								responseData = responseData.replace(datum,sites[datum.replace(/%/g,"/")].Data)
+								try{
+									responseData = responseData.replace(datum,sites[datum.replace(/%/g,"/")].Data)
+								} catch {
+									statusCode = 400;
+									responseData = errorPage.replace("%statusCode",statusCode).replace("%statusText","Site data can't be read - have all variable paths been visited?")
+								}
 							}
 						}
 
