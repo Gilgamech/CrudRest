@@ -104,7 +104,7 @@
     5. notes:
     6. Data: 
 
-A single URI in the Action causes the URI to become cached at that path. Caching functionality is still in progress.
+A single URI in the Action causes the URI to become cached in the Data property of that path on the first GET, and served from the Data property on subsequent GETs. Caching functionality is still in progress.
 
 #### Load-balance between 2 websites
 
@@ -117,7 +117,7 @@ A single URI in the Action causes the URI to become cached at that path. Caching
     5. notes:
     6. Data: 
 
-The Action can hold numerous URIs. For traditional load balancing, these would be internal locations, such as https://server1/ and https://server2/. External URIs with very different pages are being used here mostly for demonstration.
+The Action can hold numerous URIs. Currently only Round Robin load balancing is available, but weighed and other types are planned. For traditional load balancing, these would be internal locations, such as https://server1/ and https://server2/. External URIs with very different pages are being used here mostly for demonstration.
 
 ## In-memory source
 
@@ -132,7 +132,7 @@ The Action can hold numerous URIs. For traditional load balancing, these would b
 	5. notes:
 	6. Data: 1
 
-Here, the action takes the value stored in the Data property of the /increment path, adds one to it, and stores the value in the current path's Data property, then responds with it as the body. This makes a very good counter. And it can also call different paths, add two paths, and add two static numbers. It only takes one function per Action currently - nesting Actions are coming soon.
+The Action specifies to take the value stored in the Data property of the /increment path, adds one to it, store it in the current path's Data property, then responds with it as the body. This makes a very good website visitor counter. And it can also call different paths, add two paths, and add two static numbers. It only takes one function per Action currently - nesting Actions are coming soon.
 
 
 #### Decrement on GET
@@ -147,7 +147,7 @@ Here, the action takes the value stored in the Data property of the /increment p
 	5. notes:
 	6. Data: 1000000
 
-This path's Action specifies to take the /decrement path's Data property and subtract one. As before, this works with other paths and also with static numbers.
+This path's Action specifies to take the /decrement path's Data property and subtract one. The use case is less clear here. As before, this works with other paths and also with static numbers.
 
 #### Multiply on GET
 
@@ -161,7 +161,7 @@ This path's Action specifies to take the /decrement path's Data property and sub
 	5. notes:
 	6. Data: 1
 
-This path's actions multiply. Same situations and caveats as previous.
+This path's actions multiply. Same situations and caveats as previous. Useful as a conversion tool - POST a number to this path and GET the converted number.
 
 #### Divide on GET
 
@@ -175,7 +175,7 @@ This path's actions multiply. Same situations and caveats as previous.
 	5. notes:
 	6. Data: 1000000
 
-This path divides. Same situations and caveats as previous.
+This path divides. Same situations and caveats as previous. Also useful as a conversion tool.
 
 #### Data concatenation
 
@@ -232,7 +232,7 @@ This test lets you test the permissions system by trying verbs as Everyone, whic
 	5. notes:
 	6. Data: 
 
-The login Action here tells the path to capture POST requests on this path for the Login codepath instead of populating the Data parameter. 
+The login Action here pushes POST requests on this path down the Login code path, instead of populating the Data parameter. 
 
 #### Login Request
 
@@ -247,7 +247,7 @@ The login Action here tells the path to capture POST requests on this path for t
 
 - Method: Response
 - Location: http://localhost/login
-- Body: Bearer 5ff23b8c1562689dbaa11b0891e0a29c
+- Body: Bearer 133770ce9b120l375deba7ec0ce01223251
 
 Response body will include the Bearer token, which is the word "Bearer" and a space followed by a random string from a cryptographic module. All subsequent requests must include this token in a header named "token" to receive a logged-in response.
 
