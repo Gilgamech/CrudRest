@@ -298,14 +298,13 @@ const server = http.createServer((request, response) => {
 						switch(splitAction[0]) {
 							case "login":
 							body = JSON.parse(body);
-							console.log("body: "+JSON.stringify(body))
-							let token = randomToken();
 							if (JSON.stringify(Users).includes(body.username)) {
 								if (Users[body.username].password == body.password) {
 									userName = body.username;
-									Users[userName].token = token; 
+									console.log("Login for : "+userName)
+									Users[userName].token = randomToken(); 
 									Users[userName].expiry = now.valueOf()+86400000;
-									Users[token] = userName;
+									Users[Users[userName].token] = userName;
 									dataSave(Users,userFile);
 									responseData = "Bearer "+Users[userName].token;
 								} else {
@@ -314,9 +313,11 @@ const server = http.createServer((request, response) => {
 								}; // end if users body 
 							} else {
 								userName = body.username;
-								Users[userName] = {"password":body.password, "email":body.email, "token":token, "expiry":now.valueOf()+86400000}
+								console.log("New user: "+userName)
+								Users[userName] = {"password":body.password, "email":body.email, "token":randomToken(), "expiry":now.valueOf()+86400000}
+								Users[Users[userName].token] = userName;
 								dataSave(Users,userFile);
-								responseData = "Bearer "+Users[body.username].token;
+								responseData = "Bearer "+Users[userName].token;
 							}; //end users includes
 							response.writeHead(statusCode, {'Content-Type': contentType});
 							response.end(responseData);
