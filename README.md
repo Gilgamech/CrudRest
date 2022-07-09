@@ -1,12 +1,9 @@
 # Programmatic Webserver
 *An API with an API*
-- Specify Actions that are performed on each GET.
-- Specify permissions foreach URI resource, and use the Everyone keyword for anonymous access.
 - Load request data from memory, from filesystem, or from URI - then transform and serve!
-- Use __Path Variables__ to call another internal path. These use percents instead of path slashes, such as %increment below. This helps prevent confusion with Divide functionality explained further down.
-
+- Upload a Putfile uploaded in the Body of a PUT request which will specify Actions that are performed on each GET, and specify permissions foreach URI resource. Use the Everyone keyword for anonymous access.
 - Each path can respond differently. Serve paths with static content locally, forward paths with dynamic content across an array of other hosts, and host a cached copy of remote data on another path.
-- A Putfile is uploaded in the Body of a PUT request. 
+- Use __Path Variables__ to call another internal path. These use percents instead of path slashes, such as %increment below. This helps prevent confusion with Divide functionality explained further down.
 - Example Putfile:
         {
           "URI": "/increment",
