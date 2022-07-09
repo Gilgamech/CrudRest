@@ -83,6 +83,7 @@
 2. Action is populated with Action fs\~/sub/pathname.ext if the page hasn't been visited before. 
 	- File is read from filesystem into the Data field of the Body, then read from the Data field into the response. 
 	- But if the page exists and the Action has been changed to blank, will just try to respond with the Data field and won't check the filesystem.
+	- Content Type of response is determined by the file extension in the Action. So if you POST HTML at \test.txt, it will show up in the browser as plaintext HTML, not as a rendered webpage.
 3. Owner can always perform GET and PUT in any situation, so the can always control that path. More functionality is planned around this field. 
 4. AccessList controls which verbs will respond to which users.
     - The Everyone keyword is used to control access for all users, including not logged in. 
