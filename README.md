@@ -77,12 +77,12 @@
 	6. Data: 
 
 ##### About the Body:
-- Must be in JSON format. (Sorry YAML fans.)
+- Putfile must be in JSON format. (Sorry YAML fans.)
 - Size limit coming shortly. Please keep these sensible and short until then. 
 1. URI in field must match the upload path, as a validation check. It's local to the host for now, but this might change in the future to provide multi-domain support. Here, the root URI / is used. 
 2. Action is populated with Action fs\~/sub/pathname.ext if the page hasn't been visited before. 
-	- File is read from filesystem into the Data field of the Body, then read from the Data field into the response. 
-	- But if the page exists and the Action has been changed to blank, will just try to respond with the Data field and won't check the filesystem.
+	- File is read from filesystem into the Data field of the Putfile, then read from the Putfile into the response. 
+	- But if the page exists and the Putfile Action has been changed to blank, will just try to respond with the Data field and won't check the filesystem.
 	- Content Type of response is determined by the file extension in the Action. So if you POST HTML at \test.txt, it will show up in the browser as plaintext HTML, not as a rendered webpage.
 3. Owner can always perform GET and PUT in any situation, so the can always control that path. More functionality is planned around this field. 
 4. AccessList controls which verbs will respond to which users.
@@ -104,7 +104,7 @@
     5. notes:
     6. Data: 
 
-A single URI in the Action causes the URI to become cached in the Data property of that path on the first GET, and served from the Data property on subsequent GETs. Caching functionality is still in progress.
+A single URI in the Action causes the URI to become cached in the Data property of that path's Putfile on the first GET, and served from the Putfile on subsequent GETs. Caching functionality is still in progress.
 
 #### Load-balance between 2 websites
 
@@ -117,7 +117,7 @@ A single URI in the Action causes the URI to become cached in the Data property 
     5. notes:
     6. Data: 
 
-The Action can hold numerous URIs. Currently only Round Robin load balancing is available, but weighed and other types are planned. For traditional load balancing, these would be internal locations, such as https://server1/ and https://server2/. External URIs with very different pages are being used here mostly for demonstration.
+The Putfile Action can hold numerous URIs. Currently only Round Robin load balancing is available, but weighed and other types are planned. For traditional load balancing, these would be internal locations, such as https://server1/ and https://server2/. External URIs with very different pages are being used here mostly for demonstration.
 
 ## In-memory source
 
@@ -132,8 +132,7 @@ The Action can hold numerous URIs. Currently only Round Robin load balancing is 
 	5. notes:
 	6. Data: 1
 
-The Action specifies to take the value stored in the Data property of the /increment path, adds one to it, store it in the current path's Data property, then responds with it as the body. This makes a very good website visitor counter. And it can also call different paths, add two paths, and add two static numbers. It only takes one function per Action currently - nesting Actions are coming soon.
-
+The Action specifies to take the value stored in the Data property of the /increment path's Putfile, adds one to it, stores it in the current path's Putfile Data property, then responds with it as the body. This makes a very good website visitor counter. And it can also call different paths, add two paths, and add two static numbers. It only takes one function per Action currently - nesting Actions are coming soon.
 
 #### Decrement on GET
 
@@ -147,7 +146,7 @@ The Action specifies to take the value stored in the Data property of the /incre
 	5. notes:
 	6. Data: 1000000
 
-This path's Action specifies to take the /decrement path's Data property and subtract one. The use case is less clear here. As before, this works with other paths and also with static numbers.
+This path's Action specifies to take the /decrement Putfile's Data property and subtract one. The use case is less clear here - maybe as a countdown?. As before, this works with other paths and also with static numbers.
 
 #### Multiply on GET
 
@@ -188,7 +187,7 @@ This path divides. Same situations and caveats as previous. Also useful as a con
 	5. notes:
 	6. Data: 
 
-This Action shows the real power of Path Variables, by creating a webpage with one line of code. First it replaces the %header variable with your webpage's header and menu section. Then it adds the short message, referencing a CSS class in a file loaded by the header. Finally, the website footer is loaded from its path variable, before storing the page in RobbieRotten.html's Data property, and responding with it. This could be combined with transforming the data with an above function before serving. Future updates will increase the functionality and robustness of this dynamic page generation method. 
+This Action shows the real power of Path Variables, by creating a webpage with one line of Action code. First it replaces the %header variable with your webpage's header and menu section that you've already stored at /header.html. Then it adds the short message, referencing a CSS class in a file loaded by the header. Finally, the website footer is loaded from its Putfile at /footer.html, before storing the page in RobbieRotten.html's Putfile and then responding with it. This could be combined with transforming the data with an above function before serving. Future updates will increase the functionality and robustness of this dynamic page generation method. 
 
 
 ## Validation Testing
@@ -238,10 +237,12 @@ The login Action here pushes POST requests on this path down the Login code path
 
 - Method: Post
 - Location: http://localhost/login
+- Body:
 	- username: BobbyTables
 	- password: HorseBatteryStapleCorrect
 	- emailAddress: (optional)
 
+Here the Body won't be uploading a Putfile, but instead authentication data. The server uses the same process for login and sign up - if the user isn't in the data, add them with the password they sent. If they are in the data, check the password. Email address would be used for password reset, but that functionality requires email integration, which might take longer than other planned features.
 
 #### Login Response
 
