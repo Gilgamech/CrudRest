@@ -89,6 +89,7 @@
     - The Everyone keyword is used to control access for all users, including not logged in. 
     - So if you specify that Everyone can GET, and you can only POST, then you'll be able to both GET and POST.
 5. Notes may contain user-specified data, but some functions (currently only load balancer) use them to store data too, so don't remove what you didn't add. 
+6. Data is populated from one of several Actions, then served as part of a GET request.
 
 ## URI source
 
