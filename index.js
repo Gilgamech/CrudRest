@@ -66,14 +66,11 @@ const server = http.createServer((request, response) => {
 	}
 	var jsonAccessList = JSON.stringify(sites[pagename].AccessList);
 	
-	//console.log(JSON.stringify(request.headers))
 	try {
 		incomingToken = request.headers["token"].split(" ")[1]
+		//Users[token] holds the userName, Users[userName] holds the expiry.
 		if (Users[Users[incomingToken]].expiry > now.valueOf()) {//If the date is still smaller than the expiry
 			userName = Users[incomingToken];
-		//Users[token] holds the userName, Users[userName] holds the expiry.
-			//console.log("At "+now.toISOString()+" userName: "+userName)
-			//console.log(JSON.stringify(Users))
 		}
 	} catch {}
 	console.log("At "+now.toISOString()+" user "+userName+" made "+request.method+" request from "+request.socket.remoteAddress+" for page "+pagename);
@@ -103,7 +100,6 @@ const server = http.createServer((request, response) => {
 						var URItoLoad = splitAction[2]
 						//List of URLs - LB between them.
 						var URIList = splitAction[2].split(",");
-//Replace comma-split list of sites with semicolon-split list of actions. 
 						if (URIList.length > 1){
 							//disable caching for now.
 							sites[pagename].Data = ""
@@ -169,7 +165,7 @@ const server = http.createServer((request, response) => {
 						}
 						break;//end fs
 					case "data":
-						//Replace from putData
+						//Replace from Data
 						//Spread out operators by adding spaces between them, then remove any doubled spaces if they already had spaces there. Then split into a word array.
 						responseData = splitAction[1].replace(/\<\//,"<$").replace(/\+/g," + ").replace(/\+/g," + ").replace(/-/g," - ").replace(/\*/g," * ").replace(/\//g," / ").replace(/,/g," , ").replace(/]/g," ] ").replace(/}/g," } ").replace(/  /g," ");
 						responseSplit = responseData.split(" ");
@@ -320,7 +316,6 @@ const server = http.createServer((request, response) => {
 						console.log(pagename+" exists, appending.")
 						sites[pagename].Data += body;
 					}
-//Should this also save the individual file, along with the cache?
 					responseData = request.method+JSON.stringify(sites[pagename].URI);
 					console.log("At "+now.toISOString()+" user "+userName+"'s "+request.method+" complete from "+request.socket.remoteAddress+" for page "+pagename);
 					response.writeHead(statusCode, {'Content-Type': contentType});
