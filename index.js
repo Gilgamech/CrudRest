@@ -82,7 +82,8 @@ const server = http.createServer((request, response) => {
 	} else if (jsonAccessList.includes(userName)){
 		allowedVerbs = sites[pagename].AccessList[userName]
 	} else {
-	}
+		//If AccessList contains neither the Everyone keyword, nor the currently logged in user, then there are no valid permissions for this site.
+	} // end if jsonAccessList
 
 	if (allowedVerbs.includes(request.method)) {
 		let body = '';
