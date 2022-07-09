@@ -64,15 +64,16 @@ const server = http.createServer((request, response) => {
 		dataSave(sites,inMemCacheFile);
 	}
 	
-	if (JSON.stringify(request.headers).includes("Bearer ")) {
-		var incomingToken = request.headers["token"].split(" ")[1]
-		if (JSON.stringify(Users).includes(incomingToken)) {
-			if (Users[Users[incomingToken]].expiry > now.valueOf()) {//If the date is still smaller than the expiry
-			//Users[token] holds the username, Users[username] holds the expiry.
-				userName = Users[incomingToken];
-			}
+	//console.log(JSON.stringify(request.headers))
+	try {
+		incomingToken = request.headers["token"].split(" ")[1]
+		if (Users[Users[incomingToken]].expiry > now.valueOf()) {//If the date is still smaller than the expiry
+			userName = Users[incomingToken];
+		//Users[token] holds the userName, Users[userName] holds the expiry.
+			//console.log("At "+now.toISOString()+" userName: "+userName)
+			//console.log(JSON.stringify(Users))
 		}
-	}
+	} catch {}
 	
 	var jsonAccessList = JSON.stringify(sites[pagename].AccessList);
 	if (jsonAccessList.includes("Everyone") && jsonAccessList.includes(userName)){
