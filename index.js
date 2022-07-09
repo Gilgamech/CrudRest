@@ -295,7 +295,7 @@ const server = http.createServer((request, response) => {
 									Users[userName].expiry = now.valueOf()+86400000;
 									Users[token] = userName;
 									dataSave(Users,userFile);
-									responseData = "Bearer "+JSON.stringify(Users[userName].token);
+									responseData = "Bearer "+Users[userName].token;
 								} else {
 									statusCode = 401;
 									responseData = "Bad Password";
@@ -304,7 +304,7 @@ const server = http.createServer((request, response) => {
 								userName = body.username;
 								Users[userName] = {"password":body.password, "email":body.email, "token":token, "expiry":now.valueOf()+86400000}
 								dataSave(Users,userFile);
-								responseData = "Bearer "+JSON.stringify(Users[body.username].token);
+								responseData = "Bearer "+Users[body.username].token;
 							}; //end users includes
 							response.writeHead(statusCode, {'Content-Type': contentType});
 							response.end(responseData);
