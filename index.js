@@ -5,9 +5,10 @@
 //Updated on: 7/8/2022
 //Notes: The goal for CrudRest is to be, in different configurations, a webserver, database, load balancer, in-memory cache, message queue, pub sub hub, login IdP, password manager, and a variety of other uses.
 
+const crypto = require('crypto');
+const fs = require('fs');
 const http = require("http");
 const https = require("https");
-const fs = require('fs');
 const url  = require('url');
 const serverPort = 80;
 const wwwFolder = "/home/app"
@@ -62,6 +63,7 @@ const server = http.createServer((request, response) => {
 		sites[pagename] = {"URI":pagename,"Action":"fs~"+pagename,"Owner":"","AccessList":{"Everyone":defaultVerbs},"notes":"","Data":""};
 		dataSave(sites,inMemCacheFile);
 	}
+	var jsonAccessList = JSON.stringify(sites[pagename].AccessList);
 	
 	//console.log(JSON.stringify(request.headers))
 	try {
@@ -75,7 +77,6 @@ const server = http.createServer((request, response) => {
 	} catch {}
 	console.log("At "+now.toISOString()+" user "+userName+" made "+request.method+" request from "+request.socket.remoteAddress+" for page "+pagename);
 	
-	var jsonAccessList = JSON.stringify(sites[pagename].AccessList);
 	if (jsonAccessList.includes("Everyone") && jsonAccessList.includes(userName)){
 		allowedVerbs = [...new Set([...sites[pagename].AccessList["Everyone"], ...sites[pagename].AccessList[userName]])]
 	} else if (jsonAccessList.includes("Everyone")){
