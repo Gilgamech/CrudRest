@@ -83,7 +83,7 @@ const server = http.createServer((request, response) => {
 		allowedVerbs = sites[pagename].AccessList[userName]
 	} else {
 		//If AccessList contains neither the Everyone keyword, nor the currently logged in user, then there are no valid permissions for this site.
-	} // end if jsonAccessList
+	}; // end if jsonAccessList
 
 	if (allowedVerbs.includes(request.method)) {
 		let body = '';
@@ -119,12 +119,10 @@ const server = http.createServer((request, response) => {
 								}; //end for let note
 									var LBPage = (LBNum+1)%(URIList.length);
 									sites[pagename].notes = newNote+" LB:"+LBPage+";";
-						console.log("LB: "+JSON.stringify(sites[pagename].notes))
 									URItoLoad = URIList[LBPage]
 							} else {
 								URItoLoad = URIList[LBNum]
 								sites[pagename].notes = sites[pagename].notes + "LB:"+LBNum+";";
-						console.log("NO LB: "+JSON.stringify(sites[pagename].notes))
 							}; //end if sites pagename
 						}; //end if URIList
 						var expiry = splitAction[3];
@@ -273,10 +271,10 @@ const server = http.createServer((request, response) => {
 							statusCode=200;
 							sites[pagename] = inputData;
 							responseData = request.method+JSON.stringify(sites[pagename])+" successful";
-							console.log("At "+now.toISOString()+" user "+userName+"'s "+request.method+" complete from "+request.socket.remoteAddress+" for page "+pagename);
 							response.writeHead(statusCode, {'Content-Type': contentType});
 							dataSave(sites,inMemCacheFile);
 							response.end(responseData);
+							console.log("At "+now.toISOString()+" user "+userName+"'s "+request.method+" complete from "+request.socket.remoteAddress+" for page "+pagename);
 						}; //end if pagename
 					} catch (errMsg) {
 						statusCode=400;
