@@ -135,7 +135,6 @@ const server = http.createServer((request, response) => {
 							});
 						} else {
 							response.writeHead(statusCode, {'Content-Type': getContentType(pagename)});
-							dataSave(sites,inMemCacheFile);
 							response.end(sites[pagename].Data);
 						}
 						break;//end uri
@@ -151,12 +150,12 @@ const server = http.createServer((request, response) => {
 									response.end(sites[pagename].Data);
 								}
 								sites[pagename].Data = data;
+								dataSave(sites,inMemCacheFile);
 								response.writeHead(statusCode, {'Content-Type': getContentType(splitAction[1])});
 								response.end(sites[pagename].Data);
 							});
 						} else {
 							response.writeHead(statusCode, {'Content-Type': getContentType(splitAction[1])});
-							dataSave(sites,inMemCacheFile);
 							response.end(sites[pagename].Data);
 						}
 						break;//end fs
@@ -206,10 +205,10 @@ const server = http.createServer((request, response) => {
 
 						//Store at current location, after reverting closing tags.
 						sites[pagename].Data = responseData.replace(/\<\$/g,"</");
+						dataSave(sites,inMemCacheFile);
 
 						//Return as response.
 						response.writeHead(statusCode, {'Content-Type': getContentType(pagename)});
-						dataSave(sites,inMemCacheFile);
 						response.end(sites[pagename].Data);
 					default://splitAction[0]
 							if (typeof responseData == "number"){
