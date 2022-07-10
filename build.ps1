@@ -1,4 +1,4 @@
-$name = "125886194542.dkr.ecr.us-west-2.amazonaws.com/"+(((get-location) -split "\\")[2])+":"
+$name = "125886194542.dkr.ecr.us-west-2.amazonaws.com/"+(((get-location) -split "\\")[2]).ToLower()+":"
 $latest = ($name + "latest")
 
 function Build-Webserver ($ver, $serverID) {
