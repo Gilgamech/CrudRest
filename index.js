@@ -129,16 +129,14 @@ const server = http.createServer((request, response) => {
 						if (sites[pagename].Data == "") {
 							webRequest(splitAction[1], URItoLoad,function(data){
 								sites[pagename].Data = data;
-								responseData = sites[pagename].Data;
 								response.writeHead(statusCode, {'Content-Type': getContentType(pagename)});
 								dataSave(sites,inMemCacheFile);
-								response.end(responseData);
+								response.end(sites[pagename].Data);
 							});
 						} else {
-							responseData = sites[pagename].Data;
 							response.writeHead(statusCode, {'Content-Type': getContentType(pagename)});
 							dataSave(sites,inMemCacheFile);
-							response.end(responseData);
+							response.end(sites[pagename].Data);
 						}
 						break;//end uri
 					case "fs":
@@ -147,20 +145,19 @@ const server = http.createServer((request, response) => {
 								if (err) {
 									statusCode=404;
 									let errMsg = "Not found."
+									sites[pagename].Data = errorPage.replace("%statusCode",statusCode).replace("%statusText",errMsg);
 									console.log(statusCode+" "+errMsg);
 									response.writeHead(statusCode, {'Content-Type': 'text/html'});
-									response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",errMsg));
+									response.end(sites[pagename].Data);
 								}
 								sites[pagename].Data = data;
-								responseData = sites[pagename].Data;
 								response.writeHead(statusCode, {'Content-Type': getContentType(splitAction[1])});
-								response.end(responseData);
+								response.end(sites[pagename].Data);
 							});
 						} else {
-							responseData = sites[pagename].Data;
 							response.writeHead(statusCode, {'Content-Type': getContentType(splitAction[1])});
 							dataSave(sites,inMemCacheFile);
-							response.end(responseData);
+							response.end(sites[pagename].Data);
 						}
 						break;//end fs
 					case "data":
@@ -211,17 +208,16 @@ const server = http.createServer((request, response) => {
 						sites[pagename].Data = responseData.replace(/\<\$/g,"</");
 
 						//Return as response.
-						responseData = sites[pagename].Data;
 						response.writeHead(statusCode, {'Content-Type': getContentType(pagename)});
 						dataSave(sites,inMemCacheFile);
-						response.end(responseData);
+						response.end(sites[pagename].Data);
 					default://splitAction[0]
-							responseData = sites[pagename].Data;
 							if (typeof responseData == "number"){
-								responseData = JSON.stringify(responseData);
+								response.end(JSON.stringify(responseData));
+							} else {
+								response.end(sites[pagename].Data);
 							}
 							response.writeHead(statusCode, {'Content-Type': getContentType(pagename)});
-							response.end(responseData);
 						break;
 					}; //end switch splitAction[0]
 				} else {
@@ -243,45 +239,39 @@ const server = http.createServer((request, response) => {
 						inputData = JSON.parse(body);
 					} catch(errMsg) {
 						statusCode=400;
-						responseData += errMsg;
 						console.log(consoleMsg+errMsg);
 						response.writeHead(statusCode, {'Content-Type': contentType});
-						response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",responseData));
-					}
+						response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",(responseData += errMsg)));
+					}; // end try
 					try {//Verify inputs
 						if (pagename != inputData.URI) {
 							errMsg = "URI does not match server location."
-							responseData += errMsg;
 							console.log(consoleMsg+errMsg);
 							response.writeHead(statusCode, {'Content-Type': contentType});
-							response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",responseData));
+							response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",(responseData += errMsg)));
 						} else if (inputData.AccessList == "") {
 							errMsg = "AccessList too short."
-							responseData += errMsg;
 							console.log(consoleMsg+errMsg);
 							response.writeHead(statusCode, {'Content-Type': contentType});
-							response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",responseData));
+							response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",(responseData += errMsg)));
 						} else if (inputData.Action == "") {
 							errMsg = "Action too short."
-							responseData += errMsg;
 							console.log(consoleMsg+errMsg);
 							response.writeHead(statusCode, {'Content-Type': contentType});
-							response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",responseData));
+							response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",(responseData += errMsg)));
 						} else {
 							statusCode=200;
 							sites[pagename] = inputData;
-							responseData = request.method+JSON.stringify(sites[pagename])+" successful";
 							response.writeHead(statusCode, {'Content-Type': contentType});
 							dataSave(sites,inMemCacheFile);
-							response.end(responseData);
 							console.log("At "+now.toISOString()+" user "+userName+"'s "+request.method+" complete from "+request.socket.remoteAddress+" for page "+pagename);
+							response.end(request.method+JSON.stringify(sites[pagename])+" successful");
 						}; //end if pagename
 					} catch (errMsg) {
 						statusCode=400;
-						responseData += errMsg;
 						console.log(consoleMsg+errMsg);
 						response.writeHead(statusCode, {'Content-Type': contentType});
-						response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",responseData));
+						response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",(responseData += errMsg)));
 					}; //end try
 				});
 				break; //end PUT
