@@ -2,7 +2,7 @@
 *An API with an API*
 - Load request data from memory, from filesystem, or from URI - then transform and serve!
 - Upload a Putfile uploaded in the Body of a PUT request, with Actions that are performed on each GET, and control permissions foreach URI resource. Use the Everyone keyword for anonymous access.
-- Each path can respond differently. Serve paths with static content locally, forward paths with dynamic content across an array of other hosts, and host a cached copy of remote data on another path.
+- Each path can respond differently. Serve paths with static content locally, forward paths with dynamic content across an array of other hosts, and host a cached copy of remote data on another path - all in the same container.
 - Use __Path Variables__ to call another internal path. These use percents instead of path slashes, such as %increment below. This helps prevent confusion with Divide functionality explained further down.
 - Example Putfile:
         {
@@ -38,9 +38,9 @@
 
 - uri
 	- Format: "uri\~FullPathOrListOfFullPaths\~cacheExpiry"
-	- Performs the requested verb against the requested resource or resources, then stores the data in the Putfile Data property, then serves from there. 
-	- All examples here simply GET the remote resource, but PUT, POST, and all other verbs are available. 
-	- Automatically caches single-site Actions. Multi-site caching, invalidation, and expiry functionality to come.
+	- Performs the requested verb against the requested resource or resources, stores the data in the Putfile Data property, then serves from there. 
+	- All examples here only GET the remote resource, but all standard HTML verbs are available. 
+	- Automatically caches single-site Actions. Multi-site caching, and single-site cache invalidation & cache expiry functionality to come.
 - fs
 	- Format: "fs\~/path\~cacheExpiry"
 	- Loads a file from the filesystem, stores it in the path's Data property, and serves it from there.
@@ -53,7 +53,7 @@
 		- "data\~%path mathOp integer\~cacheExpiry"
 		- "data\~integer mathOp integer\~cacheExpiry"
 		- "data\~%path &lt;htmlTag&gt;ArbitraryTextGoesHere&lt;/htmlTag&gt; %otherPath\~cacheExpiry"
-	- "mathOp" here is short for mathematical operation, represented by the common symbols "+", "-", "\*", and "/". Currently only the basic 4 operations of addition, subtraction, multiplication, and division are supported, but plans are to make this section much more robust and use a C-ish language.
+	- "mathOp" here is short for mathematical operator, represented by the common symbols "+", "-", "\*", and "/". Currently only the basic 4 operations of addition, subtraction, multiplication, and division are supported, but plans are to make this section much more robust and use a C-ish language.
 	- Populates the Path Variables with the Data property of their Putfile, then performs any math operations in the Action. Stores the output in this path's PutFile's Data property before responding with it.
 
 ## Filesystem source
