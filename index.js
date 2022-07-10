@@ -129,8 +129,8 @@ const server = http.createServer((request, response) => {
 						if (sites[pagename].Data == "") {
 							webRequest(splitAction[1], URItoLoad,function(data){
 								sites[pagename].Data = data;
-								response.writeHead(statusCode, {'Content-Type': getContentType(pagename)});
 								dataSave(sites,inMemCacheFile);
+								response.writeHead(statusCode, {'Content-Type': getContentType(pagename)});
 								response.end(sites[pagename].Data);
 							});
 						} else {
@@ -211,12 +211,12 @@ const server = http.createServer((request, response) => {
 						response.writeHead(statusCode, {'Content-Type': getContentType(pagename)});
 						response.end(sites[pagename].Data);
 					default://splitAction[0]
+							response.writeHead(statusCode, {'Content-Type': getContentType(pagename)});
 							if (typeof responseData == "number"){
 								response.end(JSON.stringify(responseData));
 							} else {
 								response.end(sites[pagename].Data);
 							}
-							response.writeHead(statusCode, {'Content-Type': getContentType(pagename)});
 						break;
 					}; //end switch splitAction[0]
 				} else {
@@ -261,9 +261,9 @@ const server = http.createServer((request, response) => {
 						} else {
 							statusCode=200;
 							sites[pagename] = inputData;
-							response.writeHead(statusCode, {'Content-Type': contentType});
 							dataSave(sites,inMemCacheFile);
 							console.log("At "+now.toISOString()+" user "+userName+"'s "+request.method+" complete from "+request.socket.remoteAddress+" for page "+pagename);
+							response.writeHead(200, {'Content-Type': contentType});
 							response.end(request.method+JSON.stringify(sites[pagename])+" successful");
 						}; //end if pagename
 					} catch (errMsg) {
