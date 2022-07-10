@@ -234,10 +234,9 @@ const server = http.createServer((request, response) => {
 					statusCode=400;
 					responseData = request.method+" "+JSON.stringify(sites[pagename])+" failed: "
 					var consoleMsg = "At "+now.toISOString()+" user "+userName+"'s "+request.method+" failed from "+request.socket.remoteAddress+" for page "+pagename+": "
-					try {
+					try {//Verify JSON
 						inputData = JSON.parse(body);
 					} catch(errMsg) {
-						statusCode=400;
 						console.log(consoleMsg+errMsg);
 						response.writeHead(statusCode, {'Content-Type': contentType});
 						response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",(responseData += errMsg)));
@@ -259,7 +258,6 @@ const server = http.createServer((request, response) => {
 							response.writeHead(statusCode, {'Content-Type': contentType});
 							response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",(responseData += errMsg)));
 						} else {
-							statusCode=200;
 							sites[pagename] = inputData;
 							dataSave(sites,inMemCacheFile);
 							console.log("At "+now.toISOString()+" user "+userName+"'s "+request.method+" complete from "+request.socket.remoteAddress+" for page "+pagename);
