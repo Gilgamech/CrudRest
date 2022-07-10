@@ -144,15 +144,16 @@ const server = http.createServer((request, response) => {
 								if (err) {
 									statusCode=404;
 									let errMsg = "Not found."
-									sites[pagename].Data = errorPage.replace("%statusCode",statusCode).replace("%statusText",errMsg);
+									sites[pagename].Data = "";
 									console.log(statusCode+" "+errMsg);
 									response.writeHead(statusCode, {'Content-Type': 'text/html'});
+									response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",errMsg));
+								} else {
+									sites[pagename].Data = data;
+									dataSave(sites,inMemCacheFile);
+									response.writeHead(statusCode, {'Content-Type': getContentType(splitAction[1])});
 									response.end(sites[pagename].Data);
 								}
-								sites[pagename].Data = data;
-								dataSave(sites,inMemCacheFile);
-								response.writeHead(statusCode, {'Content-Type': getContentType(splitAction[1])});
-								response.end(sites[pagename].Data);
 							});
 						} else {
 							response.writeHead(statusCode, {'Content-Type': getContentType(splitAction[1])});
