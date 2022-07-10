@@ -84,7 +84,11 @@ const server = http.createServer((request, response) => {
 	} else {
 		//If AccessList contains neither the Everyone keyword, nor the currently logged in user, then there are no valid permissions for this site.
 	}; // end if jsonAccessList
-
+	
+	if (sites[pagename].Owner == userName){
+		allowedVerbs = [...new Set([...allowedVerbs, ...["GET", "HEAD", "OPTIONS", "PUT", "MERGE"]])]
+	}
+	
 	if (allowedVerbs.includes(request.method)) {
 		let body = '';
 		//Split action into array by tildes.

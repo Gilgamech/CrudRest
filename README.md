@@ -262,8 +262,7 @@ Reusing the user-specific permissions test from above - this time we're logged i
 - Modify header page script to put the token in the cookies and send back with every request - and say like "Hello userName" or "Click to Login" to verify state.
 - Hash passwords
 - Add LastCacheUpdateTime to Notes to support cache expiry. 
-- Owner can always GET and PUT. 
-	- Should Owner be able to be changed by others?
+- Owner can only be changed by Owner.
 	- Should Owner have other controls on page?
 - Save the individual POSTed file, along with the cache.
 - Put size checking (what's a good max size? 10 actions?)
