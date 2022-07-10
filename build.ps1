@@ -18,12 +18,6 @@ function Build-Webserver ($ver, $serverID) {
 	
 }
 
-function Test-WebItem($siteUri,$Method,$shouldError,$testOutput,$expectedOutput) {
-	$testItem = iwr -SkipHttpErrorCheck -Method $Method $siteUri -Body '{"URI":"/","Action":"fs~/index.html","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","Data":""}'
-	$msg = $siteUri +"should $Method without error"
-	Test-Item $msg  $testOutput $expectedOutput
-}
-
 function Test-Item($stringName,$testOutput,$expectedOutput) {
 	if ($testOutput -eq $expectedOutput) {
 		write-host "$stringName - Pass - Expected: $expectedOutput - Got: $testOutput" -f green
