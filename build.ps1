@@ -9,7 +9,7 @@ function Build-Webserver ($ver, $serverID) {
 	docker tag $tag $latest
 	docker run -p 80:80 -d $tag
 	sleep 1
-	$sitePct = Test-Webserver
+	$sitePct = Test-Webserver (get-TestData)
 <#
 	if ($sitePct = 100) {
 		Push-Webserver;
@@ -37,163 +37,339 @@ function Test-Item($stringName,$testOutput,$expectedOutput) {
 function get-TestData (){
 	return '[
 	{
+		"description":"Serve index.html as root.",
 		"method": "PUT",
 		"URI": "http://localhost/",
+		"headers":"",
 		"body": {"URI":"/","Action":"fs~/index.html","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","Data":""},
-		"shouldPass":1,
-		"testItem":"StatusCode"
-		"expectedOutput":200
+		"shouldPass":"pass",
+		"testItem":"StatusCode",
+		"expectedOutput":200,
+		"notes":""
 	},
 	{
+		"description":"LB between 2 websites",
 		"method": "PUT",
-		"URI": "http://localhost/GIlgamch.html"
+		"URI": "http://localhost/Gilgamech.html",
+		"headers":"",
+		"body": {"URI":"/Gilgamech.html","Action":"uri~GET~https:#www.Gilgamech.com,https:#gilgamech.neocities.org~0","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","Data":""},
+		"shouldPass":"pass",
+		"testItem":"StatusCode",
+		"expectedOutput":200,
+		"notes":""
+	},
+	{
+		"description":"increment test",
+		"method": "PUT",
+		"URI": "http://localhost/increment",
+		"headers":"",
+		"body": {"URI":"/increment","Action":"data~%increment+1","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","Data":1},
+		"shouldPass":"pass",
+		"testItem":"StatusCode",
+		"expectedOutput":200,
+		"notes":""
+	},
+	{
+		"description":"",
+		"method": "GET",
+		"URI": "http://localhost/increment",
+		"headers":"",
+		"body": "",
+		"shouldPass":"pass",
+		"testItem":"content",
+		"expectedOutput":2,
+		"notes":""
+	},
+	{
+		"description":"",
+		"method": "GET",
+		"URI": "http://localhost/increment",
+		"headers":"",
+		"body": "",
+		"shouldPass":"pass",
+		"testItem":"content",
+		"expectedOutput":3,
+		"notes":""
+	},
+	{
+		"description":"decrement test",
+		"method": "PUT",
+		"URI": "http://localhost/decrement",
+		"headers":"",
+		"body": {"URI":"/decrement","Action":"data~%decrement-1","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","Data":1000000},
+		"shouldPass":"pass",
+		"testItem":"StatusCode",
+		"expectedOutput":200,
+		"notes":""
+	},
+	{
+		"description":"",
+		"method": "GET",
+		"URI": "http://localhost/decrement",
+		"headers":"",
+		"body": "",
+		"shouldPass":"pass",
+		"testItem":"content",
+		"expectedOutput":999999,
+		"notes":""
+	},
+	{
+		"description":"",
+		"method": "GET",
+		"URI": "http://localhost/decrement",
+		"headers":"",
+		"body": "",
+		"shouldPass":"pass",
+		"testItem":"content",
+		"expectedOutput":999998,
+		"notes":""
+	},
+	{
+		"description":"URI validation",
+		"method": "PUT",
+		"URI": "http://localhost/test",
+		"headers":"",
+		"body":  {"URI":"/decrement","Action":"data~%decrement-1","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","Data":1000000},
+		"shouldPass":"fail",
+		"testItem":"StatusCode",
+		"expectedOutput":400,
+		"notes":""
+	},
+	{
+		"description":"404 test",
+		"method": "GET",
+		"URI": "http://localhost/badURI",
+		"headers":"",
+		"body": "",
+		"shouldPass":"fail",
+		"testItem":"StatusCode",
+		"expectedOutput":404,
+		"notes":""
+	},
+	{
+		"description":"",
+		"method": "GET",
+		"URI": "http://localhost/badURI",
+		"headers":"",
+		"body": "",
+		"shouldPass":"fail",
+		"testItem":"StatusCode",
+		"expectedOutput":404,
+		"notes":""
+	},
+	{
+		"description":"Multiple users",
+		"method": "PUT",
+		"URI": "http://localhost/test2",
+		"headers":"",
+		"body":  {"URI":"/test2","Action":"data~%test2/2","Owner":"Gilgamech","AccessList":{"Gilgamech":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"],"Everyone":["GET", "HEAD", "OPTIONS"]},"notes":"","Data":1000000},
+		"shouldPass":"pass",
+		"testItem":"StatusCode",
+		"expectedOutput":200,
+		"notes":""
+	},
+	{
+		"description":"",
+		"method": "GET",
+		"URI": "http://localhost/test2",
+		"headers":"",
+		"body": "",
+		"shouldPass":"pass",
+		"testItem":"StatusCode",
+		"expectedOutput":200,
+		"notes":""
+	},
+	{
+		"description":"no Everyone",
+		"method": "PUT",
+		"URI": "http://localhost/test3",
+		"headers":"",
+		"body":  {"URI":"/test3","Action":"data~%test3/2","Owner":"Gilgamech","AccessList":{"Gilgamech":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","Data":1000000},
+		"shouldPass":"pass",
+		"testItem":"StatusCode",
+		"expectedOutput":200,
+		"notes":""
+	},
+	{
+		"description":"",
+		"method": "GET",
+		"URI": "http://localhost/test3",
+		"headers":"",
+		"body": "",
+		"shouldPass":"fail",
+		"testItem":"StatusCode",
+		"expectedOutput":405,
+		"notes":""
+	},
+	{
+		"description":"Owner test",
+		"method": "PUT",
+		"URI": "http://localhost/test4",
+		"headers":"",
+		"body":  {"URI":"/test4","Action":"data~%test4*2","Owner":"Gilgamech","AccessList":{"BobbyTables":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","Data":1},
+		"shouldPass":"pass",
+		"testItem":"StatusCode",
+		"expectedOutput":200,
+		"notes":""
+	},
+	{
+		"description":"",
+		"method": "GET",
+		"URI": "http://localhost/test4",
+		"headers":"",
+		"body": "",
+		"shouldPass":"fail",
+		"testItem":"StatusCode",
+		"expectedOutput":405,
+		"notes":""
+	},
+	{
+		"description":"Website header & footer setup",
+		"method": "GET",
+		"URI": "http://localhost/header.html",
+		"headers":"",
+		"body": "",
+		"shouldPass":"pass",
+		"testItem":"StatusCode",
+		"expectedOutput":200,
+		"notes":""
+	},
+	{
+		"description":"",
+		"method": "GET",
+		"URI": "http://localhost/footer.html",
+		"headers":"",
+		"body": "",
+		"shouldPass":"pass",
+		"testItem":"StatusCode",
+		"expectedOutput":200,
+		"notes":""
+	},
+	{
+		"description":"Data concatenation",
+		"method": "PUT",
+		"URI": "http://localhost/page.html",
+		"headers":"",
+		"body":  {"URI":"/page.html","Action":"data~%header.html <div class=\"textBubbleBG\"><h1>We Are Number 1!</h1></div> %footer.html","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","Data":""},
+		"shouldPass":"pass",
+		"testItem":"StatusCode",
+		"expectedOutput":200,
+		"notes":""
+	},
+	{
+		"description":"Login testing",
+		"method": "PUT",
+		"URI": "http://localhost/login",
+		"headers":"",
+		"body":  {"URI":"/login","Action":"login","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","Data":""},
+		"shouldPass":"pass",
+		"testItem":"StatusCode",
+		"expectedOutput":200,
+		"notes":"%token."
+	},
+	{
+		"description":"",
+		"method": "POST",
+		"URI": "http://localhost/login",
+		"headers":"",
+		"body":  {"username":"Gilgamech","password":"testingPass"},
+		"shouldPass":"pass",
+		"testItem":"content",
+		"expectedOutput":"Bearer %token",
+		"notes":""
+	},
+	{
+		"description":"Multiple users",
+		"method": "PUT",
+		"URI": "http://localhost/test2",
+		"headers":"Bearer %token",
+		"body": {"URI":"/test2","Action":"data~%test2/2","Owner":"Gilgamech","AccessList":{"Gilgamech":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"],"Everyone":["GET", "HEAD", "OPTIONS"]},"notes":"","Data":1000000},
+		"shouldPass":"pass",
+		"testItem":"StatusCode",
+		"expectedOutput":200,
+		"notes":""
+	},
+	{
+		"description":"no Everyone",
+		"method": "PUT",
+		"URI": "http://localhost/test3",
+		"body": {"URI":"/test3","Action":"data~%test3/2","Owner":"Gilgamech","AccessList":{"Gilgamech":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","Data":1000000},
+		"headers":"Bearer %token",
+		"shouldPass":"pass",
+		"testItem":"StatusCode",
+		"expectedOutput":200,
+		"notes":""
+	},
+	{
+		"description":"",
+		"method": "GET",
+		"URI": "http://localhost/test3",
+		"body": "",
+		"headers":"Bearer %token",
+		"shouldPass":"pass",
+		"testItem":"content",
+		"expectedOutput":500000,
+		"notes":""
+	},
+	{
+		"description":"",
+		"method": "GET",
+		"URI": "http://localhost/test4",
+		"body": "",
+		"headers":"Bearer %token",
+		"shouldPass":"pass",
+		"testItem":"StatusCode",
+		"expectedOutput":200,
+		"notes":""
 	}
 ]' | convertfrom-JSON
 }
 
 function Test-Webserver($testData) {
 	$testCounter = 0;
-	$testCounter++;$passCounter = 0;
+	$passCounter = 0;
+	$token = ""
+<#
+$token = $webResponse.content
+#>
 
-	#$testData = $testData | convertfrom-JSON
-
-	#Serve index.html as root.
-	$method = "Put"
-	$siteUri = "http://localhost/"
-	$testItem = iwr -SkipHttpErrorCheck -Method $method $siteUri -Body '{"URI":"/","Action":"fs~/index.html","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","Data":""}'
-	$testCounter++;$passCounter += Test-Item "$siteUri should $method without error" $testItem.StatusCode 200
-
-	#LB between 2 websites
-	$method = "Put"
-	$siteUri = "http://localhost/Gilgamech.html"
-	$testItem = iwr -SkipHttpErrorCheck -Method $method $siteUri -Body '{"URI":"/Gilgamech.html","Action":"uri~GET~https:#www.Gilgamech.com,https:#gilgamech.neocities.org~0","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","Data":""}'
-	$testCounter++;$passCounter += Test-Item "$siteUri should $method without error" $testItem.StatusCode 200
-
-	#+1 test 
-	$method = "Put"
-	$siteUri = "http://localhost/increment"
-	$testItem = iwr -SkipHttpErrorCheck -Method $method $siteUri -Body '{"URI":"/increment","Action":"data~%increment+1","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","Data":1}'
-	$testCounter++;$passCounter += Test-Item "$siteUri should $method without error" $testItem.StatusCode 200
-
-	$method = "Get"
-	$testItem = iwr -SkipHttpErrorCheck -Method $method $siteUri
-	$testCounter++;$passCounter += Test-Item "$siteUri should $method without error" $testItem.content 2
-
-	$testItem = iwr -SkipHttpErrorCheck -Method $method $siteUri
-	$testCounter++;$passCounter += Test-Item "$siteUri should $method without error" $testItem.content 3
-
-	#-1 test
-	$method = "Put"
-	$siteUri = "http://localhost/decrement"
-	$testItem = iwr -SkipHttpErrorCheck -Method $method $siteUri -Body '{"URI":"/decrement","Action":"data~%decrement-1","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","Data":1000000}'
-	$testCounter++;$passCounter += Test-Item "$siteUri should $method without error" $testItem.StatusCode 200
-
-	$method = "Get"
-	$testItem = iwr -SkipHttpErrorCheck -Method $method $siteUri
-	$testCounter++;$passCounter += Test-Item "$siteUri should $method without error" $testItem.content 999999
-	$testItem = iwr -SkipHttpErrorCheck -Method $method $siteUri
-	$testCounter++;$passCounter += Test-Item "$siteUri should $method without error" $testItem.content 999998
-
-	#URI validation 
-	$method = "Put"
-	$siteUri = "http://localhost/test"
-	$testItem = iwr -SkipHttpErrorCheck -Method $method $siteUri -Body '{"URI":"/decrement","Action":"data~%decrement-1","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","Data":1000000}'
-	$testCounter++;$passCounter += Test-Item "$siteUri should Error on $method" $testItem.StatusCode 400
-
-	#404 test
-	$method = "Get"
-	$siteUri = "http://localhost/badURI"
-	$testItem = iwr -SkipHttpErrorCheck -Method $method $siteUri
-	$testCounter++;$passCounter += Test-Item "$siteUri should Error on $method" $testItem.StatusCode 404
-	$testItem = iwr -SkipHttpErrorCheck -Method $method $siteUri
-	$testCounter++;$passCounter += Test-Item "$siteUri should Error again on $method" $testItem.StatusCode 404
-
-	#Multiple users
-	$method = "Put"
-	$siteUri = "http://localhost/test2"
-	$testItem = iwr -SkipHttpErrorCheck -Method $method $siteUri -Body '{"URI":"/test2","Action":"data~%test2/2","Owner":"Gilgamech","AccessList":{"Gilgamech":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"],"Everyone":["GET", "HEAD", "OPTIONS"]},"notes":"","Data":1000000}'
-	$testCounter++;$passCounter += Test-Item "$siteUri should $method without error" $testItem.StatusCode 200
-
-	$method = "Get"
-	$testItem = iwr -SkipHttpErrorCheck -Method $method $siteUri
-	$testCounter++;$passCounter += Test-Item "$siteUri should $method without error" $testItem.StatusCode 200
-
-	#no Everyone
-	$method = "Put"
-	$siteUri = "http://localhost/test3"
-	$testItem = iwr -SkipHttpErrorCheck -Method $method $siteUri -Body '{"URI":"/test3","Action":"data~%test3/2","Owner":"Gilgamech","AccessList":{"Gilgamech":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","Data":1000000}'
-	$testCounter++;$passCounter += Test-Item "$siteUri should $method without error" $testItem.StatusCode 200
-
-	$method = "Get"
-	$testItem = iwr -SkipHttpErrorCheck -Method $method $siteUri
-	$testCounter++;$passCounter += Test-Item "$siteUri should Error on $method" $testItem.StatusCode 405
-	 
-	#Owner test
-	$method = "Put"
-	$siteUri = "http://localhost/test4"
-	$testItem = iwr -SkipHttpErrorCheck -Method $method $siteUri -Body '{"URI":"/test4","Action":"data~%test4*2","Owner":"Gilgamech","AccessList":{"BobbyTables":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","Data":1}'
-	$testCounter++;$passCounter += Test-Item "$siteUri should $method without error" $testItem.StatusCode 200
-
-	$method = "Get"
-	$testItem = iwr -SkipHttpErrorCheck -Method $method $siteUri
-	$testCounter++;$passCounter += Test-Item "$siteUri should Error on $method" $testItem.StatusCode 405
-	 
-	$method = "Get"
-	$siteUri = "http://localhost/header.html"
-	$testItem = iwr -SkipHttpErrorCheck -Method $method $siteUri 
-	$testCounter++;$passCounter += Test-Item "$siteUri should $method without error" $testItem.StatusCode 200
-
-	$method = "Get"
-	$siteUri = "http://localhost/footer.html"
-	$testItem = iwr -SkipHttpErrorCheck -Method $method $siteUri 
-	$testCounter++;$passCounter += Test-Item "$siteUri should $method without error" $testItem.StatusCode 200
-
-	#$method = "Put"
-	#iwr -SkipHttpErrorCheck -Method $method $siteUri -Body (gc .\header.html) 
-	#iwr -SkipHttpErrorCheck -Method $method $siteUri -Body (gc .\footer.html) 
-
-	#Data concatenation
-	$method = "Put"
-	$siteUri = "http://localhost/page.html"
-	$testItem = iwr -SkipHttpErrorCheck -Method $method $siteUri -Body '{"URI":"/page.html","Action":"data~%header.html <div class=\"textBubbleBG\"><h1>We Are Number 1!</h1></div> %footer.html","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","Data":""}'
-	$testCounter++;$passCounter += Test-Item "$siteUri should $method without error" $testItem.StatusCode 200
-
-	#Login testing
-	$method = "Put"
-	$siteUri = "http://localhost/login"
-	$testItem = iwr -SkipHttpErrorCheck -Method $method $siteUri -Body '{"URI":"/login","Action":"login","Owner":"Gilgamech","AccessList":{"Everyone":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","Data":""}'
-	$testCounter++;$passCounter += Test-Item "$siteUri should $method without error" $testItem.StatusCode 200
-
-	$method = "Post"
-	$testItem = iwr -SkipHttpErrorCheck -Method $method $siteUri -Body '{"username":"Gilgamech","password":"testingPass"}'
-	$testCounter++;$passCounter += Test-Item "$siteUri should $method without error" ($testItem.content -split " ")[0] "Bearer"
-	$token = $testItem.content
-	$headers = @{};
-	$headers.token = $token
-
-	#Multiple users
-	$method = "Put"
-	$siteUri = "http://localhost/test2"
-	$testItem = iwr -SkipHttpErrorCheck -Method $method $siteUri -Headers $headers -Body '{"URI":"/test2","Action":"data~%test2/2","Owner":"Gilgamech","AccessList":{"Gilgamech":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"],"Everyone":["GET", "HEAD", "OPTIONS"]},"notes":"","Data":1000000}'
-	$testCounter++;$passCounter += Test-Item "$siteUri should $method without error" $testItem.StatusCode 200
-
-	#no Everyone
-	$method = "Put"
-	$siteUri = "http://localhost/test3"
-	$testItem = iwr -SkipHttpErrorCheck -Method $method $siteUri -Headers $headers -Body '{"URI":"/test3","Action":"data~%test3/2","Owner":"Gilgamech","AccessList":{"Gilgamech":["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"]},"notes":"","Data":1000000}'
-	$testCounter++;$passCounter += Test-Item "$siteUri should $method without error" $testItem.StatusCode 200
-
-	$method = "Get"
-	$testItem = iwr -SkipHttpErrorCheck -Method $method $siteUri -Headers $headers
-	$testCounter++;$passCounter += Test-Item "$siteUri should $method without error" $testItem.content 500000
-
-	$method = "Get"
-	$siteUri = "http://localhost/test4"
-	$testItem = iwr -SkipHttpErrorCheck -Method $method $siteUri -Headers $headers
-	$testCounter++;$passCounter += Test-Item "$siteUri should $method without error" $testItem.StatusCode 200
+	
+	foreach ($data in $testData) {
+		if ($data.description) {
+			write-host $data.description
+		}
+		$testCounter++;
+		$webResponse = ""
+		if ($token -eq "") {
+			$webResponse = iwr -SkipHttpErrorCheck -Method $data.method $data.URI -Body ($data.Body |convertto-JSON)
+		} else {
+			$headers = @{};
+			$headers.token = $data.headers -replace "%token",$token;
+			$webResponse = iwr -SkipHttpErrorCheck -Method $data.method $data.URI -Body ($data.Body |convertto-JSON) -headers $headers
+		} #end if token
+		if ($data.shouldPass -eq "pass") {
+			$msgTxt = "$($data.URI) should $($data.method) without error"
+		} elseif ($data.shouldPass -eq "fail") {
+			$msgTxt = "$($data.URI) should Error on $($data.method)"
+		} else {
+			$msgTxt = "shouldPass err"
+		}
+		try {
+			$contentSplit = ($webResponse.content -split " ")
+			if ($contentSplit[0] -eq "Bearer") {
+				$token = $contentSplit[1]
+				$passCounter += Test-Item $msgTxt ($webResponse.($data.testItem) -replace $token,"%token") $data.expectedOutput
+			} else {
+				#$token = "";
+				$passCounter += Test-Item $msgTxt $webResponse.($data.testItem) $data.expectedOutput
+			}
+		} catch {
+			$token = "";
+		}
+	}
 	
 	$passRate = [math]::Round($passCounter*100/$testCounter,2)
-	Write-Host "$testCounter of $passCounter tests passed, for a pass rate of $passRate %"
+	Write-Host "$passCounter of $testCounter tests passed, for a pass rate of $passRate %"
 	return $passRate
 }
 
