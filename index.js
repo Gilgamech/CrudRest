@@ -289,7 +289,11 @@ const server = http.createServer((request, response) => {
 					} else if (sites[pagename].URI == pagename) {
 						switch(splitAction[0]) {
 							case "login":
-							body = JSON.parse(body);
+							try {//JSON validation
+								body = JSON.parse(body);
+							} catch(error) {
+								body = error;
+							}
 							if (JSON.stringify(Users).includes(body.username)) {
 								if (Users[body.username].password == body.password) {
 									userName = body.username;
