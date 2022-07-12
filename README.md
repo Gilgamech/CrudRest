@@ -29,7 +29,7 @@
 - GET - Performs specified Action.
 - HEAD - Normal functionality
 - OPTIONS - Normal functionality
-- POST - Performs "login" action if set. Otherwise populates Data parameter of the path. This is often served by a GET request, either directly or after transformation. 
+- POST - Performs the "login" action if set. Otherwise it appends the request body to the Data parameter of the Putfile. This is often served by a GET request, either directly or after transformation. 
 - PUT - Upload a Putfile, like the one just above. The Data parameter can be filled in, giving another way to populate this parameter alongside a POST request.
 - DELETE - Deletes the path's Putfile. 
 - MERGE - Read only display of Putfile. (I ran out of verbs.)
@@ -37,7 +37,7 @@
 ### Available Actions
 
 - uri
-	- Format: "uri\~FullPathOrListOfFullPaths\~cacheExpiry"
+	- Format: "uri\~FullPath,Or,List,Of,Full,Paths\~cacheExpiry"
 	- Performs the requested verb against the requested resource or resources, stores the data in the Putfile Data property, then serves from there. 
 	- All examples here only GET the remote resource, but all standard HTML verbs are available. 
 	- Automatically caches single-site Actions. Multi-site caching, and single-site cache invalidation & cache expiry functionality to come.

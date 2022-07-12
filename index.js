@@ -5,7 +5,6 @@
 //Updated on: 7/11/2022
 //Notes: The goal for CrudRest is to be, in different configurations, a webserver, database, load balancer, in-memory cache, message queue, pub sub hub, login IdP, password manager, and a variety of other uses.
 
-
 //////////////////////// Defaults ////////////////////////
 const defaultVerbs = ["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"];
 const defaultOwner = "Gilgamech"
