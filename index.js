@@ -9,7 +9,7 @@
 //////////////////////// Defaults ////////////////////////
 const defaultVerbs = ["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"];
 const defaultOwner = "Gilgamech"
-const wwwFolder = "/home/app/"
+const wwwFolder = "/home/app/www/"
 
 const crypto = require('crypto');
 const fs = require('fs');

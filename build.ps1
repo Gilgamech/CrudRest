@@ -219,10 +219,10 @@ function get-TestData (){
 	},
 	{
 		"description":"Website header & footer setup",
-		"method": "GET",
+		"method": "POST",
 		"URI": "http://localhost/header.html",
 		"headers":"",
-		"body": "",
+		"body": "(gc .\\header.html)",
 		"shouldPass":"pass",
 		"testItem":"StatusCode",
 		"expectedOutput":200,
@@ -230,10 +230,10 @@ function get-TestData (){
 	},
 	{
 		"description":"",
-		"method": "GET",
+		"method": "POST",
 		"URI": "http://localhost/footer.html",
 		"headers":"",
-		"body": "",
+		"body": "(gc .\\footer.html)",
 		"shouldPass":"pass",
 		"testItem":"StatusCode",
 		"expectedOutput":200,
@@ -334,13 +334,18 @@ $token = $webResponse.content
 		}
 		$testCounter++;
 		$webResponse = ""
-		if ($token -eq "") {
-			$webResponse = iwr -SkipHttpErrorCheck -Method $data.method $data.URI -Body ($data.Body |convertto-JSON)
-		} else {
-			$headers = @{};
+		$headers = @{};
+		if ($token -ne "") {
 			$headers.token = $data.headers -replace "%token",$token;
-			$webResponse = iwr -SkipHttpErrorCheck -Method $data.method $data.URI -Body ($data.Body |convertto-JSON) -headers $headers
 		} #end if token
+		if (($data.Body[0..3] -join "") -eq "(gc ") {
+			write-host $data.Body
+			$data.Body = (invoke-expression $data.Body);
+			$headers.ContentType = "text/html";
+			$webResponse = iwr -SkipHttpErrorCheck -Method $data.method $data.URI -Body ($data.Body) -headers $headers
+		} else {
+			$webResponse = iwr -SkipHttpErrorCheck -Method $data.method $data.URI -Body ($data.Body |convertto-JSON) -headers $headers
+		}
 		if ($data.shouldPass -eq "pass") {
 			$msgTxt = "$($data.URI) should $($data.method) without error"
 		} elseif ($data.shouldPass -eq "fail") {
