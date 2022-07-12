@@ -278,3 +278,13 @@ Reusing the user-specific permissions test from above - this time we're logged i
 - Better file checking? const files = fs.readdirSync(wwwFolder);
 - Other LB modes
 - Replace comma-split list of sites with semicolon-split list of actions. (Optional - would allow a path to round-robin between local files, remote sites, and transformed data in a bewildering series of responses. Unsure of the use case here.)
+- API Keys
+- Payload storage.
+- Messaging relay.
+- IsItUp?
+- Improve login (Need to set up logout, password reset, and delete account. Then Passport or similar?)
+- Chat
+- Ticketing system
+- Shopping cart?
+- Time tracker 
+- MFA OTPs
