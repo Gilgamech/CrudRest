@@ -10,11 +10,9 @@ function Build-Webserver ($ver, $serverID) {
 	docker run -p 80:80 -d $tag
 	sleep 1
 	$sitePct = Test-Webserver (get-TestData)
-<#
 	if ($sitePct = 100) {
-		Push-Webserver;
+		#Push-Webserver;
 	}
-#>
 	
 }
 
@@ -323,10 +321,6 @@ function Test-Webserver($testData) {
 	$testCounter = 0;
 	$passCounter = 0;
 	$token = ""
-<#
-$token = $webResponse.content
-#>
-
 	
 	foreach ($data in $testData) {
 		if ($data.description) {
