@@ -5,16 +5,20 @@
 //Updated on: 7/11/2022
 //Notes: The goal for CrudRest is to be, in different configurations, a webserver, database, load balancer, in-memory cache, message queue, pub sub hub, login IdP, password manager, and a variety of other uses.
 
+
+//////////////////////// Defaults ////////////////////////
+const defaultVerbs = ["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"];
+const defaultOwner = "Gilgamech"
+const wwwFolder = "/home/app/"
+
 const crypto = require('crypto');
 const fs = require('fs');
 const http = require("http");
 const https = require("https");
 const url  = require('url');
 const serverPort = 80;
-const wwwFolder = "/home/app"
 const inMemCacheFile = "/inMemCacheFile.txt"
 const userFile = "/userFile.txt"
-const defaultVerbs = ["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"];
 
 var error405 = "Method Not Allowed.";
 var optionsData = 'HTTP/1.1 200 OK\nAllow: GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS\nAccess-Control-Allow-Origin: https://Gilgamech.com\nAccess-Control-Allow-Methods: GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS\nAccess-Control-Allow-Headers: Content-Type'
@@ -42,7 +46,7 @@ fs.readFile(userFile, function (err,data) {
 });
 
 if (sites["/error.html"] == null) {
-	sites["/error.html"] = {"URI":"/error.html","Action":"fs~/error.html","Owner":"","AccessList":{"Everyone":defaultVerbs},"notes":"","Data":"<html><body><h1>Error %statusCode</h1><h3>%statusText</h3><p>Additionally, /error.html gave a 404 Not Found response.</p></body></html>"};
+	sites["/error.html"] = {"URI":"/error.html","Action":"fs~/error.html","Owner":defaultOwner,"AccessList":{"Everyone":defaultVerbs},"notes":"","Data":"<html><body><h1>Error %statusCode</h1><h3>%statusText</h3><p>Additionally, /error.html gave a 404 Not Found response.</p></body></html>"};
 	dataSave(sites,inMemCacheFile);
 }
 
@@ -59,7 +63,7 @@ const server = http.createServer((request, response) => {
 	
 	if (sites[pagename] == null) {
 		console.log("New page "+pagename);
-		sites[pagename] = {"URI":pagename,"Action":"fs~"+pagename,"Owner":"","AccessList":{"Everyone":defaultVerbs},"notes":"","Data":""};
+		sites[pagename] = {"URI":pagename,"Action":"fs~"+pagename,"Owner":defaultOwner,"AccessList":{"Everyone":defaultVerbs},"notes":"","Data":""};
 		dataSave(sites,inMemCacheFile);
 	}
 	var jsonAccessList = JSON.stringify(sites[pagename].AccessList);
