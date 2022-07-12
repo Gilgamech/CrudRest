@@ -2,7 +2,7 @@
 //Title: Basic Webserver
 //Made by: Stephen Gillie
 //Created on: 6/17/2022
-//Updated on: 7/8/2022
+//Updated on: 7/11/2022
 //Notes: The goal for CrudRest is to be, in different configurations, a webserver, database, load balancer, in-memory cache, message queue, pub sub hub, login IdP, password manager, and a variety of other uses.
 
 const crypto = require('crypto');
@@ -41,12 +41,10 @@ fs.readFile(userFile, function (err,data) {
 	}
 });
 
-fs.readFile(wwwFolder+"/err.html", 'utf8', function (err,data) {
-	errorPage =  data;
-	if (err) {
-		console.log(err);
-	}
-});
+if (sites["/error.html"] == null) {
+	sites["/error.html"] = {"URI":"/error.html","Action":"fs~/error.html","Owner":"","AccessList":{"Everyone":defaultVerbs},"notes":"","Data":"<html><body><h1>Error %statusCode</h1><h3>%statusText</h3><p>Additionally, /error.html gave a 404 Not Found response.</p></body></html>"};
+	dataSave(sites,inMemCacheFile);
+}
 
 const server = http.createServer((request, response) => {
 	var now = new Date();
@@ -151,7 +149,7 @@ const server = http.createServer((request, response) => {
 									sites[pagename].Data = "";
 									console.log(statusCode+" "+errMsg);
 									response.writeHead(statusCode, {'Content-Type': 'text/html'});
-									response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",errMsg));
+									response.end(sites["/error.html"].Data.replace("%statusCode",statusCode).replace("%statusText",errMsg));
 								} else {
 									sites[pagename].Data = data;
 									dataSave(sites,inMemCacheFile);
@@ -176,7 +174,7 @@ const server = http.createServer((request, response) => {
 									responseData = responseData.replace(datum,sites[datum.replace(/%/g,"/")].Data)
 								} catch {
 									statusCode = 400;
-									responseData = errorPage.replace("%statusCode",statusCode).replace("%statusText","Site data can't be read - have all variable paths been visited?")
+									responseData = sites["/error.html"].Data.replace("%statusCode",statusCode).replace("%statusText","Site data can't be read - have all variable paths been visited?")
 								}
 							}
 						}
@@ -226,7 +224,7 @@ const server = http.createServer((request, response) => {
 					}; //end switch splitAction[0]
 				} else {
 					response.writeHead(400, {'Content-Type': 'text/html'});
-					response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText","Site Action URI mismatch"));
+					response.end(sites["/error.html"].Data.replace("%statusCode",statusCode).replace("%statusText","Site Action URI mismatch"));
 				}
 				break; //end GET
 			case "PUT":
@@ -244,24 +242,24 @@ const server = http.createServer((request, response) => {
 					} catch(errMsg) {
 						console.log(consoleMsg+errMsg);
 						response.writeHead(statusCode, {'Content-Type': contentType});
-						response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",(responseData += errMsg)));
+						response.end(sites["/error.html"].Data.replace("%statusCode",statusCode).replace("%statusText",(responseData += errMsg)));
 					}; // end try
 					try {//Verify inputs
 						if (pagename != inputData.URI) {
 							errMsg = "URI does not match server location."
 							console.log(consoleMsg+errMsg);
 							response.writeHead(statusCode, {'Content-Type': contentType});
-							response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",(responseData += errMsg)));
+							response.end(sites["/error.html"].Data.replace("%statusCode",statusCode).replace("%statusText",(responseData += errMsg)));
 						} else if (inputData.AccessList == "") {
 							errMsg = "AccessList too short."
 							console.log(consoleMsg+errMsg);
 							response.writeHead(statusCode, {'Content-Type': contentType});
-							response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",(responseData += errMsg)));
+							response.end(sites["/error.html"].Data.replace("%statusCode",statusCode).replace("%statusText",(responseData += errMsg)));
 						} else if (inputData.Action == "") {
 							errMsg = "Action too short."
 							console.log(consoleMsg+errMsg);
 							response.writeHead(statusCode, {'Content-Type': contentType});
-							response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",(responseData += errMsg)));
+							response.end(sites["/error.html"].Data.replace("%statusCode",statusCode).replace("%statusText",(responseData += errMsg)));
 						} else {
 							sites[pagename] = inputData;
 							dataSave(sites,inMemCacheFile);
@@ -273,7 +271,7 @@ const server = http.createServer((request, response) => {
 						statusCode=400;
 						console.log(consoleMsg+errMsg);
 						response.writeHead(statusCode, {'Content-Type': contentType});
-						response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",(responseData += errMsg)));
+						response.end(sites["/error.html"].Data.replace("%statusCode",statusCode).replace("%statusText",(responseData += errMsg)));
 					}; //end try
 				});
 				break; //end PUT
@@ -348,13 +346,13 @@ const server = http.createServer((request, response) => {
 			default:
 				statusCode = 405;
 				response.writeHead(statusCode, {'Content-Type': 'text/html'});
-				response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",error405));
+				response.end(sites["/error.html"].Data.replace("%statusCode",statusCode).replace("%statusText",error405));
 				break; //end default
 		}; //end switch
 	} else {
 		statusCode = 405;
 		response.writeHead(statusCode, {'Content-Type': 'text/html'});
-		response.end(errorPage.replace("%statusCode",statusCode).replace("%statusText",error405));
+		response.end(sites["/error.html"].Data.replace("%statusCode",statusCode).replace("%statusText",error405));
 	}
 })
 
