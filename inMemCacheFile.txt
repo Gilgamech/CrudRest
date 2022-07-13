@@ -1,0 +1,43 @@
+{
+  "/": {
+    "URI": "/",
+    "Action": "fs~/index.html",
+    "Owner": "Gilgamech",
+    "AccessList": {
+      "Everyone": [
+        "GET",
+        "HEAD",
+        "OPTIONS",
+        "POST",
+        "PUT",
+        "DELETE",
+        "MERGE"
+      ]
+    },
+    "notes": "",
+    "Data": {
+      "type": "Buffer",
+      "data": [
+        10
+      ]
+    }
+  },
+  "/increment": {
+    "URI": "/increment",
+    "Action": "data~%increment+1",
+    "Owner": "Gilgamech",
+    "AccessList": {
+      "Everyone": [
+        "GET",
+        "HEAD",
+        "OPTIONS",
+        "POST",
+        "PUT",
+        "DELETE",
+        "MERGE"
+      ]
+    },
+    "notes": "",
+    "Data": "1"
+  }
+}
