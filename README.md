@@ -288,3 +288,9 @@ Reusing the user-specific permissions test from above - this time we're logged i
 - Shopping cart?
 - Time tracker 
 - MFA OTPs
+- Add Password Reset (Choose an email provider etc.) and logout? functionality. (Why logout? Feel free to delete the cookie.)
+
+- Webcoif
+	- Sequelize
+- Robot Swimmers
+- Login page
