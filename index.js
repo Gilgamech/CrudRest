@@ -210,7 +210,7 @@ const server = http.createServer((request, response) => {
 						}; //end for let a 
 
 						//Store at current location, after reverting closing tags.
-						sites[pagename].Data = responseData.replace(/\<\$/g,"</");
+						sites[pagename].Data = responseData.replaceAll("<\$","</");
 						dataSave(sites,inMemCacheFile);
 
 						//Return as response.
