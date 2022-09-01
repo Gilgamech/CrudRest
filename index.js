@@ -168,13 +168,13 @@ const server = http.createServer((request, response) => {
 					case "data":
 						//Replace from Data
 						//Spread out operators by adding spaces between them, then remove any doubled spaces if they already had spaces there. Then split into a word array.
-						responseData = splitAction[1].replace(/\<\//g,"<$").replace(/\+/g," + ").replace(/\+/g," + ").replace(/-/g," - ").replace(/\*/g," * ").replace(/\//g," / ").replace(/,/g," , ").replace(/]/g," ] ").replace(/}/g," } ").replace(/  /g," ");
+						responseData = splitAction[1].replaceAll("<\/","<$").replaceAll("+"," + ").replaceAll("+"," + ").replaceAll("-"," - ").replaceAll("*"," * ").replaceAll("/"," / ").replaceAll(","," , ").replaceAll("]"," ] ").replaceAll("}"," } ").replaceAll("  "," ");
 						responseSplit = responseData.split(" ");
 						//Go through the word array, and replace any paths (Use % instead of / to denote website directory or path, to avoid confusion with mathematical division.)
 						for (let datum of responseSplit) {
 							if (datum.includes("%")) {
 								try{
-									responseData = responseData.replace(datum,sites[datum.replace(/%/g,"/")].Data)
+									responseData = responseData.replace(datum,sites[datum.replaceAll("%","/")].Data)
 								} catch {
 									statusCode = 400;
 									responseData = sites["/error.html"].Data.replace("%statusCode",statusCode).replace("%statusText","Site data can't be read - have all variable paths been visited?")
