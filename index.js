@@ -9,6 +9,9 @@
 const defaultVerbs = ["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"];
 const defaultOwner = "Gilgamech"
 const wwwFolder = "./www/"
+const inMemCacheFile = "./inMemCacheFile.json"
+const userFile = "./userFile.txt"
+//////////////////////// Defaults ////////////////////////
 
 const crypto = require('crypto');
 const fs = require('fs');
@@ -16,8 +19,6 @@ const http = require("http");
 const https = require("https");
 const url  = require('url');
 const serverPort = 80;
-const inMemCacheFile = "./inMemCacheFile.json"
-const userFile = "./userFile.txt"
 
 var error405 = "Method Not Allowed.";
 var optionsData = 'HTTP/1.1 200 OK\nAllow: GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS\nAccess-Control-Allow-Origin: *\nAccess-Control-Allow-Methods: GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS\nAccess-Control-Allow-Headers: Content-Type'
