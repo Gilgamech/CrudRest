@@ -16,7 +16,7 @@ const http = require("http");
 const https = require("https");
 const url  = require('url');
 const serverPort = 80;
-const inMemCacheFile = "./inMemCacheFile.txt"
+const inMemCacheFile = "./inMemCacheFile.json"
 const userFile = "./userFile.txt"
 
 var error405 = "Method Not Allowed.";
