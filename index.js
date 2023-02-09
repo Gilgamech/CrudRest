@@ -8,7 +8,7 @@
 //////////////////////// Defaults ////////////////////////
 const defaultVerbs = ["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"];
 const defaultOwner = "Gilgamech"
-const wwwFolder = "/home/app/www/"
+const wwwFolder = "./www/"
 
 const crypto = require('crypto');
 const fs = require('fs');
@@ -16,8 +16,8 @@ const http = require("http");
 const https = require("https");
 const url  = require('url');
 const serverPort = 80;
-const inMemCacheFile = "/inMemCacheFile.txt"
-const userFile = "/userFile.txt"
+const inMemCacheFile = "./inMemCacheFile.txt"
+const userFile = "./userFile.txt"
 
 var error405 = "Method Not Allowed.";
 var optionsData = 'HTTP/1.1 200 OK\nAllow: GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS\nAccess-Control-Allow-Origin: *\nAccess-Control-Allow-Methods: GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS\nAccess-Control-Allow-Headers: Content-Type'
@@ -46,7 +46,7 @@ fs.readFile(userFile, function (err,data) {
 
 if (sites["/error.html"] == null) {
 	sites["/error.html"] = {"URI":"/error.html","Action":"fs~/error.html","Owner":defaultOwner,"AccessList":{"Everyone":defaultVerbs},"notes":"","Data":"<html><body><h1>Error %statusCode</h1><h3>%statusText</h3><p>Additionally, /error.html gave a 404 Not Found response.</p></body></html>"};
-	dataSave(sites,inMemCacheFile);
+	//dataSave(sites,inMemCacheFile);
 }
 
 const server = http.createServer((request, response) => {
