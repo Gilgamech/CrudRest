@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/> 
+		<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Gilgamech Hosting</title>	
+		<script src="https://www.Sparational.com/Sparational.js"></script>
+		<script src="https://www.Gilgamech.com/js/sitelets.js"></script>
+<script type="text/javascript">
+<!-- SCRIPTS GO HERE -->
+function buildPostPage(parentElement){
+	let wrapperDiv = addElement(parentElement,"","","div")
+	addElement(wrapperDiv,"Post text goes here!","","textarea","","","","","","","",parentElement+"textarea"+wrapperDiv)
+	//addElement(wrapperDiv,"http://localhost/increment","","input","","","","","","","",parentElement+"input"+wrapperDiv)
+	addElement(wrapperDiv,"http://localhost/UriGoesHere","","input","","","","","","","",parentElement+"input"+wrapperDiv)
+	addElement(wrapperDiv,"POST!","","button","","","","makePostCall('"+parentElement+"','"+wrapperDiv+"')")
+	addElement(wrapperDiv,"","","","","","","","","","",parentElement+"WebOut"+wrapperDiv)
+//addElement("elementParent","","","","","","","","","","","elementId")
+//addElement("elementParent","innerText","elementClass","elementType","","","onChange","onClick")
+//addElement("elementParent","innerText","elementClass","elementType","elementStyle","href","onChange","onClick","contentEditable","attributeType","attributeAction","elementId")
+}
+
+function makePostCall(parentElement,wrapperDiv){
+webRequest("POST",readElement(parentElement+"input"+wrapperDiv),function($callback){writeElement(parentElement+"WebOut"+wrapperDiv,$callback)},"",readElement(parentElement+"textarea"+wrapperDiv))
+
+webRequest("GET",readElement(parentElement+"input"+wrapperDiv),function($callback){writeElement(parentElement+"WebOut"+wrapperDiv,$callback)})
+}
+
+/*
+POST button to post
+Viewer to load page, for confirmation
+*/
+
+</script>
+<style>
+<!-- CSS CLASSES GO HERE -->
+.blank {
+}
+</style>
+		<link href="https://www.Gilgamech.com/css/Gilgamech.css" rel="stylesheet" type="text/css">
+		<link href="https://www.Gilgamech.com/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+	</head>
+	<body>
+		<div id="content">
+
+			<div id="jumbotron" class="jumbotron text-center" style="background: rgb(200, 0, 0);">
+				<h1>Programmatic Webserver</h1>
+				<h4>Test output page</h4>
+			</div>
+			<div id="container" class="container">
+				<div id="cBanner" class="alert alert-info text-center">Post data.</div>
+				<hr>
+			</div>
+
+		</div><!-- End Content-->
+		<div id="footWrapper">
+		</div>
+<script>
+buildPostPage("container");
+buildFooterPage("footWrapper");
+</script>
+	</body>
+</html>
+
