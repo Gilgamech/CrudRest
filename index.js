@@ -11,6 +11,7 @@ const defaultOwner = "Gilgamech"
 const wwwFolder = "./www/"
 const inMemCacheFile = "./inMemCacheFile.json"
 const userFile = "./userFile.txt"
+const logFolder = "./logs"
 //////////////////////// Defaults ////////////////////////
 
 const crypto = require('crypto');
@@ -38,26 +39,26 @@ var Users = new Object();
 
 fs.readFile(inMemCacheFile, function (err,data) {
 	if (err) {
-		console.log("inMemCacheFile Read err: "+err);
+		writeLog("","inMemCacheFile Read err: "+err);
 	} else {
 		try{
 			sites = JSON.parse(data);
-			console.log("inMemCacheFile Read successful.");
+			writeLog("","inMemCacheFile Read successful.");
 		}catch(e){
-			console.log("inMemCacheFile Read error: "+e)
+			writeLog("","inMemCacheFile Read error: "+e)
 		}
 	}
 });
 
 fs.readFile(userFile, function (err,data) {
 	if (err) {
-		console.log("userFile Read err: "+err);
+		writeLog("","userFile Read err: "+err);
 	} else {
 		try{
 			Users = JSON.parse(data);
-			console.log("userFile Read successful.");
+			writeLog("","userFile Read successful.");
 		}catch(e){
-			console.log("userFile Read error: "+e)
+			writeLog("","userFile Read error: "+e)
 		}
 	}
 });
@@ -79,7 +80,7 @@ const server = http.createServer((request, response) => {
 	var pagename = request.url;
 	
 	if (sites[pagename] == null) {
-		console.log("New page "+pagename);
+		writeLog(now,"New page "+pagename);
 		sites[pagename] = {"URI":pagename,"Action":"fs~"+pagename,"Owner":defaultOwner,"AccessList":{"Everyone":defaultVerbs},"notes":"","Data":""};
 		dataSave(sites,inMemCacheFile);
 	}
@@ -92,7 +93,7 @@ const server = http.createServer((request, response) => {
 			userName = Users[incomingToken];
 		}
 	} catch {}
-	console.log("At "+now.toISOString()+" user "+userName+" made "+request.method+" request from "+request.socket.remoteAddress+" for page "+pagename);
+	writeLog(now,"User "+userName+" made "+request.method+" request from "+request.socket.remoteAddress+" for page "+pagename);
 	
 	if (jsonAccessList.includes("Everyone") && jsonAccessList.includes(userName)){
 		allowedVerbs = [...new Set([...sites[pagename].AccessList["Everyone"], ...sites[pagename].AccessList[userName]])]
@@ -168,10 +169,10 @@ const server = http.createServer((request, response) => {
 						if (sites[pagename].Data == "") {
 							fs.readFile(wwwFolder+splitAction[1], function (err,data) {
 								if (err) {
-									statusCode=404;
+									statusCode = 404;
 									let errMsg = "Not found."
 									sites[pagename].Data = "";
-									console.log(statusCode+" "+errMsg);
+									writeLog(now,statusCode+" "+errMsg);
 									contentType = 'text/html';
 									response.writeHead(statusCode, {'Content-Type': contentType}, optionsData);
 									response.end(sites["/error.html"].Data.replace("%statusCode",statusCode).replace("%statusText",errMsg)); return;
@@ -227,7 +228,7 @@ const server = http.createServer((request, response) => {
 										responseData = responseData.replace(replaceVar,firstElement / secondElement);
 										break;//end plus
 									default://Operator
-										console.log("err default")
+										writeLog(now,"err default")
 										break;
 								}; //end switch Operator
 							}; //end if mathOperators
@@ -252,7 +253,7 @@ const server = http.createServer((request, response) => {
 						break;
 					}; //end switch splitAction[0]
 				} else {
-					statusCode=400;
+					statusCode = 400;
 					contentType = getContentType(pagename);
 					response.writeHead(statusCode, {'Content-Type': contentType}, optionsData);
 					response.end(sites["/error.html"].Data.replace("%statusCode",statusCode).replace("%statusText","Site Action URI mismatch")); return;
@@ -265,43 +266,43 @@ const server = http.createServer((request, response) => {
 				request.on('end', () => {
 					var inputData = "";
 					let errMsg = "";
-					statusCode=400;
+					statusCode = 400;
 					responseData = request.method+" "+JSON.stringify(sites[pagename])+" failed: "
-					var consoleMsg = "At "+now.toISOString()+" user "+userName+"'s "+request.method+" failed from "+request.socket.remoteAddress+" for page "+pagename+": "
+					var consoleMsg = "User "+userName+"'s "+request.method+" failed from "+request.socket.remoteAddress+" for page "+pagename+": "
 					try {//Verify JSON
 						inputData = JSON.parse(body);
 					} catch(errMsg) {
-						console.log(consoleMsg+errMsg);
+						writeLog(now,consoleMsg+errMsg);
 						response.writeHead(statusCode, {'Content-Type': contentType}, optionsData);
 						response.end(sites["/error.html"].Data.replace("%statusCode",statusCode).replace("%statusText",(responseData += errMsg))); return;
 					}; // end try
 					try {//Verify inputs
 						if (pagename != inputData.URI) {
 							errMsg = "URI does not match server location."
-							console.log(consoleMsg+errMsg);
+							writeLog(now,consoleMsg+errMsg);
 							response.writeHead(statusCode, {'Content-Type': contentType}, optionsData);
 							response.end(sites["/error.html"].Data.replace("%statusCode",statusCode).replace("%statusText",(responseData += errMsg))); return;
 						} else if (inputData.AccessList == "") {
 							errMsg = "AccessList too short."
-							console.log(consoleMsg+errMsg);
+							writeLog(now,consoleMsg+errMsg);
 							response.writeHead(statusCode, {'Content-Type': contentType}, optionsData);
 							response.end(sites["/error.html"].Data.replace("%statusCode",statusCode).replace("%statusText",(responseData += errMsg))); return;
 						} else if (inputData.Action == "") {
 							errMsg = "Action too short."
-							console.log(consoleMsg+errMsg);
+							writeLog(now,consoleMsg+errMsg);
 							response.writeHead(statusCode, {'Content-Type': contentType}, optionsData);
 							response.end(sites["/error.html"].Data.replace("%statusCode",statusCode).replace("%statusText",(responseData += errMsg))); return;
 						} else {
 							sites[pagename] = inputData;
 							dataSave(sites,inMemCacheFile);
-							console.log("At "+now.toISOString()+" user "+userName+"'s "+request.method+" complete from "+request.socket.remoteAddress+" for page "+pagename);
-							statusCode=200;
+							writeLog(now,"User "+userName+"'s "+request.method+" complete from "+request.socket.remoteAddress+" for page "+pagename);
+							statusCode = 200;
 							response.writeHead(statusCode, {'Content-Type': contentType}, optionsData);
 							response.end(request.method+JSON.stringify(sites[pagename])+" successful"); return;
 						}; //end if pagename
 					} catch (errMsg) {
-						statusCode=400;
-						console.log(consoleMsg+errMsg);
+						statusCode = 400;
+						writeLog(now,consoleMsg+errMsg);
 						response.writeHead(statusCode, {'Content-Type': contentType}, optionsData);
 						response.end(sites["/error.html"].Data.replace("%statusCode",statusCode).replace("%statusText",(responseData += errMsg))); return;
 					}; //end try
@@ -313,7 +314,7 @@ const server = http.createServer((request, response) => {
 				});
 				request.on('end', () => {
 					if (sites[pagename] == null) {
-						console.log(pagename+" empty, populating.")
+						writeLog(now,pagename+" empty, populating.")
 						sites[pagename].Data = body;
 					} else if (sites[pagename].URI == pagename) {
 						switch(splitAction[0]) {
@@ -326,7 +327,7 @@ const server = http.createServer((request, response) => {
 							if (JSON.stringify(Users).includes(body.username)) {
 								if (Users[body.username].password == body.password) {
 									userName = body.username;
-									console.log("Login for : "+userName)
+									writeLog(now,"Login for : "+userName)
 									Users[userName].token = randomToken(); 
 									Users[userName].expiry = now.valueOf()+86400000;
 									Users[Users[userName].token] = userName;
@@ -338,7 +339,7 @@ const server = http.createServer((request, response) => {
 								}; // end if users body 
 							} else {
 								userName = body.username;
-								console.log("New user: "+userName)
+								writeLog(now,"New user: "+userName)
 								Users[userName] = {"password":body.password, "email":body.email, "token":randomToken(), "expiry":now.valueOf()+86400000}
 								Users[Users[userName].token] = userName;
 								dataSave(Users,userFile);
@@ -348,16 +349,16 @@ const server = http.createServer((request, response) => {
 							response.end(responseData); return;
 							break; //end login
 						default:
-							console.log(pagename+" exists, appending.")
+							writeLog(now,pagename+" exists, appending.")
 							sites[pagename].Data += body;
 							break; //end login
 						}; //end switch
 					} else {
-						console.log(pagename+" exists, appending.")
+						writeLog(now,pagename+" exists, appending.")
 						sites[pagename].Data += body;
 					}
 					responseData = request.method+JSON.stringify(sites[pagename].URI);
-					console.log("At "+now.toISOString()+" user "+userName+"'s "+request.method+" complete from "+request.socket.remoteAddress+" for page "+pagename);
+					writeLog(now,"User "+userName+"'s "+request.method+" complete from "+request.socket.remoteAddress+" for page "+pagename);
 					response.writeHead(statusCode, {'Content-Type': contentType}, optionsData);
 					dataSave(sites,inMemCacheFile);
 					response.end(responseData); return;
@@ -395,7 +396,7 @@ const server = http.createServer((request, response) => {
 })
 
 server.listen((serverPort), () => {
-	console.log("Server is Running on port "+serverPort);
+	writeLog("","==========> Server is Running on port "+serverPort);
 })
 
 function randomToken(){
@@ -408,18 +409,30 @@ function dataSave(dict,filename) {
 		saveDateTime = now.valueOf()+5000;
 		fs.writeFile(filename, JSON.stringify(dict), (err) => {
 			if (err) {
-				console.log(filename+" save err: "+err);
+				writeLog("",filename+" save err: "+err);
 			} else {
-				console.log(filename+" save successful.");
+				writeLog("",filename+" save successful.");
 			}
 		});
 	} else {
-		//console.log("not yet")
+		//writeLog("","not yet")
 	}
 }
 
+function writeLog(now,logData) {
+	if (now == "") {now = new Date()};
+	//console.log("now: "+JSON.stringify(now));	
+	let logfile = logFolder+"/"+now.toJSON().split("T")[0]+".log"
+	logData = now.toISOString()+" - "+logData+"\n"
+	fs.appendFile(logfile, logData, function (err) {
+		if (err) {
+			console.log("writeLog err: "+err);
+		}
+	});
+}
+
 function getContentType(pagename) {
-		switch(pagename.split(".")[1]) {
+	switch(pagename.split(".")[1]) {
 	  case "css":
 		return 'text/css'
 		break;
@@ -472,7 +485,7 @@ function webRequest(method, location, callback, JSON,file,cached) {
 	var locationSplit2 = locationSplit[1].split("/");
 	var host = locationSplit2[2]
 	var path = "/"+locationSplit2.slice(3,locationSplit2.length).join("/")
-	console.log(protocol+" request method "+method+" for path "+path+" from host "+host+" on port "+port)
+	writeLog("",protocol+" request method "+method+" for path "+path+" from host "+host+" on port "+port)
 	var encodingType = '';
 
 	var $headers = {};
@@ -509,7 +522,7 @@ function webRequest(method, location, callback, JSON,file,cached) {
 	};
 
 	const req = https.request(options, res => {
-		console.log("statusCode:"+res.statusCode);
+		writeLog("","statusCode:"+res.statusCode);
 		var returnVar = '';
 		res.setEncoding(encodingType);
 		res.on('data', function (chunk) {
