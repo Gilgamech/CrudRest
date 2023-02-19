@@ -105,7 +105,8 @@ const server = http.createServer((request, response) => {
 		var splitAction = sites[pagename].Action.split("~");
 		switch(request.method) {
 			case "HEAD":
-				response.writeHead(statusCode, {'Content-Type': getContentType(pagename)});
+				contentType = getContentType(pagename);
+				response.writeHead(statusCode, {'Content-Type': contentType}, optionsData);
 				response.end(); return;
 				break; //end HEAD
 			case "GET":
@@ -144,11 +145,13 @@ const server = http.createServer((request, response) => {
 							webRequest(splitAction[1], URItoLoad,function(data){
 								sites[pagename].Data = data;
 								dataSave(sites,inMemCacheFile);
-								response.writeHead(statusCode, {'Content-Type': getContentType(pagename)});
+								contentType = getContentType(pagename);
+								response.writeHead(statusCode, {'Content-Type': contentType}, optionsData);
 								response.end(sites[pagename].Data); return;
 							});
 						} else {
-							response.writeHead(statusCode, {'Content-Type': getContentType(pagename)});
+							contentType = getContentType(pagename);
+							response.writeHead(statusCode, {'Content-Type': contentType}, optionsData);
 							response.end(sites[pagename].Data); return;
 						}
 						break;//end uri
@@ -160,17 +163,20 @@ const server = http.createServer((request, response) => {
 									let errMsg = "Not found."
 									sites[pagename].Data = "";
 									console.log(statusCode+" "+errMsg);
-									response.writeHead(statusCode, {'Content-Type': 'text/html'});
+									contentType = 'text/html';
+									response.writeHead(statusCode, {'Content-Type': contentType}, optionsData);
 									response.end(sites["/error.html"].Data.replace("%statusCode",statusCode).replace("%statusText",errMsg)); return;
 								} else {
 									sites[pagename].Data = data;
 									dataSave(sites,inMemCacheFile);
-									response.writeHead(statusCode, {'Content-Type': getContentType(splitAction[1])});
+									contentType = getContentType(splitAction[1]);
+									response.writeHead(statusCode, {'Content-Type': contentType}, optionsData);
 									response.end(sites[pagename].Data); return;
 								}
 							});
 						} else {
-							response.writeHead(statusCode, {'Content-Type': getContentType(splitAction[1])});
+							contentType = getContentType(splitAction[1]);
+							response.writeHead(statusCode, {'Content-Type': contentType}, optionsData);
 							response.end(sites[pagename].Data); return;
 						}
 						break;//end fs
@@ -223,11 +229,13 @@ const server = http.createServer((request, response) => {
 						dataSave(sites,inMemCacheFile);
 
 						//Return as response.
-						response.writeHead(statusCode, {'Content-Type': getContentType(pagename)});
+						contentType = getContentType(pagename);
+						response.writeHead(statusCode, {'Content-Type': contentType}, optionsData);
 						response.end(sites[pagename].Data); return;
 					default://splitAction[0]
-							response.writeHead(statusCode, {'Content-Type': getContentType(pagename)});
 							if (typeof responseData == "number"){
+							contentType = getContentType(pagename);
+							response.writeHead(statusCode, {'Content-Type': contentType}, optionsData);
 								response.end(JSON.stringify(responseData)); return;
 							} else {
 								response.end(sites[pagename].Data); return;
@@ -235,7 +243,9 @@ const server = http.createServer((request, response) => {
 						break;
 					}; //end switch splitAction[0]
 				} else {
-					response.writeHead(400, {'Content-Type': 'text/html'});
+					statusCode=400;
+					contentType = getContentType(pagename);
+					response.writeHead(statusCode, {'Content-Type': contentType}, optionsData);
 					response.end(sites["/error.html"].Data.replace("%statusCode",statusCode).replace("%statusText","Site Action URI mismatch")); return;
 				}
 				break; //end GET
@@ -253,36 +263,37 @@ const server = http.createServer((request, response) => {
 						inputData = JSON.parse(body);
 					} catch(errMsg) {
 						console.log(consoleMsg+errMsg);
-						response.writeHead(statusCode, {'Content-Type': contentType});
+						response.writeHead(statusCode, {'Content-Type': contentType}, optionsData);
 						response.end(sites["/error.html"].Data.replace("%statusCode",statusCode).replace("%statusText",(responseData += errMsg))); return;
 					}; // end try
 					try {//Verify inputs
 						if (pagename != inputData.URI) {
 							errMsg = "URI does not match server location."
 							console.log(consoleMsg+errMsg);
-							response.writeHead(statusCode, {'Content-Type': contentType});
+							response.writeHead(statusCode, {'Content-Type': contentType}, optionsData);
 							response.end(sites["/error.html"].Data.replace("%statusCode",statusCode).replace("%statusText",(responseData += errMsg))); return;
 						} else if (inputData.AccessList == "") {
 							errMsg = "AccessList too short."
 							console.log(consoleMsg+errMsg);
-							response.writeHead(statusCode, {'Content-Type': contentType});
+							response.writeHead(statusCode, {'Content-Type': contentType}, optionsData);
 							response.end(sites["/error.html"].Data.replace("%statusCode",statusCode).replace("%statusText",(responseData += errMsg))); return;
 						} else if (inputData.Action == "") {
 							errMsg = "Action too short."
 							console.log(consoleMsg+errMsg);
-							response.writeHead(statusCode, {'Content-Type': contentType});
+							response.writeHead(statusCode, {'Content-Type': contentType}, optionsData);
 							response.end(sites["/error.html"].Data.replace("%statusCode",statusCode).replace("%statusText",(responseData += errMsg))); return;
 						} else {
 							sites[pagename] = inputData;
 							dataSave(sites,inMemCacheFile);
 							console.log("At "+now.toISOString()+" user "+userName+"'s "+request.method+" complete from "+request.socket.remoteAddress+" for page "+pagename);
-							response.writeHead(200, {'Content-Type': contentType});
+							statusCode=200;
+							response.writeHead(statusCode, {'Content-Type': contentType}, optionsData);
 							response.end(request.method+JSON.stringify(sites[pagename])+" successful"); return;
 						}; //end if pagename
 					} catch (errMsg) {
 						statusCode=400;
 						console.log(consoleMsg+errMsg);
-						response.writeHead(statusCode, {'Content-Type': contentType});
+						response.writeHead(statusCode, {'Content-Type': contentType}, optionsData);
 						response.end(sites["/error.html"].Data.replace("%statusCode",statusCode).replace("%statusText",(responseData += errMsg))); return;
 					}; //end try
 				});
@@ -324,7 +335,7 @@ const server = http.createServer((request, response) => {
 								dataSave(Users,userFile);
 								responseData = "Bearer "+Users[userName].token;
 							}; //end users includes
-							response.writeHead(statusCode, {'Content-Type': contentType});
+							response.writeHead(statusCode, {'Content-Type': contentType}, optionsData);
 							response.end(responseData); return;
 							break; //end login
 						default:
@@ -338,36 +349,38 @@ const server = http.createServer((request, response) => {
 					}
 					responseData = request.method+JSON.stringify(sites[pagename].URI);
 					console.log("At "+now.toISOString()+" user "+userName+"'s "+request.method+" complete from "+request.socket.remoteAddress+" for page "+pagename);
-					response.writeHead(statusCode, {'Content-Type': contentType});
+					response.writeHead(statusCode, {'Content-Type': contentType}, optionsData);
 					dataSave(sites,inMemCacheFile);
 					response.end(responseData); return;
 				});
 				break; //end POST
 			case "DELETE":
+				response.writeHead(statusCode, {'Content-Type': contentType}, optionsData);
 				sites[pagename] = null;
 				responseData = request.method+pagename+" successful";
-				response.writeHead(statusCode, {'Content-Type': contentType});
 				dataSave(sites,inMemCacheFile);
 				response.end(responseData); return;
 				break; //end DELETE
 			case "MERGE":
+				response.writeHead(statusCode, {'Content-Type': contentType}, optionsData);
 				responseData = JSON.stringify(sites[pagename]);
 				response.end(responseData); return;
 				break; //end POST
 			case "OPTIONS":
-				responseData = optionsData;
-				response.writeHead(statusCode, {'Content-Type': contentType});
-				response.end(responseData); return;
+				response.writeHead(statusCode, {'Content-Type': contentType}, optionsData);
+				response.end(); return;
 				break; //end POST
 			default:
 				statusCode = 405;
-				response.writeHead(statusCode, {'Content-Type': 'text/html'});
+				contentType = 'text/html';
+				response.writeHead(statusCode, {'Content-Type': contentType}, optionsData);
 				response.end(sites["/error.html"].Data.replace("%statusCode",statusCode).replace("%statusText",error405)); return;
 				break; //end default
 		}; //end switch
 	} else {
 		statusCode = 405;
-		response.writeHead(statusCode, {'Content-Type': 'text/html'});
+		contentType = 'text/html';
+		response.writeHead(statusCode, {'Content-Type': contentType}, optionsData);
 		response.end(sites["/error.html"].Data.replace("%statusCode",statusCode).replace("%statusText",error405)); return;
 	}
 })
