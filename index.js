@@ -21,7 +21,16 @@ const url  = require('url');
 const serverPort = 80;
 
 var error405 = "Method Not Allowed.";
-var optionsData = 'HTTP/1.1 200 OK\nAllow: GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS\nAccess-Control-Allow-Origin: *\nAccess-Control-Allow-Methods: GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS\nAccess-Control-Allow-Headers: Content-Type'
+//var optionsData = 'HTTP/1.1 200 OK\nAllow: GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS\nAccess-Control-Allow-Origin: *\nAccess-Control-Allow-Methods: GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS\nAccess-Control-Allow-Headers: Content-Type'
+var optionsData = {};
+	//from https://gist.github.com/petrovicstefanrs/9154e7032a1b550f0da167db29e14234
+	// IE8 does not allow domains to be specified, just the *
+	// optionsData["Access-Control-Allow-Origin"] = req.optionsData.origin;
+	optionsData["Access-Control-Allow-Origin"] = "*";
+	optionsData["Access-Control-Allow-Methods"] = "POST, GET, PUT, DELETE, OPTIONS";
+	optionsData["Access-Control-Allow-Credentials"] = false;
+	optionsData["Access-Control-Max-Age"] = '86400'; // 24 hours
+	optionsData["Access-Control-Allow-Headers"] = "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept";
 var mathOperators = ["+","-","*","/"]
 var saveDateTime = 0;
 var sites = new Object();
@@ -170,7 +179,7 @@ const server = http.createServer((request, response) => {
 									sites[pagename].Data = data;
 									dataSave(sites,inMemCacheFile);
 									contentType = getContentType(splitAction[1]);
-									response.writeHead(statusCode, {'Content-Type': contentType}, optionsData);
+									response.writeHead(statusCode, {'Content-Type': contentType});
 									response.end(sites[pagename].Data); return;
 								}
 							});
