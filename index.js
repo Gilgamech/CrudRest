@@ -31,8 +31,12 @@ fs.readFile(inMemCacheFile, function (err,data) {
 	if (err) {
 		console.log("inMemCacheFile Read err: "+err);
 	} else {
-		console.log("inMemCacheFile Read successful.");
-		sites = JSON.parse(data);
+		try{
+			sites = JSON.parse(data);
+			console.log("inMemCacheFile Read successful.");
+		}catch(e){
+			console.log("inMemCacheFile Read error: "+e)
+		}
 	}
 });
 
@@ -40,8 +44,12 @@ fs.readFile(userFile, function (err,data) {
 	if (err) {
 		console.log("userFile Read err: "+err);
 	} else {
-		console.log("userFile Read successful.");
-		Users = JSON.parse(data);
+		try{
+			Users = JSON.parse(data);
+			console.log("userFile Read successful.");
+		}catch(e){
+			console.log("userFile Read error: "+e)
+		}
 	}
 });
 
