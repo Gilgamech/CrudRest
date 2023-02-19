@@ -1,9 +1,9 @@
-//Copyright 2022 Gilgamech Technologies
-//Title: Basic Webserver
+//Copyright 2023 Gilgamech Technologies
+//Title: Programmatic Webserver
 //Made by: Stephen Gillie
 //Created on: 6/17/2022
-//Updated on: 7/11/2022
-//Notes: The goal for CrudRest is to be, in different configurations, a webserver, database, load balancer, in-memory cache, message queue, pub sub hub, login IdP, password manager, and a variety of other uses.
+//Updated on: 2/19/2023
+//Notes: The goal for Programmatic Webserver is to be, in different configurations, a webserver, database, load balancer, in-memory cache, message queue, pub sub hub, login IdP, password manager, and a variety of other uses.
 
 //////////////////////// Defaults ////////////////////////
 const defaultVerbs = ["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"];
