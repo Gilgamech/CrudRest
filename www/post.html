@@ -16,6 +16,7 @@ function buildPostPage(parentElement){
 	//addElement(wrapperDiv,"http://localhost/increment","","input","","","","","","","",parentElement+"input"+wrapperDiv)
 	addElement(wrapperDiv,"http://localhost/UriGoesHere","","input","","","","","","","",parentElement+"input"+wrapperDiv)
 	addElement(wrapperDiv,"POST!","","button","","","","makePostCall('"+parentElement+"','"+wrapperDiv+"')")
+	addElement(wrapperDiv,"GET!","","button","","","","makeGetCall('"+parentElement+"','"+wrapperDiv+"')")
 
 	addElement(wrapperDiv,"None","","radio","","","","","","name","encryption","radioNone")
 	document.getElementById("radioNone").checked = true;
@@ -35,9 +36,17 @@ function buildPostPage(parentElement){
 function makePostCall(parentElement,wrapperDiv){
 	if (document.getElementById("radioNone").checked == true) {
 		webRequest("POST",readElement(parentElement+"input"+wrapperDiv),function($callback){},"",readElement(parentElement+"textarea"+wrapperDiv))
-		webRequest("GET",readElement(parentElement+"input"+wrapperDiv),function($callback){writeElement(parentElement+"WebOut"+wrapperDiv,$callback)})
 	} else if (document.getElementById("radioRunning").checked == true) {
 		webRequest("POST",readElement(parentElement+"input"+wrapperDiv),function($callback){},"",doEnigmaMan(2,readElement(parentElement+"textarea"+wrapperDiv)))
+	} else {
+		writeElement(parentElement,"Radio Error!")
+	}
+	makeGetCall(parentElement,wrapperDiv)
+}
+function makeGetCall(parentElement,wrapperDiv){
+	if (document.getElementById("radioNone").checked == true) {
+		webRequest("GET",readElement(parentElement+"input"+wrapperDiv),function($callback){writeElement(parentElement+"WebOut"+wrapperDiv,$callback)})
+	} else if (document.getElementById("radioRunning").checked == true) {
 		webRequest("GET",readElement(parentElement+"input"+wrapperDiv),function($callback){writeElement(parentElement+"WebOut"+wrapperDiv,doEnigmaMan(1,$callback))})
 	} else {
 		writeElement(parentElement,"Radio Error!")
