@@ -4,8 +4,11 @@
 //Created on: 6/17/2022
 //Updated on: 2/19/2023
 //Notes: The goal for Programmatic Webserver is to be, in different configurations, a webserver, database, load balancer, in-memory cache, message queue, pub sub hub, login IdP, password manager, and a variety of other uses.
+//Version history:
+//0.8.0: Calling it 0.8.0 to start somewhere.
 
 //////////////////////// Defaults ////////////////////////
+const progWebserverVersion = "0.8.0"
 const defaultVerbs = ["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE", "MERGE"];
 const defaultOwner = "Gilgamech"
 const wwwFolder = "./www/"
@@ -396,7 +399,7 @@ const server = http.createServer((request, response) => {
 })
 
 server.listen((serverPort), () => {
-	writeLog("","==========> Server is Running on port "+serverPort);
+	writeLog("","==========> Server version "+progWebserverVersion+" is running on port "+serverPort);
 })
 
 function randomToken(){
